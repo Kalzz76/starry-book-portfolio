@@ -217,6 +217,136 @@
   background-size: 24px 24px;
 }
 
+@keyframes anginSwoosh {
+  0% {
+    stroke-dashoffset: 600;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    stroke-dashoffset: -600;
+    opacity: 0;
+  }
+}
+
+@keyframes bintangWobble {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-8px) rotate(6deg) scale(1.05);
+  }
+  65% {
+    transform: translateY(6px) rotate(-5deg) scale(0.96);
+  }
+}
+
+@keyframes asapCerobong {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(6px, -18px) scale(1.1);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(12px, -35px) scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes jendelaLilap {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 6px rgba(246, 215, 118, 0.8));
+  }
+  40% {
+    opacity: 0.65;
+    filter: drop-shadow(0 0 3px rgba(246, 215, 118, 0.4));
+  }
+  75% {
+    opacity: 1;
+    filter: drop-shadow(0 0 9px rgba(255, 243, 176, 0.95));
+  }
+}
+
+@keyframes bukuMengapung {
+  0%, 100% {
+    transform: translateY(0px) rotateZ(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateZ(0.5deg);
+  }
+}
+
+.animasi-angin {
+  stroke-dasharray: 120 180;
+  animation: anginSwoosh 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animasi-bintang-3d {
+  animation: bintangWobble 6s ease-in-out infinite;
+}
+
+.animasi-asap {
+  animation: asapCerobong 3.5s ease-out infinite;
+}
+
+.animasi-jendela {
+  animation: jendelaLilap 3s ease-in-out infinite;
+}
+
+.animasi-buku-apung {
+  animation: bukuMengapung 6s ease-in-out infinite;
+}
+
+.tebal-halaman-bawah {
+  background: repeating-linear-gradient(
+    to bottom,
+    #fdfbef 0px,
+    #fdfbef 1.5px,
+    #d8cca8 1.5px,
+    #d8cca8 3px
+  );
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+.tebal-halaman-samping-kiri {
+  background: repeating-linear-gradient(
+    to right,
+    #d8cca8 0px,
+    #d8cca8 1.5px,
+    #fdfbef 1.5px,
+    #fdfbef 3px
+  );
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.25);
+}
+
+.tebal-halaman-samping-kanan {
+  background: repeating-linear-gradient(
+    to left,
+    #d8cca8 0px,
+    #d8cca8 1.5px,
+    #fdfbef 1.5px,
+    #fdfbef 3px
+  );
+  box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.25);
+}
+
+.lengkung-halaman-kiri {
+  box-shadow: inset -18px 0 24px -10px rgba(0, 0, 0, 0.35);
+}
+
+.lengkung-halaman-kanan {
+  box-shadow: inset 18px 0 24px -10px rgba(0, 0, 0, 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;
@@ -226,7 +356,12 @@
   .animasi-melayang,
   .animasi-awan,
   .animasi-panah,
-  .animasi-pop-up {
+  .animasi-pop-up,
+  .animasi-angin,
+  .animasi-bintang-3d,
+  .animasi-asap,
+  .animasi-jendela,
+  .animasi-buku-apung {
     animation: none !important;
   }
 }

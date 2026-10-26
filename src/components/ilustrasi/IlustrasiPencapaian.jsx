@@ -1,5 +1,6 @@
 import React from 'react'
 import DekorasiHalaman from '../dekorasi/DekorasiHalaman'
+import BintangVanGogh from '../dekorasi/BintangVanGogh'
 
 export default function IlustrasiPencapaian({ kelas = '' }) {
   return (
@@ -123,6 +124,13 @@ export default function IlustrasiPencapaian({ kelas = '' }) {
               <polygon points="10,6 12,10 16,10 13,13 14,17 10,14 6,17 7,13 4,10 8,10" fill="#ffffff" />
             </g>
           </svg>
+
+          <div className="absolute -top-3 right-8 z-20 pointer-events-none">
+            <BintangVanGogh ukuran={36} jejakAngin={true} arahAngin="kiri" />
+          </div>
+          <div className="absolute bottom-8 left-4 z-20 pointer-events-none">
+            <BintangVanGogh ukuran={26} jejakAngin={false} />
+          </div>
         </div>
       </div>
 

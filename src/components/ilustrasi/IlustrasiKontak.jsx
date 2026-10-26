@@ -1,5 +1,6 @@
 import React from 'react'
 import DekorasiHalaman from '../dekorasi/DekorasiHalaman'
+import BintangVanGogh from '../dekorasi/BintangVanGogh'
 
 export default function IlustrasiKontak({ kelas = '' }) {
   return (
@@ -111,6 +112,13 @@ export default function IlustrasiKontak({ kelas = '' }) {
               <rect x="14" y="2" width="14" height="9" rx="1" fill="#fdfbef" stroke="#1f4d36" strokeWidth="1" />
             </g>
           </svg>
+
+          <div className="absolute -top-3 right-6 z-20 pointer-events-none">
+            <BintangVanGogh ukuran={34} jejakAngin={true} arahAngin="kiri" />
+          </div>
+          <div className="absolute bottom-6 left-6 z-20 pointer-events-none">
+            <BintangVanGogh ukuran={28} jejakAngin={false} />
+          </div>
         </div>
       </div>
 

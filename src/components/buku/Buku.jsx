@@ -47,7 +47,7 @@ export default function Buku({ onHalamanSfx, onLoncengSfx, onKlikSfx, onStatusBu
   const miringBuku = useTransform(
     scrollYProgress,
     [0.0, 0.04, 0.14, 0.88, 0.96, 1.0],
-    [4, 4, 0, 0, 4, 4],
+    [5, 5, 16, 16, 5, 5],
     { clamp: true }
   )
 
@@ -189,19 +189,39 @@ export default function Buku({ onHalamanSfx, onLoncengSfx, onKlikSfx, onStatusBu
           >
             <motion.div
               style={{ opacity: opacityHalamanKiri }}
-              className="absolute left-0 top-0 w-1/2 h-full rounded-l-3xl bg-kertas border-y border-l border-lumut/30 tepi-kertas-kiri overflow-hidden z-0"
+              className="absolute -inset-1 rounded-3xl bg-[#1c120c] border border-emas/40 pointer-events-none z-[-1] shadow-[0_30px_70px_rgba(0,0,0,0.85)]"
+            >
+              <div className="absolute top-1 left-1 w-6 h-6 border-t-2 border-l-2 border-emas" />
+              <div className="absolute top-1 right-1 w-6 h-6 border-t-2 border-r-2 border-emas" />
+              <div className="absolute bottom-1 left-1 w-6 h-6 border-b-2 border-l-2 border-emas" />
+              <div className="absolute bottom-1 right-1 w-6 h-6 border-b-2 border-r-2 border-emas" />
+            </motion.div>
+
+            <motion.div
+              style={{ opacity: opacityHalamanKiri }}
+              className="absolute -bottom-3 inset-x-2 h-3.5 rounded-b-lg tebal-halaman-bawah pointer-events-none z-10"
+            />
+
+            <motion.div
+              style={{ opacity: opacityHalamanKiri }}
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-8 h-4 rounded-b-xl bg-[#2b1b11] border-b border-x border-emas/50 shadow-md pointer-events-none z-20"
+            />
+
+            <motion.div
+              style={{ opacity: opacityHalamanKiri }}
+              className="absolute left-0 top-0 w-1/2 h-full rounded-l-3xl bg-kertas border-y border-l border-lumut/30 tepi-kertas-kiri lengkung-halaman-kiri overflow-hidden z-0"
             >
               <div className="w-full h-full relative">
-                <div className="absolute right-0 inset-y-0 w-10 bg-gradient-to-l from-black/25 to-transparent pointer-events-none" />
+                <div className="absolute right-0 inset-y-0 w-12 bg-gradient-to-l from-black/30 via-black/10 to-transparent pointer-events-none" />
               </div>
             </motion.div>
 
             <motion.div
               style={{ opacity: opacityHalamanKanan }}
-              className="absolute right-0 top-0 w-1/2 h-full rounded-r-3xl bg-kertas border-y border-r border-lumut/30 tepi-kertas-kanan overflow-hidden z-0"
+              className="absolute right-0 top-0 w-1/2 h-full rounded-r-3xl bg-kertas border-y border-r border-lumut/30 tepi-kertas-kanan lengkung-halaman-kanan overflow-hidden z-0"
             >
               <div className="w-full h-full relative">
-                <div className="absolute left-0 inset-y-0 w-10 bg-gradient-to-r from-black/25 to-transparent pointer-events-none" />
+                <div className="absolute left-0 inset-y-0 w-12 bg-gradient-to-r from-black/30 via-black/10 to-transparent pointer-events-none" />
               </div>
             </motion.div>
 
