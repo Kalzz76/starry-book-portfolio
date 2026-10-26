@@ -2,9 +2,20 @@ import React, { useState } from 'react'
 import { useBahasa } from '../../i18n/KonteksBahasa'
 import TombolBahasa from './TombolBahasa'
 import TombolSuara from './TombolSuara'
+import MenuPengaturan from './MenuPengaturan'
 import Ikon from './Ikon'
 
-export default function Navbar({ suaraAktif, onToggleSuara, onKlikSfx, onNavigasiBab, terlihat = true }) {
+export default function Navbar({
+  suaraAktif,
+  onToggleSuara,
+  kursorAktif,
+  onToggleKursor,
+  maskotAktif,
+  onToggleMaskot,
+  onKlikSfx,
+  onNavigasiBab,
+  terlihat = true
+}) {
   const { t } = useBahasa()
   const [menuBuka, setMenuBuka] = useState(false)
 
@@ -66,6 +77,15 @@ export default function Navbar({ suaraAktif, onToggleSuara, onKlikSfx, onNavigas
         <div className="flex items-center gap-2 sm:gap-3">
           <TombolBahasa onKlikSfx={onKlikSfx} />
           <TombolSuara suaraAktif={suaraAktif} onToggle={onToggleSuara} />
+          <MenuPengaturan
+            kursorAktif={kursorAktif}
+            onToggleKursor={onToggleKursor}
+            maskotAktif={maskotAktif}
+            onToggleMaskot={onToggleMaskot}
+            suaraAktif={suaraAktif}
+            onToggleSuara={onToggleSuara}
+            onKlikSfx={onKlikSfx}
+          />
 
           <button
             type="button"

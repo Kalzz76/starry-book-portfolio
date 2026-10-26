@@ -118,5 +118,20 @@
     "kutipan": "Setiap baris kode adalah bagian dari cerita yang tak pernah berhenti bertumbuh. Terima kasih telah menjelajahi lembaran kisah ini.",
     "bacaKembali": "Buka Kembali Dari Awal",
     "unduhCv": "Unduh CV"
+  },
+  "maskot": {
+    "salam1": "Salam hangat, pengelana! Selamat membaca kisah Kaka.",
+    "salam2": "Burung hantu penjaga menyapamu! Jangan lupa cek Bab Proyek.",
+    "salam3": "Setiap baris kode adalah petualangan baru di malam berbintang!",
+    "klikAku": "Klik aku!"
+  },
+  "pengaturan": {
+    "judul": "Pengaturan Dongeng",
+    "kursor": "Kursor Bintang",
+    "kursorSub": "Kunang-kunang & serbuk emas",
+    "maskot": "Burung Hantu Penjaga",
+    "maskotSub": "Maskot interaktif pendamping",
+    "suara": "Alunan Musik",
+    "suaraSub": "Kotak musik & efek lembaran"
   }
 }

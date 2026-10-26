@@ -118,5 +118,20 @@
     "kutipan": "Every line of code is part of a tale that never stops evolving. Thank you for exploring these pages.",
     "bacaKembali": "Read Again From Start",
     "unduhCv": "Download CV"
+  },
+  "maskot": {
+    "salam1": "Warm greetings, traveler! Welcome to Kaka's storybook.",
+    "salam2": "The guardian owl salutes you! Make sure to explore the Projects chapter.",
+    "salam3": "Every line of code is a new quest under the starry night sky!",
+    "klikAku": "Click me!"
+  },
+  "pengaturan": {
+    "judul": "Storybook Settings",
+    "kursor": "Stardust Cursor",
+    "kursorSub": "Firefly & golden stardust",
+    "maskot": "Guardian Owl",
+    "maskotSub": "Interactive storybook mascot",
+    "suara": "Magical Audio",
+    "suaraSub": "Music box & page turning sfx"
   }
 }

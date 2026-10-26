@@ -6,12 +6,28 @@ import Navbar from './components/ui/Navbar'
 import Buku from './components/buku/Buku'
 import ModeHalaman from './components/sections/ModeHalaman'
 import Footer from './components/ui/Footer'
+import KursorSihir from './components/dekorasi/KursorSihir'
+import MaskotBurungHantu from './components/dekorasi/MaskotBurungHantu'
 import { daftarBab } from './data/linimasa'
 
 function AplikasiUtama() {
   const modeBuku = useModeBuku()
   const { suaraAktif, nyalakanSuara, matikanSuara, mainkanEfek } = useSuara()
   const [bukuTerbuka, setBukuTerbuka] = useState(false)
+  const [kursorAktif, setKursorAktif] = useState(() => {
+    try {
+      return localStorage.getItem('kursorAktif') !== 'tidak'
+    } catch (e) {
+      return true
+    }
+  })
+  const [maskotAktif, setMaskotAktif] = useState(() => {
+    try {
+      return localStorage.getItem('maskotAktif') !== 'tidak'
+    } catch (e) {
+      return true
+    }
+  })
 
   const handleToggleSuara = () => {
     if (suaraAktif) {
@@ -19,6 +35,26 @@ function AplikasiUtama() {
     } else {
       nyalakanSuara()
     }
+  }
+
+  const handleToggleKursor = () => {
+    setKursorAktif((prev) => {
+      const baru = !prev
+      try {
+        localStorage.setItem('kursorAktif', baru ? 'ya' : 'tidak')
+      } catch (e) {}
+      return baru
+    })
+  }
+
+  const handleToggleMaskot = () => {
+    setMaskotAktif((prev) => {
+      const baru = !prev
+      try {
+        localStorage.setItem('maskotAktif', baru ? 'ya' : 'tidak')
+      } catch (e) {}
+      return baru
+    })
   }
 
   const bunyikanKlik = () => {
@@ -59,10 +95,17 @@ function AplikasiUtama() {
 
   return (
     <div className="min-h-screen bg-malamgelap text-kertas font-isi relative selection:bg-bintang/30 selection:text-bintang">
+      <KursorSihir aktif={kursorAktif} />
+      <MaskotBurungHantu aktif={maskotAktif} onKlikSfx={bunyikanLonceng} />
+
       <Navbar
         terlihat={tampilkanNavbar}
         suaraAktif={suaraAktif}
         onToggleSuara={handleToggleSuara}
+        kursorAktif={kursorAktif}
+        onToggleKursor={handleToggleKursor}
+        maskotAktif={maskotAktif}
+        onToggleMaskot={handleToggleMaskot}
         onKlikSfx={bunyikanKlik}
         onNavigasiBab={navigasiKeBab}
       />
