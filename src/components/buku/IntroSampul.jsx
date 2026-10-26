@@ -1,22 +1,22 @@
 import React, { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Sampul from './Sampul'
 import Latar from './Latar'
-import Ikon from '../ui/Ikon'
-import { useBahasa } from '../../i18n/KonteksBahasa'
+import IsiHero from '../isi/IsiHero'
 
 export default function IntroSampul({ onKlikSfx }) {
-  const { t } = useBahasa()
   const ref = useRef(null)
+  const kurangiGerak = typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end']
   })
 
-  const rotateY = useTransform(scrollYProgress, [0.15, 0.75], [0, -160], { clamp: true })
-  const scale = useTransform(scrollYProgress, [0.15, 0.85], [0.85, 1.35], { clamp: true })
-  const opacity = useTransform(scrollYProgress, [0.65, 0.95], [1, 0], { clamp: true })
+  const scale = useTransform(scrollYProgress, [0, 0.85], [1, 1.6], { clamp: true })
+  const opacity = useTransform(scrollYProgress, [0.6, 0.92], [1, 0], { clamp: true })
+  const opacityTeks = useTransform(scrollYProgress, [0.15, 0.55], [1, 0], { clamp: true })
 
   const scrollKeKonten = () => {
     if (ref.current) {
@@ -28,37 +28,45 @@ export default function IntroSampul({ onKlikSfx }) {
     }
   }
 
+  if (kurangiGerak) {
+    return (
+      <div className="relative h-[80vh] w-full bg-malamgelap overflow-hidden flex items-end justify-center pb-12">
+        <img
+          src="/video/intro-poster.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-75"
+        />
+        <div className="relative z-10 w-full flex justify-center">
+          <IsiHero onAksiProyek={scrollKeKonten} onKlikSfx={onKlikSfx} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div ref={ref} className="relative h-[250vh] bg-malamgelap">
       <Latar />
 
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center p-4 overflow-hidden">
-        <div className="ruang-buku-3d w-full max-w-sm sm:max-w-md aspect-[3/4] flex items-center justify-center">
-          <motion.div
-            style={{
-              rotateY,
-              scale,
-              opacity,
-              transformOrigin: 'left center',
-              transformStyle: 'preserve-3d'
-            }}
-            className="w-full h-full relative will-change-transform"
-          >
-            <Sampul
-              onBukaBuku={scrollKeKonten}
-              onKlikSfx={onKlikSfx}
-            />
-          </motion.div>
-        </div>
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-end pb-8 sm:pb-12 overflow-hidden">
+        <motion.div
+          style={{ scale, opacity }}
+          className="absolute inset-0 w-full h-full pointer-events-none will-change-transform"
+        >
+          <img
+            src="/video/intro-poster.jpg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-malamgelap via-transparent to-black/30 pointer-events-none" />
+        </motion.div>
 
         <motion.div
-          style={{ opacity }}
-          className="absolute bottom-10 flex flex-col items-center gap-2 text-emas"
+          style={{ opacity: opacityTeks }}
+          className="relative z-10 w-full flex justify-center"
         >
-          <span className="font-isi text-xs font-semibold uppercase tracking-widest bg-malamgelap/80 px-4 py-1.5 rounded-full border border-emas/40 shadow-lg animasi-panah">
-            {t('buku.petunjukScroll')}
-          </span>
-          <Ikon nama="panah-atas" kelas="w-4 h-4 rotate-180 text-emas animasi-panah" />
+          <IsiHero onAksiProyek={scrollKeKonten} onKlikSfx={onKlikSfx} />
         </motion.div>
       </div>
     </div>

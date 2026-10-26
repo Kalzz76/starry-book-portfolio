@@ -127,7 +127,7 @@ function AplikasiUtama() {
         )}
       </main>
 
-      {modeBuku !== 'buku' && <Footer onKlikSfx={bunyikanKlik} />}
+      <Footer onKlikSfx={bunyikanKlik} />
     </div>
   )
 }

@@ -1,10 +1,15 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 import KunangKunang from '../dekorasi/KunangKunang'
 import BintangVanGogh from '../dekorasi/BintangVanGogh'
 
-export default function Latar() {
+export default function Latar({ skala }) {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0" aria-hidden="true">
+    <motion.div
+      style={{ scale: skala }}
+      className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0 will-change-transform"
+      aria-hidden="true"
+    >
       <div
         className="absolute -inset-10 bg-cover bg-center animasi-vangogh-gerak"
         style={{
@@ -124,6 +129,6 @@ export default function Latar() {
           background: 'radial-gradient(ellipse at center, rgba(13, 17, 54, 0.05) 0%, rgba(13, 17, 54, 0.25) 60%, rgba(6, 8, 25, 0.7) 100%)'
         }}
       />
-    </div>
+    </motion.div>
   )
 }
