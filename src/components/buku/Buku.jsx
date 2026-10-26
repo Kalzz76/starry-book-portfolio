@@ -6,7 +6,7 @@ import Lembar from './Lembar'
 import HalamanDasar from './HalamanDasar'
 import SampulBelakang from './SampulBelakang'
 import Latar from './Latar'
-import IntroVideo from './IntroVideo'
+import IntroBuku3D from './IntroBuku3D'
 import PenandaBab from './PenandaBab'
 import IsiHero from '../isi/IsiHero'
 import IlustrasiTentang from '../ilustrasi/IlustrasiTentang'
@@ -38,12 +38,6 @@ export default function Buku({ onHalamanSfx, onLoncengSfx, onKlikSfx, onStatusBu
     { clamp: true }
   )
 
-  const opacityVideo = useTransform(
-    scrollYProgress,
-    [0.27, 0.31],
-    [1, 0],
-    { clamp: true }
-  )
 
   const opacityHero = useTransform(
     scrollYProgress,
@@ -164,16 +158,11 @@ export default function Buku({ onHalamanSfx, onLoncengSfx, onKlikSfx, onStatusBu
     <div ref={kontainerRef} className="relative h-[1000vh]">
       <Latar skala={skalaLatar} />
 
-      <motion.div
-        style={{ opacity: opacityVideo }}
-        className="fixed inset-0 pointer-events-none z-10"
-      >
-        <IntroVideo
-          progres={scrollYProgress}
-          mulai={waktuVideo.mulai}
-          selesai={waktuVideo.selesai}
-        />
-      </motion.div>
+      <IntroBuku3D
+        progres={scrollYProgress}
+        mulai={waktuVideo.mulai}
+        selesai={waktuVideo.selesai}
+      />
 
       <motion.div
         style={{ opacity: opacityHero }}
