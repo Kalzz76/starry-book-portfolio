@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "logo": "Kaka",
+    "beranda": "Home",
+    "tentang": "About",
+    "keahlian": "Skills",
+    "proyek": "Projects",
+    "pencapaian": "Achievements",
+    "kontak": "Contact",
+    "suaraNyalakan": "Enable music & sound",
+    "suaraMatikan": "Mute music & sound",
+    "menuBuka": "Open navigation menu",
+    "menuTutup": "Close navigation menu"
+  },
+  "buku": {
+    "bukaBuku": "Open Book",
+    "petunjukScroll": "Scroll to open the book",
+    "halamanSebelumnya": "Previous Page",
+    "halamanBerikutnya": "Next Page",
+    "babSebelumnya": "Previous Chapter",
+    "babBerikutnya": "Next Chapter",
+    "sampulDepan": "Front Cover",
+    "halaman": "Page",
+    "jilid": "Volume"
+  },
+  "hero": {
+    "eyebrow": "WEB · MOBILE · CLOUD",
+    "nama": "Kaka Andrea Yahya",
+    "peran": "Software Engineering Student",
+    "tagline": "Crafting lines of code into meaningful stories, from structured web applications to friendly mobile experiences.",
+    "tombolProyek": "View Projects",
+    "tombolCV": "Download CV",
+    "altIlustrasi": "Illustration of an open storybook with a laptop and a small owl"
+  },
+  "tentang": {
+    "penandaBab": "Chapter 1",
+    "judul": "About The Author",
+    "paragraf1": "Hello! I am Kaka Andrea Yahya, a Software Engineering student at SMKN 13 Bandung. I have a deep passion for designing and building clean, efficient, and impactful web and mobile applications.",
+    "paragraf2": "To me, every line of code represents a chapter in an ongoing adventure. Experienced with Laravel, Flutter, C#, and cloud fundamentals, I am always enthusiastic about mastering new technologies to craft reliable solutions.",
+    "tombolLanjut": "Explore Project Stories",
+    "kartuPendidikanJudul": "Education",
+    "kartuPendidikanIsi": "SMKN 13 Bandung",
+    "kartuPendidikanSub": "Software Engineering (2024 - 2026)",
+    "kartuOrganisasiJudul": "Organization",
+    "kartuOrganisasiIsi": "IRMA (Islamic Youth Organization)",
+    "kartuOrganisasiSub": "Active in teamwork, leadership, and community outreach",
+    "kartuBahasaJudul": "Languages",
+    "kartuBahasaIsi": "Indonesian (Native), English (Basic/A1), Sundanese (Conversational)",
+    "kartuBahasaSub": "Communicative, courteous, and collaborative"
+  },
+  "keahlian": {
+    "penandaBab": "Chapter 2",
+    "judul": "Adventure Equipment",
+    "pengantar": "The tools and gear I carry to navigate through complex logic and overcome software engineering challenges.",
+    "kelompokBahasa": "Programming Languages",
+    "kelompokFramework": "Frameworks & Libraries",
+    "kelompokDatabase": "Database & Cloud",
+    "kelompokDesain": "Interface Design"
+  },
+  "proyek": {
+    "penandaBab": "Chapter 3",
+    "judul": "Stories I Have Crafted",
+    "pengantar": "Each creation is an authentic chapter built with precision, logical reasoning, and complete dedication.",
+    "filterSemua": "All",
+    "filterWeb": "Web",
+    "filterMobile": "Mobile",
+    "filterLainnya": "Others",
+    "tombolBaca": "Read The Story",
+    "tahun": "Year Created",
+    "demo": "Live Demo",
+    "github": "Code Repository",
+    "tutup": "Close Story",
+    "kosong": "No stories found in this category."
+  },
+  "pencapaian": {
+    "penandaBab": "Chapter 4",
+    "judul": "Badges and Honors",
+    "pengantar": "Proof of dedication, comprehensive learning, and competitive challenges undertaken along the way.",
+    "tabLomba": "Competitions & Contests",
+    "tabSertifikat": "Training Certificates",
+    "lihatSertifikat": "View Certificate Verification",
+    "penyelenggara": "Issued by",
+    "kosong": "No achievements recorded in this section."
+  },
+  "kontak": {
+    "penandaBab": "Final Chapter",
+    "judul": "See You in the Next Chapter",
+    "pengantar": "This book may soon close, but exciting new journeys await. I am open to internship opportunities, collaborative projects, or friendly technical chats.",
+    "labelNama": "Your Name",
+    "placeholderNama": "Your name or company representative...",
+    "labelEmail": "Email Address",
+    "placeholderEmail": "your.email@example.com",
+    "labelPesan": "Story Message",
+    "placeholderPesan": "Describe your internship inquiry, collaboration offer, or warm greetings...",
+    "tombolKirim": "Send Story Letter",
+    "mengirim": "Sending Carrier Pigeon...",
+    "suksesJudul": "Your letter has arrived!",
+    "suksesPesan": "Thank you very much for reaching out. I will read your message and reply as soon as possible.",
+    "errorKosong": "Please fill in your name and message before sending.",
+    "errorEmail": "Email address must be valid (must contain @ and a domain dot).",
+    "errorPanjang": "Message is too long (maximum 1000 characters).",
+    "errorKirim": "Automatic transmission was interrupted by network. You may send an email directly using the link below.",
+    "tombolEmailManual": "Send via Direct Email",
+    "salinEmail": "Copy Email",
+    "tercatat": "Email address copied to clipboard!"
+  },
+  "footer": {
+    "tamat": "The End.",
+    "subtamat": "This book is closed for now, but the software engineering adventure continues with every commit.",
+    "hakCipta": "© 2026 Kaka Andrea Yahya. Styled like a warm watercolor storybook.",
+    "kreditFont": "Fonts: Fraunces, DM Sans, Caveat (Google Fonts)",
+    "kembaliKeAtas": "Back to Front Cover"
+  },
+  "sampulBelakang": {
+    "tamat": "The End",
+    "subtamat": "Closing Chapter",
+    "nama": "Kaka Andrea Yahya",
+    "kutipan": "Every line of code is part of a tale that never stops evolving. Thank you for exploring these pages.",
+    "bacaKembali": "Read Again From Start",
+    "unduhCv": "Download CV"
+  }
+}

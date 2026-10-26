@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0d1136;
+    color: #fdfbef;
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(246, 215, 118, 0.35);
+    color: #f6d776;
+  }
+}
+
+@keyframes berkedip {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes melayang {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translate(12px, -18px) scale(1.1);
+    opacity: 0.9;
+  }
+  66% {
+    transform: translate(-14px, -10px) scale(0.95);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes awanBergerak {
+  0% {
+    transform: translateX(-10%);
+  }
+  50% {
+    transform: translateX(10%);
+  }
+  100% {
+    transform: translateX(-10%);
+  }
+}
+
+@keyframes panahOsilasi {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes popUpBangkit {
+  0% {
+    transform: rotateX(80deg) translateZ(0px) scale(0.85);
+    opacity: 0;
+  }
+  70% {
+    transform: rotateX(-8deg) translateZ(40px) scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateX(0deg) translateZ(35px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes vanGoghNapas {
+  0% {
+    transform: scale(1.06) translate(0%, 0%);
+  }
+  25% {
+    transform: scale(1.12) translate(-1.5%, -1%);
+  }
+  50% {
+    transform: scale(1.10) translate(1%, -1.8%);
+  }
+  75% {
+    transform: scale(1.14) translate(-1%, 1.2%);
+  }
+  100% {
+    transform: scale(1.06) translate(0%, 0%);
+  }
+}
+
+@keyframes pusaranKuas {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arusKuas {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -300;
+  }
+}
+
+@keyframes denyutBintang {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.08);
+  }
+}
+
+.animasi-berkedip {
+  animation: berkedip 3s ease-in-out infinite;
+}
+
+.animasi-melayang {
+  animation: melayang 6s ease-in-out infinite;
+}
+
+.animasi-awan {
+  animation: awanBergerak 75s ease-in-out infinite alternate;
+}
+
+.animasi-panah {
+  animation: panahOsilasi 1.8s ease-in-out infinite;
+}
+
+.animasi-pop-up {
+  transform-origin: bottom center;
+  animation: popUpBangkit 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+
+.animasi-vangogh-gerak {
+  animation: vanGoghNapas 36s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.animasi-pusaran-vangogh {
+  transform-origin: center center;
+  animation: pusaranKuas 45s linear infinite;
+}
+
+.animasi-arus-kuas {
+  animation: arusKuas 14s linear infinite;
+}
+
+.animasi-denyut-bintang {
+  animation: denyutBintang 4s ease-in-out infinite;
+}
+
+.ruang-buku-3d {
+  perspective: 1800px;
+  perspective-origin: center 45%;
+  transform-style: preserve-3d;
+}
+
+.sisi-lembar {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.sisi-belakang {
+  transform: rotateY(180deg);
+}
+
+.pop-up-kontainer {
+  transform-style: preserve-3d;
+  perspective: 1200px;
+}
+
+.tepi-kertas-kanan {
+  box-shadow: 
+    2px 0 0 #f1e8d4,
+    4px 0 0 #fdfbef,
+    6px 0 0 #f1e8d4,
+    8px 0 0 #fdfbef,
+    10px 0 0 #f1e8d4,
+    16px 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tepi-kertas-kiri {
+  box-shadow: 
+    -2px 0 0 #f1e8d4,
+    -4px 0 0 #fdfbef,
+    -6px 0 0 #f1e8d4,
+    -8px 0 0 #fdfbef,
+    -10px 0 0 #f1e8d4,
+    -16px 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tekstur-kertas {
+  background-image: radial-gradient(#1f4d36 0.4px, transparent 0.4px);
+  background-size: 24px 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .animasi-berkedip,
+  .animasi-melayang,
+  .animasi-awan,
+  .animasi-panah,
+  .animasi-pop-up {
+    animation: none !important;
+  }
+}

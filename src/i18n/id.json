@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "logo": "Kaka",
+    "beranda": "Beranda",
+    "tentang": "Tentang",
+    "keahlian": "Keahlian",
+    "proyek": "Proyek",
+    "pencapaian": "Pencapaian",
+    "kontak": "Kontak",
+    "suaraNyalakan": "Nyalakan musik & efek",
+    "suaraMatikan": "Matikan musik & efek",
+    "menuBuka": "Buka menu navigasi",
+    "menuTutup": "Tutup menu navigasi"
+  },
+  "buku": {
+    "bukaBuku": "Buka Buku",
+    "petunjukScroll": "Scroll untuk membuka buku",
+    "halamanSebelumnya": "Halaman Sebelumnya",
+    "halamanBerikutnya": "Next Page",
+    "babSebelumnya": "Bab Sebelumnya",
+    "babBerikutnya": "Bab Berikutnya",
+    "sampulDepan": "Sampul Depan",
+    "halaman": "Halaman",
+    "jilid": "Jilid"
+  },
+  "hero": {
+    "eyebrow": "WEB · MOBILE · CLOUD",
+    "nama": "Kaka Andrea Yahya",
+    "peran": "Software Engineering Student",
+    "tagline": "Menyusun baris kode menjadi kisah yang bermanfaat, dari aplikasi web terstruktur hingga antarmuka mobile yang ramah pengguna.",
+    "tombolProyek": "Lihat Proyek",
+    "tombolCV": "Unduh CV",
+    "altIlustrasi": "Ilustrasi buku dongeng terbuka berisi laptop dan burung hantu kecil"
+  },
+  "tentang": {
+    "penandaBab": "Bab 1",
+    "judul": "Tentang Sang Penulis",
+    "paragraf1": "Halo! Saya Kaka Andrea Yahya, siswa jurusan Rekayasa Perangkat Lunak (RPL) di SMKN 13 Bandung. Saya memiliki ketertarikan mendalam pada pengembangan aplikasi web dan mobile yang rapi, efisien, dan memberi dampak nyata.",
+    "paragraf2": "Bagi saya, setiap baris kode adalah babak dalam sebuah perjalanan. Terbiasa memecahkan masalah dengan Laravel, Flutter, C#, dan cloud, saya selalu bersemangat mempelajari teknologi baru untuk menghadirkan solusi terbaik.",
+    "tombolLanjut": "Jelajahi Kisah Proyek",
+    "kartuPendidikanJudul": "Pendidikan",
+    "kartuPendidikanIsi": "SMKN 13 Bandung",
+    "kartuPendidikanSub": "Rekayasa Perangkat Lunak (2024 - 2026)",
+    "kartuOrganisasiJudul": "Organisasi",
+    "kartuOrganisasiIsi": "IRMA (Ikatan Remaja Masjid)",
+    "kartuOrganisasiSub": "Aktif dalam kebersamaan, kepemimpinan, dan kegiatan sosial",
+    "kartuBahasaJudul": "Kemampuan Bahasa",
+    "kartuBahasaIsi": "Indonesia (Aktif), Inggris (Dasar/A1), Sunda (Dasar)",
+    "kartuBahasaSub": "Berkomunikasi secara sopan, terbuka, dan kolaboratif"
+  },
+  "keahlian": {
+    "penandaBab": "Bab 2",
+    "judul": "Perlengkapan Petualangan",
+    "pengantar": "Senjata dan peralatan yang saya bawa untuk menjelajahi rimba kode serta menyelesaikan tantangan rekayasa perangkat lunak.",
+    "kelompokBahasa": "Bahasa Pemrograman",
+    "kelompokFramework": "Framework & Pustaka",
+    "kelompokDatabase": "Database & Cloud",
+    "kelompokDesain": "Desain Antarmuka"
+  },
+  "proyek": {
+    "penandaBab": "Bab 3",
+    "judul": "Kisah-Kisah yang Kubuat",
+    "pengantar": "Setiap karya adalah lembaran kisah nyata yang dibangun dengan ketelitian, logika, dan dedikasi penuh.",
+    "filterSemua": "Semua",
+    "filterWeb": "Web",
+    "filterMobile": "Mobile",
+    "filterLainnya": "Lainnya",
+    "tombolBaca": "Baca Kisahnya",
+    "tahun": "Tahun Pengerjaan",
+    "demo": "Kunjungi Demo",
+    "github": "Repositori Kode",
+    "tutup": "Tutup Kisah",
+    "kosong": "Belum ada kisah dalam kategori ini."
+  },
+  "pencapaian": {
+    "penandaBab": "Bab 4",
+    "judul": "Lencana dan Piala",
+    "pengantar": "Bukti dedikasi, pembelajaran intensif, dan kompetisi yang telah saya lalui sepanjang perjalanan.",
+    "tabLomba": "Kompetisi & Lomba",
+    "tabSertifikat": "Sertifikat Pelatihan",
+    "lihatSertifikat": "Lihat Verifikasi Sertifikat",
+    "penyelenggara": "Penyelenggara",
+    "kosong": "Belum ada catatan pencapaian pada bagian ini."
+  },
+  "kontak": {
+    "penandaBab": "Bab Terakhir",
+    "judul": "Sampai Jumpa di Bab Berikutnya",
+    "pengantar": "Halaman ini mungkin segera ditutup, namun kisah baru siap dimulai. Saya terbuka untuk peluang magang, proyek kolaboratif, maupun diskusi santai.",
+    "labelNama": "Nama Pengirim",
+    "placeholderNama": "Nama Anda atau perwakilan perusahaan...",
+    "labelEmail": "Alamat Email",
+    "placeholderEmail": "email.anda@contoh.com",
+    "labelPesan": "Isi Pesan",
+    "placeholderPesan": "Ceritakan tawaran magang, kolaborasi, atau sekadar salam hangat...",
+    "tombolKirim": "Kirim Surat Cerita",
+    "mengirim": "Mengirimkan Merpati Pos...",
+    "suksesJudul": "Suratmu sudah sampai!",
+    "suksesPesan": "Terima kasih banyak telah menyapa. Saya akan membaca pesan Anda dan membalasnya secepat mungkin.",
+    "errorKosong": "Mohon isi nama dan pesan Anda sebelum mengirim.",
+    "errorEmail": "Alamat email harus valid (memiliki simbol @ dan domain).",
+    "errorPanjang": "Pesan terlalu panjang (maksimal 1000 karakter).",
+    "errorKirim": "Pengiriman otomatis terhambat jaringan. Anda dapat langsung mengirim email manual ke alamat saya di bawah.",
+    "tombolEmailManual": "Kirim Lewat Email Langsung",
+    "salinEmail": "Salin Email",
+    "tercatat": "Alamat email berhasil disalin!"
+  },
+  "footer": {
+    "tamat": "Tamat.",
+    "subtamat": "Buku ini ditutup untuk saat ini, namun perjalanan rekayasa perangkat lunak akan terus berlanjut.",
+    "hakCipta": "© 2026 Kaka Andrea Yahya. Dibuat dengan gaya buku dongeng cat air yang hangat.",
+    "kreditFont": "Font: Fraunces, DM Sans, Caveat (Google Fonts)",
+    "kembaliKeAtas": "Kembali ke Sampul Depan"
+  },
+  "sampulBelakang": {
+    "tamat": "Tamat",
+    "subtamat": "Bab Penutup",
+    "nama": "Kaka Andrea Yahya",
+    "kutipan": "Setiap baris kode adalah bagian dari cerita yang tak pernah berhenti bertumbuh. Terima kasih telah menjelajahi lembaran kisah ini.",
+    "bacaKembali": "Buka Kembali Dari Awal",
+    "unduhCv": "Unduh CV"
+  }
+}
