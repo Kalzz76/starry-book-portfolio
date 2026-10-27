@@ -38,16 +38,18 @@ export function useSuara() {
     inisialisasiRef.current = true
 
     musikRef.current = new Howl({
-      src: ['/audio/kotak-musik-loop.mp3'],
+      src: ['/audio/grimoire-loop.mp3', '/audio/kotak-musik-loop.mp3'],
       loop: true,
       volume: 0,
       html5: true
     })
 
     sfxRef.current = {
-      halaman: new Howl({ src: ['/audio/sfx-halaman.mp3'], volume: 0.5 }),
-      klik: new Howl({ src: ['/audio/sfx-klik.mp3'], volume: 0.4 }),
-      lonceng: new Howl({ src: ['/audio/sfx-lonceng.mp3'], volume: 0.6 })
+      ramuan: new Howl({ src: ['/audio/sfx-ramuan.mp3', '/audio/sfx-halaman.mp3'], volume: 0.5 }),
+      debu: new Howl({ src: ['/audio/sfx-debu.mp3', '/audio/sfx-klik.mp3'], volume: 0.35 }),
+      tinta: new Howl({ src: ['/audio/sfx-tinta.mp3', '/audio/sfx-klik.mp3'], volume: 0.35 }),
+      segel: new Howl({ src: ['/audio/sfx-segel.mp3', '/audio/sfx-lonceng.mp3'], volume: 0.6 }),
+      klik: new Howl({ src: ['/audio/sfx-klik.mp3'], volume: 0.4 })
     }
   }
 
@@ -85,7 +87,7 @@ export function useSuara() {
   const mainkanEfek = (nama) => {
     if (!suaraAktif) return
     siapkanAudio()
-    const target = sfxRef.current[nama]
+    const target = sfxRef.current[nama] || sfxRef.current.klik
     if (target) {
       target.stop()
       target.play()

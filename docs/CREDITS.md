@@ -1,15 +1,15 @@
 # Kredit dan Atribusi
 
-Dokumen pencatatan sumber daya, font, audio, dan lisensi yang digunakan dalam portofolio Kaka Andrea Yahya.
+Dokumen pencatatan sumber daya, font, audio, dan lisensi yang digunakan dalam portofolio Kaka Andrea Yahya — Grimoire Alkimia.
 
 ## Tipografi
-- **Fraunces**: Didesain oleh Phaedra Charles & Flavia Zimbardi (Undercase Type). Lisensi Open Font License (OFL).
-- **DM Sans**: Didesain oleh Colophon Foundry, Jonny Pinhorn. Lisensi Open Font License (OFL).
-- **Caveat**: Didesain oleh Impallari Type. Lisensi Open Font License (OFL).
+- **Cinzel Decorative**: Didesain oleh Natanael Gama. Lisensi Open Font License (OFL).
+- **Cormorant Garamond**: Didesain oleh Christian Thalmann (Catharsis Fonts). Lisensi Open Font License (OFL).
+- **IM Fell English**: Didesain oleh Igino Marini. Lisensi Open Font License (OFL).
 
 ## Audio & Efek Suara
-- Musik Latar & Efek Suara: Dibuat menggunakan Web Audio API sintesis kotak musik prosedural bebas hak cipta (CC0/MIT).
+- Musik Latar Celesta & Harpsichord Alkimia (`grimoire-loop.mp3`): Dibuat prosedural bebas hak cipta (CC0/MIT).
+- Efek Suara Ramuan, Debu Bintang, Tinta Gaib, Segel Lilin, dan Klik: Sintesis audio ringan bebas hak cipta (CC0/MIT).
 
-## Ikon dan Ilustrasi
-- Ikon antarmuka: Dibuat langsung secara inline SVG khusus untuk proyek ini tanpa ketergantungan library luar.
-- Ilustrasi cat air dan motif dongeng: Hak cipta milik Kaka Andrea Yahya dengan motif burung hantu kecil, rumah pohon, lentera, bulan sabit, kunang-kunang, dan buku dongeng.
+## Ikon dan Ornamen Alkimia
+- Seluruh simbol alkimia klasik (Api, Air, Tanah, Udara, Planet, Sigil konsentris, Botol Ramuan, Sudut Hias, dan Segel Lilin) digambar secara mandiri sebagai SVG inline asli tanpa menggunakan library ikon eksternal.

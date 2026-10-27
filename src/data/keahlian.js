@@ -1,38 +1,58 @@
 export const daftarKeahlian = [
   {
-    id: "bahasa-pemrograman",
-    ikon: "kode",
+    unsur: "api",
+    warna: "ramuanmerah",
     nama: {
-      id: "Bahasa Pemrograman",
-      en: "Programming Languages"
+      id: "Api (Bahasa Pemrograman)",
+      en: "Fire (Programming Languages)"
     },
-    daftar: ["HTML", "CSS", "JavaScript", "PHP", "C#", "Dart"]
+    daftar: [
+      { nama: "HTML", simbol: "Ht", nomor: "01" },
+      { nama: "CSS", simbol: "Cs", nomor: "02" },
+      { nama: "JavaScript", simbol: "Js", nomor: "03" },
+      { nama: "PHP", simbol: "Ph", nomor: "04" },
+      { nama: "C#", simbol: "C#", nomor: "05" },
+      { nama: "Dart", simbol: "Da", nomor: "06" }
+    ]
   },
   {
-    id: "framework-pustaka",
-    ikon: "pustaka",
+    unsur: "tanah",
+    warna: "tembaga",
     nama: {
-      id: "Framework & Pustaka",
-      en: "Frameworks & Libraries"
+      id: "Tanah (Framework)",
+      en: "Earth (Frameworks)"
     },
-    daftar: ["Laravel", "Flutter", "Tailwind CSS", "Bootstrap", "Blade"]
+    daftar: [
+      { nama: "Laravel", simbol: "La", nomor: "07" },
+      { nama: "Flutter", simbol: "Fl", nomor: "08" },
+      { nama: "Tailwind CSS", simbol: "Tw", nomor: "09" },
+      { nama: "React", simbol: "Re", nomor: "10" }
+    ]
   },
   {
-    id: "database-cloud",
-    ikon: "cloud",
+    unsur: "air",
+    warna: "ramuanbiru",
     nama: {
-      id: "Database & Cloud",
-      en: "Database & Cloud"
+      id: "Air (Database & Cloud)",
+      en: "Water (Database & Cloud)"
     },
-    daftar: ["MySQL", "SQL Server", "AWS Cloud Foundations", "AWS Architecting"]
+    daftar: [
+      { nama: "MySQL", simbol: "My", nomor: "11" },
+      { nama: "AWS Cloud", simbol: "Aw", nomor: "12" },
+      { nama: "SQL Server", simbol: "Sq", nomor: "13" }
+    ]
   },
   {
-    id: "desain-antarmuka",
-    ikon: "kuas",
+    unsur: "udara",
+    warna: "ramuanhijau",
     nama: {
-      id: "Desain Antarmuka",
-      en: "Interface Design"
+      id: "Udara (Desain)",
+      en: "Air (Design & Prototyping)"
     },
-    daftar: ["Figma", "Canva", "UI/UX Prototyping", "Design System"]
+    daftar: [
+      { nama: "Figma", simbol: "Fi", nomor: "14" },
+      { nama: "Canva", simbol: "Ca", nomor: "15" },
+      { nama: "UI/UX", simbol: "Ux", nomor: "16" }
+    ]
   }
 ]

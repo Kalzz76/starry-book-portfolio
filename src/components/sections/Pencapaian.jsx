@@ -1,144 +1,122 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useBahasa } from '../../i18n/KonteksBahasa'
+import Perkamen from '../ui/Perkamen'
+import PemisahAlkimia from '../dekorasi/PemisahAlkimia'
+import SegelLilin from '../dekorasi/SegelLilin'
+import DebuBintang from '../efek/DebuBintang'
 import { daftarSertifikat } from '../../data/sertifikat'
-import KartuKertas from '../ui/KartuKertas'
-import PembatasGelombang from '../dekorasi/PembatasGelombang'
-import Ikon from '../ui/Ikon'
 
-export default function Pencapaian({ onHalamanSfx, onKlikSfx }) {
+export default function Pencapaian({ onKlikSfx }) {
   const { t, bahasaAktif } = useBahasa()
   const [tabAktif, setTabAktif] = useState('Lomba')
 
-  const handleGantiTab = (tab) => {
-    setTabAktif(tab)
-    if (onHalamanSfx) {
-      onHalamanSfx()
-    }
-  }
-
-  const itemTerfilter = []
-  for (let i = 0; i < daftarSertifikat.length; i++) {
-    const item = daftarSertifikat[i]
-    if (item.jenis === tabAktif) {
-      itemTerfilter.push(item)
-    }
-  }
+  const sertifikatTersaring = daftarSertifikat.filter((item) => item.jenis === tabAktif)
 
   return (
-    <section id="pencapaian" className="relative bg-pasir text-tinta pt-20 md:pt-28 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10 pb-20 md:pb-32">
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
-          <span className="font-tulisan text-jingga text-2xl mb-1">
-            {t('pencapaian.penandaBab')}
+    <section id="pencapaian" className="relative py-16 sm:py-24 px-4 sm:px-6 max-w-5xl mx-auto scroll-mt-20">
+      <PemisahAlkimia simbol="☉" />
+
+      <Perkamen>
+        <div className="relative mb-8 text-center">
+          <span className="font-aksen italic text-sm text-tembaga block mb-1">
+            {t('pencapaian.nomorBab')}
           </span>
-
-          <h2 className="font-judul text-hutan text-3xl md:text-5xl font-bold leading-tight mb-4">
-            {t('pencapaian.judul')}
-          </h2>
-
-          <p className="font-isi text-base sm:text-lg text-tinta/80 leading-relaxed mb-8">
-            {t('pencapaian.pengantar')}
-          </p>
-
-          <div className="inline-flex p-1.5 bg-kartu rounded-full border border-lumut/40 shadow-sm">
-            <button
-              type="button"
-              onClick={() => handleGantiTab('Lomba')}
-              className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-200 ${
-                tabAktif === 'Lomba'
-                  ? 'bg-hutan text-kertas shadow-sm'
-                  : 'text-hutan hover:text-jingga'
-              }`}
-              aria-pressed={tabAktif === 'Lomba'}
-            >
-              {t('pencapaian.tabLomba')}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleGantiTab('Sertifikat')}
-              className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-200 ${
-                tabAktif === 'Sertifikat'
-                  ? 'bg-hutan text-kertas shadow-sm'
-                  : 'text-hutan hover:text-jingga'
-              }`}
-              aria-pressed={tabAktif === 'Sertifikat'}
-            >
-              {t('pencapaian.tabSertifikat')}
-            </button>
+          <div className="relative inline-block">
+            <DebuBintang onMainkanSfx={onKlikSfx} />
+            <h2 className="font-judul text-sepia text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+              {t('pencapaian.judul')}
+            </h2>
           </div>
         </div>
 
-        {itemTerfilter.length === 0 ? (
-          <div className="text-center py-16 bg-kartu rounded-3xl border border-dashed border-lumut/40">
-            <p className="font-isi text-tinta/70 text-base">
-              {t('pencapaian.kosong')}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {itemTerfilter.map((item, index) => (
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mb-10">
+          <button
+            type="button"
+            onClick={() => {
+              if (onKlikSfx) onKlikSfx()
+              setTabAktif('Lomba')
+            }}
+            className={`font-judul text-xs uppercase tracking-widest px-5 py-2.5 rounded-sm border-2 transition-all duration-200 cursor-pointer ${
+              tabAktif === 'Lomba'
+                ? 'bg-ramuanmerah text-krem border-emas shadow-md'
+                : 'bg-perkamentua text-sepia border-emas/70 hover:bg-emas/20'
+            }`}
+          >
+            {t('pencapaian.tabLomba')}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (onKlikSfx) onKlikSfx()
+              setTabAktif('Sertifikat')
+            }}
+            className={`font-judul text-xs uppercase tracking-widest px-5 py-2.5 rounded-sm border-2 transition-all duration-200 cursor-pointer ${
+              tabAktif === 'Sertifikat'
+                ? 'bg-ramuanmerah text-krem border-emas shadow-md'
+                : 'bg-perkamentua text-sepia border-emas/70 hover:bg-emas/20'
+            }`}
+          >
+            {t('pencapaian.tabSertifikat')}
+          </button>
+        </div>
+
+        <div className="space-y-4 sm:space-y-6">
+          {sertifikatTersaring.map((item, index) => {
+            const keteranganTeks = item.keterangan[bahasaAktif] || item.keterangan.id
+            return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.35, delay: index * 0.08 }}
+                className="bg-perkamentua/40 border border-tembaga/40 rounded-sm p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-4 sm:gap-6 hover:border-emas/80 transition-colors shadow-sm"
               >
-                <KartuKertas kelas="h-full flex flex-col justify-between border border-lumut/30 hover:border-lumut transition-all duration-300">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-hutan text-bintang flex-shrink-0 flex items-center justify-center shadow-sm">
-                      <Ikon nama="bintang" kelas="w-6 h-6" />
-                    </div>
+                <div className="flex-shrink-0 self-center sm:self-start">
+                  <SegelLilin
+                    ukuran="sedang"
+                    anak={<span className="font-judul text-sm text-emas">✦</span>}
+                  />
+                </div>
 
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="font-isi text-xs font-bold uppercase tracking-wider text-jingga">
-                          {item.tahun}
-                        </span>
-                        <span className="font-tulisan text-base text-hutan/70">
-                          {item.jenis}
-                        </span>
-                      </div>
-
-                      <h3 className="font-judul text-lg sm:text-xl font-bold text-hutan mb-1">
-                        {item.nama}
-                      </h3>
-
-                      <p className="font-isi text-xs text-tinta/60 font-semibold mb-3">
-                        {t('pencapaian.penyelenggara')}: {item.penyelenggara}
-                      </p>
-
-                      {item.keterangan && (
-                        <p className="font-isi text-sm text-tinta/75 leading-relaxed">
-                          {item.keterangan[bahasaAktif] || item.keterangan.id}
-                        </p>
-                      )}
-                    </div>
+                <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1.5">
+                    <h3 className="font-judul text-lg sm:text-xl font-bold text-sepia">
+                      {item.nama}
+                    </h3>
+                    <span className="font-aksen italic text-xs sm:text-sm text-tembaga font-semibold">
+                      {item.tahun}
+                    </span>
                   </div>
 
-                  {item.link && (
-                    <div className="pt-4 border-t border-pasir flex justify-end">
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={onKlikSfx}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-hutan hover:text-jingga transition-colors"
-                      >
-                        <span>{t('pencapaian.lihatSertifikat')}</span>
-                        <Ikon nama="link" kelas="w-3.5 h-3.5" />
-                      </a>
-                    </div>
-                  )}
-                </KartuKertas>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
+                  <p className="font-aksen italic text-sm text-tembaga/90 font-medium mb-2">
+                    {item.penyelenggara}
+                  </p>
 
-      <PembatasGelombang kelas="text-malam" />
+                  <p className="font-isi text-base text-sepia/85 leading-relaxed mb-3">
+                    {keteranganTeks}
+                  </p>
+
+                  {item.link && (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={onKlikSfx}
+                      className="inline-flex items-center gap-1.5 font-aksen text-xs font-semibold text-ramuanmerah hover:text-sepia underline decoration-tembaga"
+                    >
+                      <span>Lihat Piagam Asli</span>
+                      <span>↗</span>
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+      </Perkamen>
     </section>
   )
 }

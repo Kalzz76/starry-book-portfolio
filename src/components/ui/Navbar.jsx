@@ -1,91 +1,81 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useBahasa } from '../../i18n/KonteksBahasa'
+import { KonteksTransisi } from '../../context/KonteksTransisi'
 import TombolBahasa from './TombolBahasa'
 import TombolSuara from './TombolSuara'
-import MenuPengaturan from './MenuPengaturan'
-import Ikon from './Ikon'
+import TombolLilin from './TombolLilin'
+import { daftarBab } from '../../data/bab'
 
-export default function Navbar({
-  suaraAktif,
-  onToggleSuara,
-  kursorAktif,
-  onToggleKursor,
-  maskotAktif,
-  onToggleMaskot,
-  onKlikSfx,
-  onNavigasiBab,
-  terlihat = true
-}) {
+export default function Navbar({ suaraAktif, onToggleSuara, onKlikSfx }) {
   const { t } = useBahasa()
+  const { mulaiTransisi } = useContext(KonteksTransisi)
   const [menuBuka, setMenuBuka] = useState(false)
+  const [babAktif, setBabAktif] = useState('hero')
 
-  const daftarMenu = [
-    { kunci: 'beranda', hash: 'hero' },
-    { kunci: 'tentang', hash: 'tentang' },
-    { kunci: 'keahlian', hash: 'keahlian' },
-    { kunci: 'proyek', hash: 'proyek' },
-    { kunci: 'pencapaian', hash: 'pencapaian' },
-    { kunci: 'kontak', hash: 'kontak' }
-  ]
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 120
+      for (let i = daftarBab.length - 1; i >= 0; i--) {
+        const el = document.getElementById(daftarBab[i].hash)
+        if (el && el.offsetTop <= scrollPos) {
+          setBabAktif(daftarBab[i].hash)
+          break
+        }
+      }
+    }
 
-  const handleKlikMenu = (hash, e) => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleNavigasi = (hash, e) => {
+    if (e) e.preventDefault()
     setMenuBuka(false)
     if (onKlikSfx) onKlikSfx()
-
-    if (onNavigasiBab) {
-      e.preventDefault()
-      onNavigasiBab(hash)
-    }
+    mulaiTransisi(hash)
   }
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 bg-malamgelap/90 backdrop-blur-md border-b border-emas/20 text-kertas transition-all duration-500 ${
-        terlihat
-          ? 'opacity-100 translate-y-0 pointer-events-auto'
-          : 'opacity-0 -translate-y-12 pointer-events-none'
-      }`}
-    >
+    <header className="fixed top-0 inset-x-0 z-50 bg-malamsihir/90 backdrop-blur-md border-b border-emas/50 text-krem transition-all duration-300">
       <div className="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
         <a
           href="#hero"
-          onClick={(e) => handleKlikMenu('hero', e)}
-          className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-bintang rounded-lg p-1"
-          aria-label="Kaka Andrea Yahya — Beranda"
+          onClick={(e) => handleNavigasi('hero', e)}
+          className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emas rounded p-1"
+          aria-label="Kaka Andrea Yahya — Grimoire Alkimia"
         >
-          <span className="text-bintang group-hover:rotate-12 transition-transform duration-300">
-            <Ikon nama="bintang" kelas="w-4 h-4" />
+          <span className="text-emas text-base group-hover:rotate-45 transition-transform duration-300">
+            🜂
           </span>
-          <span className="font-judul text-xl sm:text-2xl font-bold text-kertas tracking-tight">
+          <span className="font-judul text-lg sm:text-2xl font-bold text-krem tracking-wider">
             {t('nav.logo')}
           </span>
         </a>
 
         <nav className="hidden md:flex items-center gap-6" aria-label="Menu Utama">
-          {daftarMenu.map((item) => (
-            <a
-              key={item.kunci}
-              href={`#${item.hash}`}
-              onClick={(e) => handleKlikMenu(item.hash, e)}
-              className="font-isi text-xs uppercase tracking-widest text-kertas/80 hover:text-bintang transition-colors duration-200 py-1 border-b-2 border-transparent hover:border-bintang"
-            >
-              {t(`nav.${item.kunci}`)}
-            </a>
-          ))}
+          {daftarBab.map((item) => {
+            const aktif = babAktif === item.hash
+            return (
+              <a
+                key={item.hash}
+                href={`#${item.hash}`}
+                onClick={(e) => handleNavigasi(item.hash, e)}
+                className={`font-aksen text-sm tracking-[0.15em] transition-colors duration-200 py-1 border-b-2 ${
+                  aktif
+                    ? 'text-emas border-emas font-bold'
+                    : 'text-krem/80 hover:text-emas border-transparent'
+                }`}
+              >
+                {t(item.kunci)}
+              </a>
+            )
+          })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <TombolLilin onKlikSfx={onKlikSfx} />
           <TombolBahasa onKlikSfx={onKlikSfx} />
           <TombolSuara suaraAktif={suaraAktif} onToggle={onToggleSuara} />
-          <MenuPengaturan
-            kursorAktif={kursorAktif}
-            onToggleKursor={onToggleKursor}
-            maskotAktif={maskotAktif}
-            onToggleMaskot={onToggleMaskot}
-            suaraAktif={suaraAktif}
-            onToggleSuara={onToggleSuara}
-            onKlikSfx={onKlikSfx}
-          />
 
           <button
             type="button"
@@ -93,25 +83,26 @@ export default function Navbar({
               setMenuBuka(!menuBuka)
               if (onKlikSfx) onKlikSfx()
             }}
-            className="md:hidden w-8 h-8 rounded-full flex items-center justify-center bg-malam/90 text-kertas border border-emas/40 hover:bg-malam transition-colors"
+            className="md:hidden w-8 h-8 rounded-full flex items-center justify-center bg-ungugelap text-krem border border-tembaga hover:border-emas transition-colors ml-1"
             aria-label={menuBuka ? t('nav.menuTutup') : t('nav.menuBuka')}
           >
-            <Ikon nama={menuBuka ? 'silang' : 'menu'} kelas="w-4 h-4" />
+            <span className="text-xs font-bold">{menuBuka ? '✕' : '☰'}</span>
           </button>
         </div>
       </div>
 
       {menuBuka && (
-        <div className="md:hidden bg-malamgelap/95 backdrop-blur-md border-b border-emas/20 px-4 py-6 shadow-lembut">
-          <nav className="flex flex-col gap-4" aria-label="Menu Mobile">
-            {daftarMenu.map((item) => (
+        <div className="md:hidden bg-malamsihir/98 border-b border-emas/40 px-4 py-5 shadow-2xl animate-fade-in">
+          <nav className="flex flex-col gap-3" aria-label="Menu Mobile">
+            {daftarBab.map((item) => (
               <a
-                key={item.kunci}
+                key={item.hash}
                 href={`#${item.hash}`}
-                onClick={(e) => handleKlikMenu(item.hash, e)}
-                className="font-isi text-sm uppercase tracking-widest text-kertas/90 py-2 border-b border-malam hover:text-bintang transition-colors"
+                onClick={(e) => handleNavigasi(item.hash, e)}
+                className="font-aksen text-base tracking-widest text-krem/90 py-1.5 border-b border-tembaga/30 hover:text-emas transition-colors flex items-center justify-between"
               >
-                {t(`nav.${item.kunci}`)}
+                <span>{t(item.kunci)}</span>
+                <span className="text-xs text-emas font-judul">{item.nomor}</span>
               </a>
             ))}
           </nav>

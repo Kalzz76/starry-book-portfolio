@@ -1,34 +1,27 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useBahasa } from '../../i18n/KonteksBahasa'
-import { dataProfil } from '../../data/profil'
-import KartuKertas from '../ui/KartuKertas'
-import TombolPil from '../ui/TombolPil'
-import Bintang from '../dekorasi/Bintang'
-import KunangKunang from '../dekorasi/KunangKunang'
-import PembatasGelombang from '../dekorasi/PembatasGelombang'
-import Parallax from '../dekorasi/Parallax'
-import Ikon from '../ui/Ikon'
+import Perkamen from '../ui/Perkamen'
+import PemisahAlkimia from '../dekorasi/PemisahAlkimia'
+import SegelLilin from '../dekorasi/SegelLilin'
+import DebuBintang from '../efek/DebuBintang'
 
-export default function Kontak({ onLoncengSfx, onKlikSfx }) {
+export default function Kontak({ onKlikSfx, onSegelSfx }) {
   const { t, bahasaAktif } = useBahasa()
   const tautanCV = bahasaAktif === 'id' ? '/cv/CV_Kaka_ID.pdf' : '/cv/CV_Kaka_EN.pdf'
 
-  const [nama, setNama] = useState('')
-  const [email, setEmail] = useState('')
-  const [pesan, setPesan] = useState('')
-  const [websiteHoneypot, setWebsiteHoneypot] = useState('')
-
-  const [statusKirim, setStatusKirim] = useState('diam')
+  const [form, setForm] = useState({ nama: '', email: '', pesan: '', website: '' })
+  const [status, setStatus] = useState('awal')
   const [pesanError, setPesanError] = useState('')
-  const [emailDisalin, setEmailDisalin] = useState(false)
+  const [emailTersalin, setEmailTersalin] = useState(false)
+  const [ledakanSukses, setLedakanSukses] = useState(false)
 
   const handleSalinEmail = () => {
+    if (onKlikSfx) onKlikSfx()
     try {
-      navigator.clipboard.writeText(dataProfil.email)
-      setEmailDisalin(true)
-      if (onKlikSfx) onKlikSfx()
-      setTimeout(() => setEmailDisalin(false), 2500)
+      navigator.clipboard.writeText('rafliar99@gmail.com')
+      setEmailTersalin(true)
+      setTimeout(() => setEmailTersalin(false), 2500)
     } catch (e) {}
   }
 
@@ -36,315 +29,289 @@ export default function Kontak({ onLoncengSfx, onKlikSfx }) {
     e.preventDefault()
     setPesanError('')
 
-    if (websiteHoneypot) {
+    if (form.website) {
+      setStatus('sukses')
       return
     }
 
-    const namaBersih = nama.trim()
-    const emailBersih = email.trim()
-    const pesanBersih = pesan.trim()
-
-    if (!namaBersih || !pesanBersih) {
+    if (!form.nama.trim() || !form.pesan.trim()) {
       setPesanError(t('kontak.errorKosong'))
       return
     }
 
-    if (!emailBersih.includes('@') || !emailBersih.includes('.')) {
+    if (!form.email.includes('@') || !form.email.includes('.')) {
       setPesanError(t('kontak.errorEmail'))
       return
     }
 
-    if (pesanBersih.length > 1000) {
+    if (form.pesan.length > 1000) {
       setPesanError(t('kontak.errorPanjang'))
       return
     }
 
-    setStatusKirim('mengirim')
-
-    const apiKey = import.meta.env.VITE_WEB3FORMS_KEY || 'FORM_KEY_PLACEHOLDER'
+    setStatus('mengirim')
+    if (onKlikSfx) onKlikSfx()
 
     try {
-      const respon = await fetch('https://api.web3forms.com/submit', {
+      const accessKey = import.meta.env.VITE_WEB3FORMS_KEY || 'FORM_KEY_PLACEHOLDER'
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          access_key: apiKey,
-          name: namaBersih,
-          email: emailBersih,
-          message: pesanBersih,
-          subject: 'Pesan Buku Dongeng Portofolio dari ' + namaBersih
+          access_key: accessKey,
+          name: form.nama,
+          email: form.email,
+          message: form.pesan,
+          subject: 'Pesan Baru dari Grimoire Alkimia — ' + form.nama
         })
       })
 
-      const hasil = await respon.json()
-
+      const hasil = await response.json()
       if (hasil.success) {
-        setStatusKirim('sukses')
-        setNama('')
-        setEmail('')
-        setPesan('')
-        if (onLoncengSfx) {
-          onLoncengSfx()
-        }
-        setTimeout(() => {
-          setStatusKirim('diam')
-        }, 30000)
+        setStatus('sukses')
+        setLedakanSukses(true)
+        if (onSegelSfx) onSegelSfx()
       } else {
-        setStatusKirim('gagal')
+        setStatus('error')
         setPesanError(t('kontak.errorKirim'))
       }
     } catch (err) {
-      setStatusKirim('gagal')
+      setStatus('error')
       setPesanError(t('kontak.errorKirim'))
     }
   }
 
-  const linkMailto = `mailto:${dataProfil.email}?subject=Halo%20Kaka%20Andrea%20Yahya&body=${encodeURIComponent(pesan)}`
-
   return (
-    <section id="kontak" className="relative bg-malam text-kertas pt-20 md:pt-28 overflow-hidden">
-      <Bintang jumlah={35} />
-      <KunangKunang jumlah={8} />
+    <section id="kontak" className="relative py-16 sm:py-24 px-4 sm:px-6 max-w-6xl mx-auto scroll-mt-20">
+      <PemisahAlkimia simbol="☽" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10 pb-20 md:pb-32">
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
-          <span className="font-tulisan text-jingga text-2xl mb-1">
-            {t('kontak.penandaBab')}
-          </span>
-
-          <h2 className="font-judul text-kertas text-3xl md:text-5xl font-bold leading-tight mb-4">
+      <div className="relative mb-12 text-center">
+        <span className="font-aksen italic text-sm text-tembaga block mb-1">
+          {t('kontak.nomorBab')}
+        </span>
+        <div className="relative inline-block">
+          <DebuBintang onMainkanSfx={onKlikSfx} picuLedakan={ledakanSukses} besar={ledakanSukses} />
+          <h2 className="font-judul text-krem text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
             {t('kontak.judul')}
           </h2>
+        </div>
+        <p className="font-isi text-base sm:text-lg text-krem/75 max-w-xl mx-auto mt-2">
+          {t('kontak.subjudul')}
+        </p>
+      </div>
 
-          <p className="font-isi text-base sm:text-lg text-kertas/80 leading-relaxed mb-8">
-            {t('kontak.pengantar')}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left bg-ungugelap/70 border border-emas/30 rounded-sm p-6 sm:p-8 shadow-halaman">
+          <div className="w-full flex justify-center mb-6" aria-hidden="true">
+            <svg viewBox="0 0 200 160" className="w-44 h-36 text-emas drop-shadow">
+              <path d="M40 145 C40 140 160 140 160 145 L150 152 L50 152 Z" fill="#2e1f12" />
+              <rect x="58" y="70" width="22" height="75" rx="3" fill="#c2a468" />
+              <line x1="69" y1="70" x2="69" y2="58" stroke="#14173a" strokeWidth="2" />
+              <ellipse cx="69" cy="50" rx="6" ry="12" fill="#ffd700" className="animate-lilin" />
+              <ellipse cx="69" cy="52" rx="3" ry="7" fill="#ff4500" />
+
+              <path d="M120 110 C110 110 105 125 105 145 L155 145 C155 125 150 110 140 110 Z" fill="#14173a" stroke="#c9a227" strokeWidth="2" />
+              <rect x="123" y="98" width="14" height="12" rx="2" fill="#c9a227" />
+              <path d="M130 100 L175 40 M175 40 L168 38 L165 48 Z" stroke="#ffe9a8" strokeWidth="3" fill="#ffe9a8" />
+            </svg>
+          </div>
+
+          <h3 className="font-judul text-xl font-bold text-emas mb-3 tracking-wide">
+            Segel Pos & Arsip Alkimia
+          </h3>
+          <p className="font-isi text-base text-krem/80 mb-6 leading-relaxed">
+            Terbuka untuk diskusi proyek web, tawaran magang, serta kolaborasi pengembangan perangkat lunak.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            <TombolPil
-              href={dataProfil.github}
+          <div className="w-full grid grid-cols-2 gap-3 mb-6">
+            <a
+              href="https://github.com/Kalzz76"
               target="_blank"
               rel="noopener noreferrer"
-              varian="terang"
               onClick={onKlikSfx}
-              ariaLabel="GitHub Kaka Andrea Yahya"
+              className="flex items-center gap-3 p-2.5 rounded-sm bg-black/40 border border-emas/30 hover:border-emas transition-colors group"
+              aria-label="GitHub Kalzz76"
             >
-              <Ikon nama="github" kelas="w-4 h-4" />
-              <span>GitHub</span>
-            </TombolPil>
+              <SegelLilin ukuran="kecil" anak={<span className="text-xs">GH</span>} />
+              <span className="font-aksen text-sm text-krem group-hover:text-cahayatinta font-medium truncate">
+                GitHub
+              </span>
+            </a>
 
-            <TombolPil
-              href={dataProfil.linkedin}
+            <a
+              href="https://www.linkedin.com/in/kaka-andrea-yahya"
               target="_blank"
               rel="noopener noreferrer"
-              varian="terang"
               onClick={onKlikSfx}
-              ariaLabel="LinkedIn Kaka Andrea Yahya"
+              className="flex items-center gap-3 p-2.5 rounded-sm bg-black/40 border border-emas/30 hover:border-emas transition-colors group"
+              aria-label="LinkedIn Kaka Andrea Yahya"
             >
-              <Ikon nama="linkedin" kelas="w-4 h-4" />
-              <span>LinkedIn</span>
-            </TombolPil>
+              <SegelLilin ukuran="kecil" anak={<span className="text-xs">IN</span>} />
+              <span className="font-aksen text-sm text-krem group-hover:text-cahayatinta font-medium truncate">
+                LinkedIn
+              </span>
+            </a>
 
-            <TombolPil
-              href={`mailto:${dataProfil.email}`}
-              varian="terang"
+            <a
+              href="mailto:rafliar99@gmail.com"
               onClick={onKlikSfx}
-              ariaLabel="Email Kaka Andrea Yahya"
+              className="flex items-center gap-3 p-2.5 rounded-sm bg-black/40 border border-emas/30 hover:border-emas transition-colors group"
+              aria-label="Kirim Email ke Kaka Andrea Yahya"
             >
-              <Ikon nama="email" kelas="w-4 h-4" />
-              <span>Email</span>
-            </TombolPil>
+              <SegelLilin ukuran="kecil" anak={<span className="text-xs">✉</span>} />
+              <span className="font-aksen text-sm text-krem group-hover:text-cahayatinta font-medium truncate">
+                Email Pos
+              </span>
+            </a>
 
-            <TombolPil
+            <a
               href={tautanCV}
               target="_blank"
               rel="noopener noreferrer"
-              varian="jingga"
               onClick={onKlikSfx}
-              ariaLabel="Unduh CV Kaka"
+              className="flex items-center gap-3 p-2.5 rounded-sm bg-black/40 border border-emas/30 hover:border-emas transition-colors group"
+              aria-label="Unduh CV Kaka Andrea Yahya"
             >
-              <Ikon nama="unduh" kelas="w-4 h-4" />
-              <span>Unduh CV</span>
-            </TombolPil>
+              <SegelLilin ukuran="kecil" anak={<span className="text-xs">📜</span>} />
+              <span className="font-aksen text-sm text-krem group-hover:text-cahayatinta font-medium truncate">
+                Unduh CV
+              </span>
+            </a>
           </div>
+
+          <button
+            type="button"
+            onClick={handleSalinEmail}
+            className="w-full py-2 px-3 bg-perkamentua/20 hover:bg-perkamentua/30 border border-tembaga/50 rounded-sm font-aksen text-xs text-cahayatinta flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          >
+            <span>{emailTersalin ? t('kontak.tercatat') : t('kontak.salinEmail')}</span>
+            <span>{emailTersalin ? '✓' : '📋'}</span>
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 flex justify-center">
-            <Parallax rentang={15} kelas="w-full max-w-sm">
-              <div className="relative bg-kartu/95 rounded-3xl p-6 sm:p-8 shadow-lembut border border-lumut/40 text-center text-tinta">
-                <div className="w-48 h-48 sm:w-56 sm:h-56 mx-auto flex items-center justify-center">
-                  <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-md">
-                    <circle cx="100" cy="100" r="86" fill="#161b4a" />
-                    
-                    <path d="M20 155 Q100 135 180 155 L180 186 L20 186 Z" fill="#1f4d36" opacity="0.9" />
-                    <rect x="70" y="135" width="60" height="12" rx="4" fill="#694326" />
-                    
-                    <circle cx="100" cy="115" r="22" fill="#d9732f" />
-                    <circle cx="94" cy="112" r="5" fill="#fdfbef" />
-                    <circle cx="106" cy="112" r="5" fill="#fdfbef" />
-                    <line x1="91" y1="112" x2="97" y2="112" stroke="#1a1a1a" strokeWidth="2" />
-                    <line x1="103" y1="112" x2="109" y2="112" stroke="#1a1a1a" strokeWidth="2" />
-                    <polygon points="100,117 97,122 103,122" fill="#f6d776" />
-                    
-                    <rect x="42" y="90" width="22" height="34" rx="4" fill="#694326" />
-                    <rect x="45" y="95" width="16" height="22" rx="2" fill="#f6d776" opacity="0.9" />
-                    <circle cx="53" cy="106" r="3" fill="#ffffff" />
-                    <line x1="53" y1="75" x2="53" y2="90" stroke="#694326" strokeWidth="2" />
-                    <circle cx="53" cy="74" r="3" fill="#694326" />
-                    
-                    <circle cx="40" cy="70" r="2.5" fill="#f6d776" className="animasi-berkedip" />
-                    <circle cx="150" cy="85" r="3" fill="#f6d776" className="animasi-melayang" />
-                    <circle cx="160" cy="60" r="2" fill="#f6d776" className="animasi-berkedip" />
-                  </svg>
+        <div className="lg:col-span-7">
+          <Perkamen>
+            {status === 'sukses' ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-10 text-center flex flex-col items-center"
+              >
+                <div className="mb-6 transform scale-125 transition-transform duration-500">
+                  <SegelLilin
+                    ukuran="besar"
+                    stamped={true}
+                    anak={<span className="font-judul text-xl text-emas">✦</span>}
+                  />
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-pasir">
-                  <span className="font-tulisan text-2xl text-jingga block">
-                    Burung Hantu & Lentera Malam
-                  </span>
-                  <span className="font-isi text-xs text-tinta/60">
-                    Menjaga peraduan hingga bab berikutnya
-                  </span>
+                <h3 className="font-judul text-2xl sm:text-3xl font-bold text-sepia mb-3">
+                  {t('kontak.suksesJudul')}
+                </h3>
+
+                <p className="font-isi text-lg text-sepia/85 max-w-md mx-auto leading-relaxed mb-6">
+                  {t('kontak.suksesPesan')}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStatus('awal')
+                    setForm({ nama: '', email: '', pesan: '', website: '' })
+                  }}
+                  className="font-judul text-xs uppercase tracking-widest px-6 py-2.5 border-2 border-tembaga text-sepia hover:bg-sepia hover:text-krem rounded-sm transition-colors"
+                >
+                  Kirim Surat Lainnya
+                </button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleKirim} className="space-y-4 sm:space-y-5">
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    tabIndex="-1"
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={(e) => setForm({ ...form, website: e.target.value })}
+                  />
                 </div>
-              </div>
-            </Parallax>
-          </div>
 
-          <div className="lg:col-span-7">
-            <KartuKertas malam={true} kelas="border border-lumut/40">
-              {statusKirim === 'sukses' ? (
-                <div className="py-8 text-center">
-                  <div className="w-14 h-14 rounded-full bg-hutan text-bintang mx-auto flex items-center justify-center mb-4 shadow-md">
-                    <Ikon nama="bintang" kelas="w-7 h-7" />
-                  </div>
-                  <h3 className="font-judul text-2xl font-bold text-hutan mb-2">
-                    {t('kontak.suksesJudul')}
-                  </h3>
-                  <p className="font-isi text-base text-tinta/80 max-w-md mx-auto mb-6">
-                    {t('kontak.suksesPesan')}
-                  </p>
-                  <p className="font-tulisan text-lg text-jingga">
-                    Sampai jumpa di balasan surat berikutnya!
-                  </p>
+                <div>
+                  <label htmlFor="nama" className="block font-aksen italic text-sm text-tembaga font-bold mb-1">
+                    {t('kontak.labelNama')}
+                  </label>
+                  <input
+                    type="text"
+                    id="nama"
+                    name="nama"
+                    required
+                    value={form.nama}
+                    onChange={(e) => setForm({ ...form, nama: e.target.value })}
+                    placeholder={t('kontak.placeholderNama')}
+                    className="w-full bg-perkamentua/60 text-sepia border-2 border-tembaga/60 rounded-sm px-3.5 py-2.5 font-isi placeholder:text-sepia/40 focus:border-ramuanmerah focus:outline-none transition-colors"
+                  />
                 </div>
-              ) : (
-                <form onSubmit={handleKirim} className="flex flex-col gap-4">
-                  <div className="hidden" aria-hidden="true">
-                    <label htmlFor="website">Website</label>
-                    <input
-                      type="text"
-                      id="website"
-                      name="website"
-                      tabIndex="-1"
-                      autoComplete="off"
-                      value={websiteHoneypot}
-                      onChange={(e) => setWebsiteHoneypot(e.target.value)}
-                    />
-                  </div>
 
-                  <div>
-                    <label htmlFor="form-nama" className="block font-isi text-xs uppercase tracking-wider text-hutan font-bold mb-1.5">
-                      {t('kontak.labelNama')}
-                    </label>
-                    <input
-                      type="text"
-                      id="form-nama"
-                      value={nama}
-                      onChange={(e) => setNama(e.target.value)}
-                      placeholder={t('kontak.placeholderNama')}
-                      className="w-full bg-kertas text-tinta border border-lumut/60 rounded-2xl px-4 py-2.5 focus:border-hutan focus:ring-1 focus:ring-hutan outline-none transition-all font-isi text-sm"
-                      disabled={statusKirim === 'mengirim'}
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="email" className="block font-aksen italic text-sm text-tembaga font-bold mb-1">
+                    {t('kontak.labelEmail')}
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder={t('kontak.placeholderEmail')}
+                    className="w-full bg-perkamentua/60 text-sepia border-2 border-tembaga/60 rounded-sm px-3.5 py-2.5 font-isi placeholder:text-sepia/40 focus:border-ramuanmerah focus:outline-none transition-colors"
+                  />
+                </div>
 
-                  <div>
-                    <label htmlFor="form-email" className="block font-isi text-xs uppercase tracking-wider text-hutan font-bold mb-1.5">
-                      {t('kontak.labelEmail')}
-                    </label>
-                    <input
-                      type="email"
-                      id="form-email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t('kontak.placeholderEmail')}
-                      className="w-full bg-kertas text-tinta border border-lumut/60 rounded-2xl px-4 py-2.5 focus:border-hutan focus:ring-1 focus:ring-hutan outline-none transition-all font-isi text-sm"
-                      disabled={statusKirim === 'mengirim'}
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="pesan" className="block font-aksen italic text-sm text-tembaga font-bold mb-1">
+                    {t('kontak.labelPesan')}
+                  </label>
+                  <textarea
+                    id="pesan"
+                    name="pesan"
+                    rows="4"
+                    required
+                    value={form.pesan}
+                    onChange={(e) => setForm({ ...form, pesan: e.target.value })}
+                    placeholder={t('kontak.placeholderPesan')}
+                    className="w-full bg-perkamentua/60 text-sepia border-2 border-tembaga/60 rounded-sm px-3.5 py-2.5 font-isi placeholder:text-sepia/40 focus:border-ramuanmerah focus:outline-none transition-colors resize-none"
+                  />
+                </div>
 
-                  <div>
-                    <label htmlFor="form-pesan" className="block font-isi text-xs uppercase tracking-wider text-hutan font-bold mb-1.5">
-                      {t('kontak.labelPesan')}
-                    </label>
-                    <textarea
-                      id="form-pesan"
-                      rows="4"
-                      value={pesan}
-                      onChange={(e) => setPesan(e.target.value)}
-                      placeholder={t('kontak.placeholderPesan')}
-                      className="w-full bg-kertas text-tinta border border-lumut/60 rounded-2xl px-4 py-2.5 focus:border-hutan focus:ring-1 focus:ring-hutan outline-none transition-all font-isi text-sm resize-none"
-                      disabled={statusKirim === 'mengirim'}
-                    />
-                    <div className="flex justify-end mt-1">
-                      <span className="text-[11px] text-tinta/50">
-                        {pesan.length}/1000
-                      </span>
-                    </div>
-                  </div>
-
-                  {pesanError && (
-                    <div className="bg-sakura/30 text-hutan border border-sakura rounded-2xl px-4 py-2.5 text-xs font-medium">
-                      {pesanError}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap items-center justify-between gap-4 mt-2">
-                    <TombolPil
-                      tipe="submit"
-                      varian="utama"
-                      disabled={statusKirim === 'mengirim'}
-                      onClick={onKlikSfx}
+                {pesanError && (
+                  <div className="bg-ramuanmerah/15 text-ramuanmerah border border-ramuanmerah rounded-sm px-3 py-2 text-sm font-isi flex flex-col gap-2">
+                    <p>{pesanError}</p>
+                    <a
+                      href="mailto:rafliar99@gmail.com"
+                      className="font-aksen font-bold underline text-xs"
                     >
-                      <Ikon nama="email" kelas="w-4 h-4" />
-                      <span>
-                        {statusKirim === 'mengirim'
-                          ? t('kontak.mengirim')
-                          : t('kontak.tombolKirim')}
-                      </span>
-                    </TombolPil>
-
-                    <button
-                      type="button"
-                      onClick={handleSalinEmail}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-hutan hover:text-jingga transition-colors cursor-pointer"
-                    >
-                      <Ikon nama="link" kelas="w-3.5 h-3.5" />
-                      <span>{emailDisalin ? t('kontak.tercatat') : t('kontak.salinEmail')}</span>
-                    </button>
+                      {t('kontak.tombolEmailManual')} ↗
+                    </a>
                   </div>
+                )}
 
-                  {statusKirim === 'gagal' && (
-                    <div className="pt-3 border-t border-pasir/80">
-                      <a
-                        href={linkMailto}
-                        className="inline-flex items-center gap-2 text-xs font-bold text-jingga underline underline-offset-4 hover:text-hutan"
-                      >
-                        {t('kontak.tombolEmailManual')}
-                      </a>
-                    </div>
-                  )}
-                </form>
-              )}
-            </KartuKertas>
-          </div>
+                <button
+                  type="submit"
+                  disabled={status === 'mengirim'}
+                  className="w-full py-3 px-6 bg-ramuanmerah hover:bg-emas text-krem hover:text-sepia font-judul text-xs sm:text-sm uppercase tracking-widest border-2 border-emas rounded-sm transition-all duration-300 shadow-md cursor-pointer flex items-center justify-center gap-2 select-none"
+                >
+                  <span>{status === 'mengirim' ? t('kontak.mengirim') : t('kontak.tombolKirim')}</span>
+                  <span>🜂</span>
+                </button>
+              </form>
+            )}
+          </Perkamen>
         </div>
       </div>
-
-      <PembatasGelombang kelas="text-kertas" />
     </section>
   )
 }

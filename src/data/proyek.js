@@ -3,6 +3,7 @@ export const daftarProyek = [
     id: "classio-school",
     judul: "Classio — School Management System",
     kategori: "Web",
+    status: "Selesai",
     ringkasan: {
       id: "Sistem informasi manajemen sekolah terpadu untuk pendataan siswa, pengelolaan nilai akademik, dan absensi otomatis.",
       en: "Integrated school management system for student records, academic grading, and automated attendance tracking."
@@ -21,12 +22,13 @@ export const daftarProyek = [
     id: "klinik-bumi-sehat",
     judul: "Klinik Pratama Bumi Sehat Bahagia",
     kategori: "Web",
+    status: "Selesai",
     ringkasan: {
       id: "Pembangunan website informasi layanan kesehatan dan pemetaan lokasi fasilitas klinik secara interaktif.",
       en: "Web application providing healthcare service information and interactive clinic facility mapping."
     },
     deskripsi: {
-      id: "Aplikasi berbasis Laravel untuk menyajikan profil layanan klinik kesehatan masyarakat, antrean pasien online, serta modul pemetaan (mapping) lokasi yang memudahkan masyarakat menemukan fasilitas kesehatan terdekat.",
+      id: "Aplikasi berbasis Laravel untuk menyajikan profil layanan klinik kesehatan masyarakat, antrean pasien online, serta modul pemetaan lokasi yang memudahkan masyarakat menemukan fasilitas kesehatan terdekat.",
       en: "A Laravel-powered application presenting clinic healthcare services, online patient queues, and interactive location mapping to help visitors easily locate healthcare facilities."
     },
     teknologi: ["Laravel", "PHP", "MySQL", "Tailwind CSS", "Leaflet JS"],
@@ -39,6 +41,7 @@ export const daftarProyek = [
     id: "perpustakaan-digital",
     judul: "Sistem Peminjaman Perpustakaan",
     kategori: "Web",
+    status: "Selesai",
     ringkasan: {
       id: "Aplikasi sirkulasi buku digital dengan manajemen katalog, pencatatan tanggal peminjaman, dan kalkulasi denda otomatis.",
       en: "Digital library circulation system with book catalogs, lending records, and automated overdue penalty calculations."
@@ -57,6 +60,7 @@ export const daftarProyek = [
     id: "flutter-daily-tracker",
     judul: "Kaka Activity & Habit Tracker",
     kategori: "Mobile",
+    status: "Selesai",
     ringkasan: {
       id: "Aplikasi mobile untuk memantau rutinitas belajar pemrograman, target latihan harian, dan ringkasan progres mandiri.",
       en: "A mobile application for monitoring daily programming routines, study targets, and personal progress."

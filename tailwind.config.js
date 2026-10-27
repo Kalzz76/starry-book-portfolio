@@ -6,28 +6,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        kertas: "#fdfbef",
-        pasir: "#f1e8d4",
-        kartu: "#f8f6ee",
-        hutan: "#1f4d36",
-        lumut: "#8aa76a",
-        jingga: "#d9732f",
-        sakura: "#e9a6b5",
-        malam: "#161b4a",
-        malamgelap: "#0d1136",
-        samudra: "#2a4d9b",
-        langit: "#6fa8dc",
-        bintang: "#f6d776",
+        malamsihir: "#14173a",
+        ungu: "#4b2a6b",
+        ungugelap: "#1d1230",
+        perkamen: "#d8c08a",
+        perkamentua: "#c2a468",
+        sepia: "#2e1f12",
+        tembaga: "#8a5a2b",
         emas: "#c9a227",
-        tinta: "#1a1a1a"
+        krem: "#f4ead2",
+        ramuanhijau: "#3fae6b",
+        ramuanbiru: "#2f6fba",
+        ramuanmerah: "#9b2c2c",
+        cahayatinta: "#ffe9a8"
       },
       fontFamily: {
-        judul: ["Fraunces", "serif"],
-        isi: ["DM Sans", "sans-serif"],
-        tulisan: ["Caveat", "cursive"]
+        judul: ["Cinzel Decorative", "serif"],
+        isi: ["Cormorant Garamond", "serif"],
+        aksen: ["IM Fell English", "serif"]
       },
       boxShadow: {
-        lembut: "0 8px 24px rgba(31, 77, 54, 0.12)"
+        halaman: "0 10px 30px rgba(0, 0, 0, 0.55)"
       }
     }
   },
