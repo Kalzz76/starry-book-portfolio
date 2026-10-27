@@ -21,12 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const pixelToast = document.getElementById('pixelToast');
   const toastMessage = document.getElementById('toastMessage');
   const earthquakeContainer = document.getElementById('earthquakeContainer');
+  const pixelMusicHud = document.getElementById('pixelMusicHud');
+  const bgMusicAudio = document.getElementById('bgMusicAudio');
+  const musicHudCard = document.getElementById('musicHudCard');
+  const musicHudBtn = document.getElementById('musicHudBtn');
+  const musicHudIconBox = document.getElementById('musicHudIconBox');
+  const musicHudTitle = document.getElementById('musicHudTitle');
+  const musicHudSub = document.getElementById('musicHudSub');
+  const musicSpeakerOn = document.getElementById('musicSpeakerOn');
+  const musicSpeakerOff = document.getElementById('musicSpeakerOff');
+  const bgMusicVolSlider = document.getElementById('bgMusicVolSlider');
+  const btnResurrectTrigger = document.getElementById('btnResurrectTrigger');
+  const backToTopBtn = document.getElementById('backToTopBtn');
 
   // -------------------------------------------------------------------------
   // 2. Synthesized 8-Bit Web Audio Engine
   // -------------------------------------------------------------------------
   let audioCtx = null;
   let isSoundEnabled = true;
+  let isBGMPlaying = false;
+  let hasUserInteracted = false;
+  let currentBGMVolume = 0.15;
 
   function initAudio() {
     if (!audioCtx) {
@@ -372,16 +387,77 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Toast Helper
+  // -------------------------------------------------------------------------
+  // Minecraft Achievement Toast Notification Helper & Chime
+  // -------------------------------------------------------------------------
+  const toastTitle = document.getElementById('toastTitle');
+  const toastIcon = document.getElementById('toastIcon');
+
+  function playMinecraftDing() {
+    if (!isSoundEnabled) return;
+    try {
+      initAudio();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      // Authentic Minecraft Achievement Chime (F#5, A#5, C#6 sparkling triad)
+      const notes = [
+        { f: 739.99, t: 0, d: 0.1 },
+        { f: 932.33, t: 0.08, d: 0.1 },
+        { f: 1108.73, t: 0.16, d: 0.45 }
+      ];
+
+      notes.forEach(note => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(note.f, now + note.t);
+
+        gain.gain.setValueAtTime(0, now + note.t);
+        gain.gain.linearRampToValueAtTime(0.22, now + note.t + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + note.t);
+        osc.stop(now + note.t + note.d + 0.02);
+      });
+    } catch(e) {}
+  }
+
   let toastTimer = null;
-  function showToast(msg) {
-    if (!pixelToast || !toastMessage) return;
-    toastMessage.textContent = msg;
+  function showToast(msg, title = null, icon = null) {
+    if (!pixelToast) return;
+    const lang = localStorage.getItem('kaka_portfolio_lang') || 'id';
+    
+    // Default Minecraft achievement header
+    const defaultTitle = lang === 'en' ? 'Advancement Made!' : 'Pencapaian Diraih!';
+    if (toastTitle) toastTitle.textContent = title || defaultTitle;
+    if (toastMessage) toastMessage.textContent = msg;
+
+    // Smart icon selection
+    if (toastIcon) {
+      if (icon) {
+        toastIcon.textContent = icon;
+      } else {
+        const m = msg.toLowerCase();
+        if (m.includes('resurrect') || m.includes('bangkit')) toastIcon.textContent = '⚡';
+        else if (m.includes('musik') || m.includes('music')) toastIcon.textContent = '🎵';
+        else if (m.includes('buku') || m.includes('semanggi') || m.includes('grimoire') || m.includes('scroll')) toastIcon.textContent = '📜';
+        else if (m.includes('bahasa') || m.includes('language')) toastIcon.textContent = '🌐';
+        else if (m.includes('kursor') || m.includes('reaper')) toastIcon.textContent = '🗡️';
+        else if (m.includes('makhluk') || m.includes('maskot')) toastIcon.textContent = '💀';
+        else toastIcon.textContent = '🏆';
+      }
+    }
+
     pixelToast.classList.add('show');
+    playMinecraftDing();
+
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       pixelToast.classList.remove('show');
-    }, 3200);
+    }, 3800);
   }
 
   // -------------------------------------------------------------------------
@@ -395,6 +471,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hour >= 6 && hour < 15) return 'day';
     if (hour >= 15 && hour < 18.5) return 'sunset';
     return 'night';
+  }
+
+  const shadowBadgeText = document.getElementById('shadowBadgeText');
+  const shadowArmySubtitle = document.getElementById('shadowArmySubtitle');
+  const shadowArenaStatus = document.getElementById('shadowArenaStatus');
+  const shadowCrownLeft = document.getElementById('shadowCrownLeft');
+  const shadowCrownRight = document.getElementById('shadowCrownRight');
+  const shadowMonarchCrest = document.getElementById('shadowMonarchCrest');
+
+  function updateThemeDynamicTexts(theme) {
+    if (theme === 'day') {
+      if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SANCTUM (SIANG)';
+      if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang berkumpul di bawah hangatnya mentari siang untuk menyapa pengembara digital.';
+      if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI SIANG CERIA & AKTIF';
+      if (shadowCrownLeft) shadowCrownLeft.textContent = '☀️';
+      if (shadowCrownRight) shadowCrownRight.textContent = '☀️';
+      if (shadowMonarchCrest) shadowMonarchCrest.textContent = '☀️ 🐱 🐕 🧙‍♂️ 🦅';
+    } else if (theme === 'sunset') {
+      if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SENJA (SORE)';
+      if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang menikmati lembayung senja magis menjelang malam keramat.';
+      if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI SENJA JINGGA & BERJAGA';
+      if (shadowCrownLeft) shadowCrownLeft.textContent = '🌇';
+      if (shadowCrownRight) shadowCrownRight.textContent = '🌇';
+      if (shadowMonarchCrest) shadowMonarchCrest.textContent = '🌇 🦇 🐱 💀 🧙‍♂️';
+    } else {
+      if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT HALLOWEEN (MALAM)';
+      if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang singgah untuk memberikan dukungan serta pesan apresiasi dalam perjalanan portofolio Kaka Andrea Yahya.';
+      if (shadowArenaStatus) shadowArenaStatus.textContent = 'RAMAH & BERPATROLI BEBAS';
+      if (shadowCrownLeft) shadowCrownLeft.textContent = '🎃';
+      if (shadowCrownRight) shadowCrownRight.textContent = '🎃';
+      if (shadowMonarchCrest) shadowMonarchCrest.textContent = '👻 🦇 🐱 💀 🧙‍♂️';
+    }
   }
 
   function setTheme(theme) {
@@ -413,6 +521,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('theme-night');
       if (bgNight) bgNight.classList.add('active');
     }
+    
+    updateThemeDynamicTexts(theme);
     localStorage.setItem('kaka_theme', theme);
   }
 
@@ -505,12 +615,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. Typing Effect on Subtitle
   // -------------------------------------------------------------------------
   const typingElement = document.getElementById('typingText');
-  const rolePhrases = [
-    "Code Necromancer & Spooky Web Developer",
-    "Resurrecting Dead Pixels & Living Code",
-    "HTML5 • CSS3 • JavaScript Sorcery",
-    "Ready for Dark & Epic Digital Quests!"
-  ];
+  const typingRolePhrases = {
+    id: [
+      "Code Necromancer & Pengembang Web",
+      "Membangkitkan Baris Kode Menjadi Kehidupan",
+      "Sihir Web Retro • Pixel Art & Kode Modern",
+      "Siap Memulai Petualangan Digital Epik!"
+    ],
+    en: [
+      "Code Necromancer & Spooky Web Developer",
+      "Resurrecting Dead Pixels & Living Code",
+      "HTML5 • CSS3 • JavaScript Sorcery",
+      "Ready for Dark & Epic Digital Quests!"
+    ]
+  };
+
+  let currentLanguage = localStorage.getItem('kaka_portfolio_lang') || 'id';
+  let rolePhrases = typingRolePhrases[currentLanguage] || typingRolePhrases.id;
 
   let phraseIndex = 0;
   let charIndex = 0;
@@ -607,9 +728,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const avatarFlipCard = document.getElementById('avatarFlipCard');
   if (avatarFlipCard) {
     let isAvatarFlipped = false;
-    let isAvatarHovered = false;
 
-    // Clicking the avatar toggles flip and prevents expanding the entire grimoire card
+    // Clicking the avatar toggles flip
     avatarFlipCard.addEventListener('click', (e) => {
       e.stopPropagation();
       isAvatarFlipped = !isAvatarFlipped;
@@ -622,21 +742,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     avatarFlipCard.addEventListener('mouseenter', () => {
-      isAvatarHovered = true;
       playSound('blip');
     });
 
+    // When cursor leaves, always return back to Pixel Art so it never stays locked on photo
     avatarFlipCard.addEventListener('mouseleave', () => {
-      isAvatarHovered = false;
+      isAvatarFlipped = false;
+      avatarFlipCard.classList.remove('flipped');
     });
-
-    // Slow automatic flip rotation (every 7.5s, gently toggles between Pixel Art and Real Photo)
-    setInterval(() => {
-      if (!isAvatarHovered && grimoireCardFrame && grimoireCardFrame.classList.contains('collapsed')) {
-        isAvatarFlipped = !isAvatarFlipped;
-        avatarFlipCard.classList.toggle('flipped', isAvatarFlipped);
-      }
-    }, 7500);
   }
 
   // Clicking anywhere on the portrait card triggers expansion
@@ -791,7 +904,8 @@ document.addEventListener('DOMContentLoaded', () => {
       item.tabIndex = 0;
 
       const numStr = idx < 9 ? `SPELL 0${idx + 1}` : `SPELL ${idx + 1}`;
-      const flame = isActive ? '🔥' : '🕯️';
+      const itemGlyph = spell.icon || '📜';
+      const flame = isActive ? '🔥' : itemGlyph;
 
       item.innerHTML = `
         <div class="item-left-block">
@@ -895,6 +1009,132 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Open Grimoire Render
   selectGrimoireSpell(0);
+
+  // -------------------------------------------------------------------------
+  // 6B. ASTA'S 5-LEAF CLOVER GRIMOIRE: Buka - Tutup Interaktif (Open / Close)
+  // -------------------------------------------------------------------------
+  const cloverGrimoireMaster = document.getElementById('cloverGrimoireMaster');
+  const cloverTomeBook = document.getElementById('cloverTomeBook');
+  const btnOpenCloverBook = document.getElementById('btnOpenCloverBook');
+  const btnCloseCloverBook = document.getElementById('btnCloseCloverBook');
+  const btnCloseCloverBottom = document.getElementById('btnCloseCloverBottom');
+
+  let isCloverBookAnimating = false;
+
+  function openCloverGrimoire() {
+    if (!cloverGrimoireMaster || isCloverBookAnimating) return;
+    if (cloverGrimoireMaster.classList.contains('open')) return;
+
+    isCloverBookAnimating = true;
+    playSound('arise');
+    playSound('unroll');
+
+    // Trigger cover opening 3D swing
+    cloverGrimoireMaster.classList.remove('closed');
+    cloverGrimoireMaster.classList.add('opening');
+
+    // Spawn Anti-Magic Crimson Spark particles
+    if (cloverTomeBook) {
+      const rect = cloverTomeBook.getBoundingClientRect();
+      for (let i = 0; i < 14; i++) {
+        const spark = document.createElement('span');
+        spark.className = 'ghost-spirit';
+        spark.textContent = Math.random() < 0.6 ? '⛧' : '✦';
+        spark.style.color = '#ff1744';
+        spark.style.left = (rect.left + rect.width / 2 + (Math.random() * 120 - 60)) + 'px';
+        spark.style.top = (rect.top + rect.height / 2 + (Math.random() * 120 - 60)) + 'px';
+        spark.style.setProperty('--dx', (Math.random() * 180 - 90) + 'px');
+        spark.style.setProperty('--dy', (Math.random() * -140 - 40) + 'px');
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 900);
+      }
+    }
+
+    setTimeout(() => {
+      cloverGrimoireMaster.classList.remove('opening');
+      cloverGrimoireMaster.classList.add('open');
+      isCloverBookAnimating = false;
+      showToast('⚔️ Kitab Semanggi 5 Asta Terbuka! Gulungan mantra siap dibacakan.');
+    }, 400);
+  }
+
+  function closeCloverGrimoire() {
+    if (!cloverGrimoireMaster || isCloverBookAnimating) return;
+    if (cloverGrimoireMaster.classList.contains('closed')) return;
+
+    isCloverBookAnimating = true;
+    playSound('stone');
+    playSound('roll');
+
+    // Trigger 3D book pages slam shut
+    cloverGrimoireMaster.classList.remove('open');
+    cloverGrimoireMaster.classList.add('closing');
+
+    // Particle burst of closing seal
+    const openBookEl = document.getElementById('openGrimoireBook');
+    if (openBookEl) {
+      const rect = openBookEl.getBoundingClientRect();
+      for (let i = 0; i < 8; i++) {
+        const spark = document.createElement('span');
+        spark.className = 'ghost-spirit';
+        spark.textContent = '🔒';
+        spark.style.left = (rect.left + rect.width / 2 + (Math.random() * 100 - 50)) + 'px';
+        spark.style.top = (rect.top + rect.height / 2 + (Math.random() * 60 - 30)) + 'px';
+        spark.style.setProperty('--dx', (Math.random() * 140 - 70) + 'px');
+        spark.style.setProperty('--dy', (Math.random() * -100 - 20) + 'px');
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 850);
+      }
+    }
+
+    setTimeout(() => {
+      cloverGrimoireMaster.classList.remove('closing');
+      cloverGrimoireMaster.classList.add('closed', 'just-closed');
+      playSound('stone');
+      showToast('🔒 Kitab Semanggi 5 Berhasil Disegel Kembali!');
+
+      const projectsSec = document.getElementById('projects');
+      if (projectsSec) {
+        projectsSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      setTimeout(() => {
+        cloverGrimoireMaster.classList.remove('just-closed');
+        isCloverBookAnimating = false;
+      }, 500);
+    }, 400);
+  }
+
+  if (cloverTomeBook) {
+    cloverTomeBook.addEventListener('click', openCloverGrimoire);
+    cloverTomeBook.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openCloverGrimoire();
+      }
+    });
+  }
+
+  if (btnOpenCloverBook) {
+    btnOpenCloverBook.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openCloverGrimoire();
+    });
+  }
+
+  if (btnCloseCloverBook) {
+    btnCloseCloverBook.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeCloverGrimoire();
+    });
+  }
+
+  if (btnCloseCloverBottom) {
+    btnCloseCloverBottom.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeCloverGrimoire();
+    });
+  }
 
   // -------------------------------------------------------------------------
   // 7. Sacred Relics & Certificates: Opsi A (Spotlight Showcase & Filmstrip)
@@ -1923,6 +2163,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.sleeping = false;
       this.fleeing = false;
       this.busy = false;
+      this.insideCottage = false;
 
       if (this.el) {
         this.el.addEventListener('click', () => {
@@ -1946,14 +2187,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async blink() {
-      if (!this.el || this.sleeping || this.fleeing) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
       this.el.classList.add('blink');
       await waitMs(180);
       this.el.classList.remove('blink');
     }
 
     async look() {
-      if (!this.el || this.sleeping || this.fleeing) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
       const dir = Math.random() < 0.5 ? 'look-l' : 'look-r';
       this.el.classList.add(dir);
       await waitMs(randNum(700, 1500));
@@ -1961,33 +2202,126 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async walk() {
-      if (!this.el || !this.el.parentElement || this.sleeping || this.fleeing) return;
-      const W = this.el.parentElement.clientWidth - 80;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
+      const stageEl = this.el.parentElement || document.getElementById('stage');
+      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 80;
       const from = this.el.offsetLeft;
       
-      // Freely roam across the entire stage (from 5% to 90% of screen width)
-      let to = randNum(30, W - 30);
-      // Limit jump distance to look natural
+      // Freely roam across stage, staying outside the witch cottage (left >= 110px) and clear of music HUD
+      const minLeftBound = 110;
+      const maxRightBound = Math.max(160, W - 250);
+      let to = randNum(minLeftBound, maxRightBound);
+      
+      // Limit distance per walk for smooth natural steps
       const maxDist = randNum(140, 280);
       if (Math.abs(to - from) > maxDist) {
         to = to > from ? from + maxDist : from - maxDist;
       }
-      to = Math.min(W - 20, Math.max(20, to));
+      to = Math.min(maxRightBound, Math.max(minLeftBound, to));
 
-      const dur = Math.max(0.6, Math.abs(to - from) / 100);
+      const dur = Math.max(0.7, Math.abs(to - from) / 95);
+      const isLeft = to < from;
 
       this.el.style.transitionDuration = dur + 's';
-      this.el.classList.add('walk', to < from ? 'look-l' : 'look-r');
+      this.el.classList.remove('look-l', 'look-r');
+      this.el.classList.add('walk', isLeft ? 'look-l' : 'look-r');
+      this.el.style.left = to + 'px';
+      
+      await waitMs(dur * 1000);
+      this.el.classList.remove('walk');
+    }
+
+    async enterCottage() {
+      if (!this.el || this.sleeping || this.fleeing || this.busy || this.insideCottage) return;
+      this.busy = true;
+      const cottage = document.getElementById('witchCottage');
+      const cottageBubble = document.getElementById('cottageBubble');
+
+      // 1. Walk toward cottage door (left: 54px)
+      const from = this.el.offsetLeft;
+      const to = 54;
+      const dur = Math.max(0.6, Math.abs(to - from) / 110);
+      this.el.style.transitionDuration = dur + 's';
+      this.el.classList.remove('look-l', 'look-r');
+      this.el.classList.add('walk', 'look-l');
       this.el.style.left = to + 'px';
       await waitMs(dur * 1000);
-      this.el.classList.remove('walk', 'look-l', 'look-r');
+      this.el.classList.remove('walk');
+
+      // 2. Open cottage door
+      if (cottage) cottage.classList.add('door-open');
+      playSound('stone');
+      await waitMs(350);
+
+      // 3. Step inside
+      this.el.classList.add('entering');
+      this.insideCottage = true;
+      await waitMs(450);
+
+      // 4. Close door
+      if (cottage) cottage.classList.remove('door-open');
+
+      // 5. Cottage activity bubble
+      if (cottageBubble) {
+        cottageBubble.textContent = this.el.id === 'a' 
+          ? 'Skully lagi ngopi tulang... ☕' 
+          : 'Pumpling meramu mantra... 🧪';
+        cottageBubble.classList.add('show');
+        setTimeout(() => cottageBubble.classList.remove('show'), 2600);
+      }
+
+      this.busy = false;
+
+      // Rest inside cottage for 4.5 to 7.5 seconds
+      await waitMs(randNum(4500, 7500));
+
+      // Exit cottage
+      await this.exitCottage();
+    }
+
+    async exitCottage() {
+      if (!this.el || !this.insideCottage) return;
+      this.busy = true;
+      const cottage = document.getElementById('witchCottage');
+
+      // 1. Open door
+      if (cottage) cottage.classList.add('door-open');
+      playSound('stone');
+      await waitMs(350);
+
+      // 2. Step outside
+      this.insideCottage = false;
+      this.el.classList.remove('entering');
+      this.el.style.left = '64px';
+      this.el.classList.remove('look-l');
+      this.el.classList.add('look-r');
+      await waitMs(300);
+
+      // 3. Walk out onto the stage floor
+      const to = randNum(130, 240);
+      const dur = Math.max(0.6, Math.abs(to - 64) / 100);
+      this.el.style.transitionDuration = dur + 's';
+      this.el.classList.add('walk', 'look-r');
+      this.el.style.left = to + 'px';
+      await waitMs(dur * 1000);
+      this.el.classList.remove('walk');
+
+      // 4. Close door
+      if (cottage) cottage.classList.remove('door-open');
+      this.busy = false;
+
+      // 5. Speak after exiting
+      const quote = this.el.id === 'a' 
+        ? 'Ah, segarnya ramuan nenek sihir! ✨' 
+        : 'Pumpling kenyang pie labu! 🥧';
+      await this.say(quote, 2200);
     }
 
     async sleep() {
-      if (!this.el || this.sleeping || this.fleeing) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
       this.sleeping = true;
       this.el.classList.add('sleep');
-      await waitMs(randNum(3000, 7000));
+      await waitMs(randNum(2500, 4500));
       await this.wake();
     }
 
@@ -2002,6 +2336,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async poke() {
       if (!this.el) return;
+      if (this.insideCottage) {
+        await this.exitCottage();
+        return;
+      }
       if (this.sleeping) {
         await this.wake();
         await this.say('Hah?! Siapa mengusik tidurku?!', 1800, false);
@@ -2010,11 +2348,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomQuote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
         await this.say(randomQuote, 2400);
         this.el.classList.remove('jump');
+        // Walk right after being poked!
+        await waitMs(400);
+        await this.walk();
       }
     }
 
     async greetAutonomously() {
-      if (this.sleeping || this.fleeing || this.busy) return;
+      if (this.sleeping || this.fleeing || this.busy || this.insideCottage) return;
       this.el.classList.add('jump');
       const randomQuote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
       await this.say(randomQuote, 2600, true);
@@ -2022,22 +2363,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async flee(mx) {
-      if (!this.el || !this.el.parentElement || this.fleeing) return;
+      if (!this.el || this.fleeing || this.insideCottage) return;
       this.fleeing = true;
       if (this.sleeping) {
         this.sleeping = false;
         this.el.classList.remove('sleep');
       }
-      const W = this.el.parentElement.clientWidth - 80;
+      const stageEl = this.el.parentElement || document.getElementById('stage');
+      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 80;
       const from = this.el.offsetLeft;
       const dir = (from + 38 < mx) ? -1 : 1;
-      let to = from + dir * randNum(160, 260);
-      if (to < 10 || to > W) to = dir < 0 ? W - randNum(0, 40) : 10 + randNum(0, 40);
-      to = Math.min(W, Math.max(10, to));
+      let to = from + dir * randNum(160, 280);
+      const minLeftBound = 110;
+      const maxRightBound = Math.max(160, W - 250);
+      if (to < minLeftBound || to > maxRightBound) {
+        to = dir < 0 ? maxRightBound - randNum(0, 40) : minLeftBound + randNum(0, 40);
+      }
+      to = Math.min(maxRightBound, Math.max(minLeftBound, to));
 
       const dur = Math.max(0.35, Math.abs(to - from) / 320);
+      const isLeft = to < from;
+
       this.el.style.transitionDuration = dur + 's';
-      this.el.classList.add('scared', 'walk', to < from ? 'look-l' : 'look-r');
+      this.el.classList.remove('look-l', 'look-r');
+      this.el.classList.add('scared', 'walk', isLeft ? 'look-l' : 'look-r');
 
       if (Math.random() < 0.6) {
         this.say(this.el.id === 'a' ? 'Waa, ada arwah datang!' : 'Ampun, Tuan Reaper!', 1000, false);
@@ -2045,36 +2394,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
       this.el.style.left = to + 'px';
       await waitMs(dur * 1000);
-      this.el.classList.remove('scared', 'walk', 'look-l', 'look-r');
-      await waitMs(250);
+      this.el.classList.remove('scared', 'walk');
+      await waitMs(200);
       this.fleeing = false;
     }
 
     async loop() {
+      // Immediate initial wander so the user sees them walk right away!
+      await waitMs(randNum(500, 1200));
+      await this.walk();
+
       while (true) {
-        await waitMs(randNum(1000, 2800));
-        if (this.sleeping || this.fleeing) continue;
+        await waitMs(randNum(800, 2200));
+        if (this.sleeping || this.fleeing || this.insideCottage) continue;
         const r = Math.random();
 
-        // 35% chance to wander and walk freely across the stage
-        if (r < 0.35) {
+        // 18% chance to enter the witch cottage and rest inside!
+        if (r < 0.18) {
+          await this.enterCottage();
+        }
+        // 47% chance to wander and walk freely across the stage
+        else if (r < 0.65) {
           await this.walk();
         } 
-        // 25% chance to speak a greeting autonomously
-        else if (r < 0.60) {
+        // 15% chance to speak a greeting autonomously
+        else if (r < 0.80) {
           await this.greetAutonomously();
         } 
-        // 15% look around
-        else if (r < 0.75) {
+        // 10% look around
+        else if (r < 0.90) {
           await this.look();
         } 
-        // 15% blink
-        else if (r < 0.90) {
-          await this.blink();
-        } 
-        // 10% take a quick nap
+        // 10% blink
         else {
-          await this.sleep();
+          await this.blink();
         }
       }
     }
@@ -2124,7 +2477,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDragonSwitchUI();
     const dr = document.getElementById('dragon');
     if (dr) {
-      dr.style.display = isDragonEnabled ? 'block' : 'none';
+      if (!isDragonEnabled) {
+        dr.style.display = 'none';
+      } else {
+        dr.style.display = window.reaperCursorShown ? 'block' : 'none';
+      }
     }
   }
 
@@ -2175,6 +2532,10 @@ document.addEventListener('DOMContentLoaded', () => {
   applyDragonState();
   applyMascotsState();
 
+  // -------------------------------------------------------------------------
+  // 11. Autonomous Mascot Characters (Skully & Pumpling)
+  // -------------------------------------------------------------------------
+
   // Instantiate Mascots with their quote sets
   const charA = document.getElementById('a');
   const charB = document.getElementById('b');
@@ -2185,110 +2546,332 @@ document.addEventListener('DOMContentLoaded', () => {
     mascotA = new SpookyMascot(charA, skullyQuotes, 'Yo, Necromancer!');
     mascotB = new SpookyMascot(charB, pumplingQuotes, 'Trick or Treat!');
 
-    window.addEventListener('pointermove', e => {
+    function checkMascotFlee(cx, cy) {
+      // Only flee if reaper cursor spirit is actively enabled!
       if (!isMascotsEnabled || !isDragonEnabled) return;
-      if (e.pointerType !== 'mouse') return;
       for (const m of [mascotA, mascotB]) {
-        if (!m || !m.el) continue;
+        if (!m || !m.el || m.insideCottage) continue;
         const r = m.el.getBoundingClientRect();
-        const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
-        if (d < 165) m.flee(e.clientX);
+        const d = Math.hypot(cx - (r.left + r.width / 2), cy - (r.top + r.height / 2));
+        if (d < 170) m.flee(cx);
       }
-    });
+    }
+
+    window.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') return;
+      checkMascotFlee(e.clientX, e.clientY);
+    }, { passive: true });
+
+    window.addEventListener('mousemove', e => {
+      checkMascotFlee(e.clientX, e.clientY);
+    }, { passive: true });
 
     setTimeout(() => mascotA && isMascotsEnabled && mascotA.greetAutonomously(), 1400);
     setTimeout(() => mascotB && isMascotsEnabled && mascotB.greetAutonomously(), 3800);
   }
 
+  // Interactive Witch Cottage (Pondok Nenek Sihir)
+  const witchCottage = document.getElementById('witchCottage');
+  if (witchCottage) {
+    witchCottage.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playSound('click');
+      playSound('stone');
+      
+      const cottageBubble = document.getElementById('cottageBubble');
+      const insideMascot = [mascotA, mascotB].find(m => m && m.insideCottage);
+      
+      if (insideMascot) {
+        insideMascot.exitCottage();
+        if (cottageBubble) {
+          cottageBubble.textContent = "Tok tok! Ada yang mengetuk pintu! 🚪";
+          cottageBubble.classList.add('show');
+          setTimeout(() => cottageBubble.classList.remove('show'), 2200);
+        }
+      } else {
+        const targetMascot = Math.random() < 0.5 ? mascotA : mascotB;
+        if (targetMascot && !targetMascot.fleeing) {
+          targetMascot.say("Mau bertamu ke pondok nenek sihir dulu ah!", 1800);
+          setTimeout(() => targetMascot.enterCottage(), 700);
+        }
+      }
+    });
+  }
+
   // -------------------------------------------------------------------------
   // 12. Floating Phantom Reaper Flying Cursor & Click Particles
   // -------------------------------------------------------------------------
-  if (window.matchMedia('(pointer:fine)').matches) {
-    const dr = document.getElementById('dragon');
-    if (dr) {
-      const di = dr.querySelector('i');
-      let tx = 0, ty = 0, x = 0, y = 0, shown = false, face = 1;
+  const dr = document.getElementById('dragon');
+  if (dr) {
+    const di = dr.querySelector('i');
+    let tx = 0, ty = 0, x = 0, y = 0, shown = false, face = 1;
+    window.reaperCursorShown = false;
 
-      window.addEventListener('pointermove', e => {
-        if (!isDragonEnabled) return;
-        if (e.pointerType !== 'mouse') return;
-        if (!shown) {
-          shown = true;
-          x = tx = e.clientX;
-          y = ty = e.clientY;
-          dr.style.display = 'block';
-        }
-        if (Math.abs(e.clientX - tx) > 2) {
-          face = e.clientX > tx ? 1 : -1;
-        }
-        tx = e.clientX;
-        ty = e.clientY;
-        if (di) di.style.transform = `scaleX(${face})`;
-      });
-
-      // Click: Scythe Slash & Spawn Purple Spirit Wisps & Mini Bats
-      window.addEventListener('pointerdown', e => {
-        if (!isDragonEnabled) return;
-        if (e.pointerType !== 'mouse') return;
-
-        playSound('ghost');
-        if (Math.random() < 0.6) playSound('bat');
-
-        // Scythe tilt swing on click
-        if (di) {
-          di.style.transform = `scaleX(${face}) rotate(${face * 20}deg) scale(1.15)`;
-          setTimeout(() => {
-            di.style.transform = `scaleX(${face})`;
-          }, 180);
-        }
-
-        requestAnimationFrame(() => {
-          // 3 Purple Spirits
-          for (let i = 0; i < 3; i++) {
-            const spirit = document.createElement('span');
-            spirit.className = 'ghost-spirit';
-            spirit.textContent = '👻';
-            spirit.style.left = (e.clientX + randNum(-15, 15)) + 'px';
-            spirit.style.top = (e.clientY + randNum(-15, 15)) + 'px';
-            spirit.style.setProperty('--dx', (randNum(-70, 70)) + 'px');
-            spirit.style.setProperty('--dy', (randNum(-95, -45)) + 'px');
-            document.body.appendChild(spirit);
-            setTimeout(() => spirit.remove(), 850);
-          }
-
-          // 2 Mini Bats
-          for (let i = 0; i < 2; i++) {
-            const bat = document.createElement('span');
-            bat.className = 'mini-bat';
-            bat.textContent = '🦇';
-            bat.style.left = (e.clientX + randNum(-10, 10)) + 'px';
-            bat.style.top = (e.clientY + randNum(-10, 10)) + 'px';
-            const dx = (face === 1 ? randNum(50, 110) : randNum(-110, -50)) + 'px';
-            bat.style.setProperty('--dx', dx);
-            bat.style.setProperty('--dy', randNum(-80, 20) + 'px');
-            document.body.appendChild(bat);
-            setTimeout(() => bat.remove(), 950);
-          }
-        });
-      });
-
-      document.addEventListener('mouseleave', () => {
-        dr.style.display = 'none';
-        shown = false;
-      });
-
-      (function tick() {
-        if (isDragonEnabled) {
-          x += (tx - x) * 0.22;
-          y += (ty - y) * 0.22;
-          // Float with proper offset
-          const offsetX = face === 1 ? -70 : -75;
-          const offsetY = -70;
-          dr.style.transform = `translate(${x + offsetX}px, ${y + offsetY}px)`;
-        }
-        requestAnimationFrame(tick);
-      })();
+    function handleReaperMove(clientX, clientY) {
+      if (!isDragonEnabled) return;
+      if (!shown) {
+        shown = true;
+        window.reaperCursorShown = true;
+        x = tx = clientX;
+        y = ty = clientY;
+        dr.style.display = 'block';
+      }
+      if (Math.abs(clientX - tx) > 2) {
+        face = clientX > tx ? 1 : -1;
+      }
+      tx = clientX;
+      ty = clientY;
+      if (di) di.style.transform = `scaleX(${face})`;
     }
+
+    window.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') return;
+      handleReaperMove(e.clientX, e.clientY);
+    }, { passive: true });
+
+    window.addEventListener('mousemove', e => {
+      handleReaperMove(e.clientX, e.clientY);
+    }, { passive: true });
+
+    // Scythe swing & spirits on click
+    function handleReaperClick(clientX, clientY) {
+      if (!isDragonEnabled) return;
+      playSound('ghost');
+      if (Math.random() < 0.6) playSound('bat');
+
+      if (di) {
+        di.style.transform = `scaleX(${face}) rotate(${face * 20}deg) scale(1.15)`;
+        setTimeout(() => {
+          di.style.transform = `scaleX(${face})`;
+        }, 180);
+      }
+
+      requestAnimationFrame(() => {
+        // 3 Purple Spirits
+        for (let i = 0; i < 3; i++) {
+          const spirit = document.createElement('span');
+          spirit.className = 'ghost-spirit';
+          spirit.textContent = '👻';
+          spirit.style.left = (clientX + randNum(-15, 15)) + 'px';
+          spirit.style.top = (clientY + randNum(-15, 15)) + 'px';
+          spirit.style.setProperty('--dx', (randNum(-70, 70)) + 'px');
+          spirit.style.setProperty('--dy', (randNum(-95, -45)) + 'px');
+          document.body.appendChild(spirit);
+          setTimeout(() => spirit.remove(), 850);
+        }
+
+        // 2 Mini Bats
+        for (let i = 0; i < 2; i++) {
+          const bat = document.createElement('span');
+          bat.className = 'mini-bat';
+          bat.textContent = '🦇';
+          bat.style.left = (clientX + randNum(-10, 10)) + 'px';
+          bat.style.top = (clientY + randNum(-10, 10)) + 'px';
+          const dx = (face === 1 ? randNum(50, 110) : randNum(-110, -50)) + 'px';
+          bat.style.setProperty('--dx', dx);
+          bat.style.setProperty('--dy', randNum(-80, 20) + 'px');
+          document.body.appendChild(bat);
+          setTimeout(() => bat.remove(), 950);
+        }
+      });
+    }
+
+    window.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'touch') return;
+      handleReaperClick(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('mouseenter', e => {
+      handleReaperMove(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('mouseleave', () => {
+      dr.style.display = 'none';
+      shown = false;
+      window.reaperCursorShown = false;
+    });
+
+    (function tick() {
+      if (isDragonEnabled && shown) {
+        x += (tx - x) * 0.22;
+        y += (ty - y) * 0.22;
+        // Float centered around cursor
+        const offsetX = face === 1 ? -60 : -65;
+        const offsetY = -60;
+        dr.style.transform = `translate(${x + offsetX}px, ${y + offsetY}px)`;
+      }
+      requestAnimationFrame(tick);
+    })();
+  }
+
+  // -------------------------------------------------------------------------
+  // 17. FLOATING RETRO PIXEL MUSIC PLAYER (Halloween-bg.mp3)
+  // -------------------------------------------------------------------------
+
+  function updateMusicHUD(playing) {
+    isBGMPlaying = playing;
+    if (pixelMusicHud) pixelMusicHud.classList.toggle('playing', playing);
+    const lang = localStorage.getItem('kaka_portfolio_lang') || 'id';
+    if (musicHudTitle) musicHudTitle.textContent = playing 
+      ? (lang === 'en' ? 'MUSIC ON' : 'MUSIK NYALA') 
+      : (lang === 'en' ? 'MUSIC MUTED' : 'MUSIK MATI');
+    if (musicHudSub) musicHudSub.textContent = playing 
+      ? (lang === 'en' ? 'HALLOWEEN THEME' : 'ALUNAN HALLOWEEN') 
+      : (lang === 'en' ? 'PEACEFUL SILENCE' : 'NIKMATI KETENANGAN');
+    if (musicSpeakerOn) musicSpeakerOn.classList.toggle('hidden', !playing);
+    if (musicSpeakerOff) musicSpeakerOff.classList.toggle('hidden', playing);
+  }
+
+  function playBGM() {
+    if (!bgMusicAudio) return;
+    const targetVol = bgMusicVolSlider ? parseFloat(bgMusicVolSlider.value) : currentBGMVolume;
+    bgMusicAudio.volume = Math.max(0.02, targetVol);
+    const playPromise = bgMusicAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        updateMusicHUD(true);
+      }).catch((err) => {
+        console.warn('Autoplay prevented by browser:', err);
+        updateMusicHUD(false);
+      });
+    }
+  }
+
+  function pauseBGM() {
+    if (!bgMusicAudio) return;
+    bgMusicAudio.pause();
+    updateMusicHUD(false);
+  }
+
+  function toggleBGM() {
+    if (!bgMusicAudio) return;
+    if (isBGMPlaying) {
+      pauseBGM();
+      showToast('🤫 Musik latar dihentikan.');
+    } else {
+      playBGM();
+      showToast('🎵 Memutar alunan Halloween di Sanctum...');
+    }
+  }
+
+  if (musicHudIconBox) {
+    musicHudIconBox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBGM();
+    });
+  }
+
+  const musicHudInfoEl = document.querySelector('.music-hud-info');
+  if (musicHudInfoEl) {
+    musicHudInfoEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBGM();
+    });
+  }
+
+  if (musicHudBtn) {
+    musicHudBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBGM();
+    });
+  }
+
+  if (musicHudCard) {
+    musicHudCard.addEventListener('click', (e) => {
+      if (e.target && (e.target.id === 'bgMusicVolSlider' || e.target.classList.contains('music-vol-slider'))) {
+        return;
+      }
+      toggleBGM();
+    });
+  }
+
+  if (bgMusicVolSlider) {
+    bgMusicVolSlider.addEventListener('input', (e) => {
+      e.stopPropagation();
+      const val = parseFloat(e.target.value);
+      currentBGMVolume = val;
+      if (bgMusicAudio) {
+        bgMusicAudio.volume = val;
+        if (val > 0 && bgMusicAudio.paused) {
+          playBGM();
+        } else if (val === 0 && !bgMusicAudio.paused) {
+          pauseBGM();
+        }
+      }
+    });
+    bgMusicVolSlider.addEventListener('click', (e) => e.stopPropagation());
+  }
+
+  // Seamless First-Interaction Auto-Start
+  function handleFirstUserInteraction() {
+    if (hasUserInteracted) return;
+    hasUserInteracted = true;
+    playBGM();
+    window.removeEventListener('click', handleFirstUserInteraction);
+    window.removeEventListener('keydown', handleFirstUserInteraction);
+    window.removeEventListener('touchstart', handleFirstUserInteraction);
+  }
+
+  window.addEventListener('click', handleFirstUserInteraction, { passive: true });
+  window.addEventListener('keydown', handleFirstUserInteraction, { passive: true });
+  window.addEventListener('touchstart', handleFirstUserInteraction, { passive: true });
+
+  // -------------------------------------------------------------------------
+  // 18. RESURRECTION EASTER EGG & BACK TO TOP ACTION
+  // -------------------------------------------------------------------------
+
+  function triggerResurrection(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    playSound('arise');
+    playSound('victory');
+
+    const lang = localStorage.getItem('kaka_portfolio_lang') || 'id';
+    const title = lang === 'en' ? 'Advancement Made!' : 'Pencapaian Diraih!';
+    const desc = lang === 'en' ? 'The Necromancer Resurrected!' : 'Kebangkitan Sang Necromancer!';
+    showToast(desc, title, '⚡');
+
+    // Subterranean Screen Tremor
+    if (earthquakeContainer) {
+      earthquakeContainer.classList.add('tremor');
+      setTimeout(() => earthquakeContainer.classList.remove('tremor'), 1200);
+    }
+
+    // Avatar pulse glow
+    const heroCard = document.querySelector('.hero-avatar-card');
+    if (heroCard) {
+      heroCard.classList.add('resurrect-pulse');
+      setTimeout(() => heroCard.classList.remove('resurrect-pulse'), 3000);
+    }
+
+    // Burst of resurrection soul particles
+    for (let i = 0; i < 22; i++) {
+      const spark = document.createElement('span');
+      spark.className = 'resurrect-soul-burst';
+      spark.textContent = ['⚡', '✨', '👻', '💀', '🔥', '✦'][Math.floor(Math.random() * 6)];
+      spark.style.left = (window.innerWidth / 2 + (Math.random() * 280 - 140)) + 'px';
+      spark.style.top = (window.innerHeight * 0.75 + (Math.random() * 120 - 60)) + 'px';
+      spark.style.setProperty('--dx', (Math.random() * 450 - 225) + 'px');
+      spark.style.setProperty('--dy', (Math.random() * -360 - 80) + 'px');
+      document.body.appendChild(spark);
+      setTimeout(() => spark.remove(), 1100);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (btnResurrectTrigger) {
+    btnResurrectTrigger.addEventListener('click', triggerResurrection);
+  }
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      playSound('blip');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 });
 
