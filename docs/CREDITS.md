@@ -1,15 +1,19 @@
-# Kredit dan Atribusi
-
-Dokumen pencatatan sumber daya, font, audio, dan lisensi yang digunakan dalam portofolio Kaka Andrea Yahya — Grimoire Alkimia.
+# Kredit Aset & Lisensi
 
 ## Tipografi
-- **Cinzel Decorative**: Didesain oleh Natanael Gama. Lisensi Open Font License (OFL).
-- **Cormorant Garamond**: Didesain oleh Christian Thalmann (Catharsis Fonts). Lisensi Open Font License (OFL).
-- **IM Fell English**: Didesain oleh Igino Marini. Lisensi Open Font License (OFL).
+- **Pirata One** — Dibuat oleh Rodrigo Fuenzalida & Nicolas Silva (Google Fonts, SIL Open Font License 1.1)
+- **Inter** — Dibuat oleh Rasmus Andersson (Google Fonts, SIL Open Font License 1.1)
+- **Courier Prime** — Dibuat oleh Quote-Unquote Apps (Google Fonts, SIL Open Font License 1.1)
 
-## Audio & Efek Suara
-- Musik Latar Celesta & Harpsichord Alkimia (`grimoire-loop.mp3`): Dibuat prosedural bebas hak cipta (CC0/MIT).
-- Efek Suara Ramuan, Debu Bintang, Tinta Gaib, Segel Lilin, dan Klik: Sintesis audio ringan bebas hak cipta (CC0/MIT).
+## Pustaka Perangkat Lunak
+- **React 18** — MIT License
+- **Vite** — MIT License
+- **Tailwind CSS** — MIT License
+- **Framer Motion** — MIT License
+- **Howler.js** — MIT License
 
-## Ikon dan Ornamen Alkimia
-- Seluruh simbol alkimia klasik (Api, Air, Tanah, Udara, Planet, Sigil konsentris, Botol Ramuan, Sudut Hias, dan Segel Lilin) digambar secara mandiri sebagai SVG inline asli tanpa menggunakan library ikon eksternal.
+## Visual & Ikonografi
+- Seluruh ilustrasi SVG (rumah tua, labu, hantu, kelelawar, laba-laba, toples ramuan, lilin, lentera, bulan purnama) digambar sendiri dengan kode SVG orisinal tanpa library icon eksternal dan bebas hak cipta franchise.
+
+## Efek Suara & Musik Ambience
+- Efek suara malam, klik senter, kepakan kelelawar, percikan, dan ketukan pintu: audio sintesis dan berlisensi Creative Commons 0 (CC0 Public Domain).

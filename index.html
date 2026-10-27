@@ -1,22 +1,1410 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#14173a" />
-    <title>Kaka Andrea Yahya — Grimoire Alkimia</title>
-    <meta name="description" content="Portofolio Kaka Andrea Yahya dalam lembaran perkamen Grimoire Alkimia kuno. Siswa Rekayasa Perangkat Lunak SMKN 13 Bandung." />
-    <meta property="og:title" content="Kaka Andrea Yahya — Grimoire Alkimia" />
-    <meta property="og:description" content="Catatan eksperimen, ramuan kode, dan segel pencapaian Kaka Andrea Yahya." />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:type" content="website" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-malamsihir text-krem font-isi antialiased selection:bg-ramuanmerah/40 selection:text-cahayatinta">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaka Andrea Yahya | Code Necromancer Portfolio</title>
+  <meta name="description" content="Portofolio Kaka Andrea Yahya - Code Necromancer, Web Developer & Spooky Pixel Enthusiast.">
+  
+  <!-- Google Fonts: Press Start 2P, Cinzel Decorative, & VT323 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Creepster&family=Pirata+One&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF7518'><path d='M12 2C8 2 4 5 4 10C4 16 8 22 12 22C16 22 20 16 20 10C20 5 16 2 12 2ZM8 9C8.8 9 9.5 9.7 9.5 10.5C9.5 11.3 8.8 12 8 12C7.2 12 6.5 11.3 6.5 10.5C6.5 9.7 7.2 9 8 9ZM16 9C16.8 9 17.5 9.7 17.5 10.5C17.5 11.3 16.8 12 16 12C15.2 12 14.5 11.3 14.5 10.5C14.5 9.7 15.2 9 16 9ZM12 18C9.5 18 8 16 8 16L9.5 15C9.5 15 10.5 16.2 12 16.2C13.5 16.2 14.5 15 14.5 15L16 16C16 16 14.5 18 12 18Z'/></svg>">
+</head>
+<body class="theme-night">
+
+  <!-- Background Environment Layer -->
+  <div class="bg-wrapper">
+    <div class="bg-image bg-night active" id="bgNight"></div>
+    <div class="bg-image bg-sunset" id="bgSunset"></div>
+    <div class="bg-image bg-day" id="bgDay"></div>
+    <div class="bg-overlay"></div>
+    <div class="scanlines"></div>
+  </div>
+
+  <!-- Screen Tremor Wrapper for Earthquakes -->
+  <div id="earthquakeContainer" class="earthquake-wrapper">
+
+    <!-- Floating Navigation Bar -->
+    <header class="header-container">
+      <nav class="navbar" id="navbar">
+        <!-- Left Logo: Spooky Jack-o'-Lantern Emblem -->
+        <a href="#home" class="nav-logo" aria-label="Home">
+          <svg class="pumpkin-logo-icon" viewBox="0 0 32 32" width="28" height="28">
+            <path d="M15 2 C16 4 17 6 18 7 C15 7 14 6 14 3 Z" fill="#2d7f36" />
+            <ellipse cx="16" cy="18" rx="13" ry="11" fill="#FF7518" stroke="#4a1500" stroke-width="1.5"/>
+            <path d="M9 13 L12 17 L7 17 Z" fill="#2b0000" />
+            <path d="M23 13 L25 17 L20 17 Z" fill="#2b0000" />
+            <polygon points="16,16 14,19 18,19" fill="#2b0000" />
+            <path d="M9 22 L11 20 L13 22 L15 20 L17 22 L19 20 L21 22 L23 20 L22 24 L19 25 L16 26 L13 25 L10 24 Z" fill="#2b0000" />
+            <circle cx="10" cy="15" r="1" fill="#FFD700" opacity="0.8"/>
+            <circle cx="22" cy="15" r="1" fill="#FFD700" opacity="0.8"/>
+          </svg>
+          <span class="logo-text">KAKA.NECRO</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home" class="nav-link active">Sanctum</a></li>
+          <li><a href="#about" class="nav-link">Grimoire</a></li>
+          <li><a href="#projects" class="nav-link">Spells</a></li>
+          <li><a href="#sertificat" class="nav-link">Relics</a></li>
+          <li><a href="#shadows" class="nav-link">Companions</a></li>
+          <li><a href="#contact" class="nav-link">Altar</a></li>
+        </ul>
+
+        <!-- Right Controls: Sound, Theme, & Mascot Settings -->
+        <div class="nav-actions">
+          <!-- 8-Bit Web Audio Toggle -->
+          <button class="nav-btn sound-btn" id="soundToggle" title="Nyalakan/Matikan Suara 8-Bit" aria-label="Toggle Sound">
+            <svg class="sound-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+          </button>
+
+          <!-- Day / Sunset / Night Mode Toggle -->
+          <button class="nav-btn theme-toggle" id="themeToggle" title="Ganti Mode Waktu (Siang / Sore / Malam)" aria-label="Toggle Theme">
+            <!-- Moon Icon (Night) -->
+            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12.3 2a10 10 0 0 0-1.9 20 10 10 0 0 0 9.6-7.3 1 1 0 0 0-1.2-1.2 8 8 0 1 1-7.7-10.3 1 1 0 0 0-1.2-1.2z"/>
+            </svg>
+            <!-- Sun Icon (Day) -->
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <!-- Sunset Icon (Sore) -->
+            <svg class="theme-icon sunset-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 10v2M5.6 11.6l.7.7M18.4 11.6l-.7.7M8 17a4 4 0 0 1 8 0M3 17h18M2 21h20M12 4v2M4 9l1.5.5M20 9l-1.5.5"/>
+            </svg>
+          </button>
+
+          <!-- Settings Dropdown (Toggle Pumpkin Cursor & Mascots) -->
+          <div class="settings-wrapper" id="settingsWrapper">
+            <button class="nav-btn settings-btn" id="settingsToggle" title="Pengaturan Efek (Kursor Labu &amp; Makhluk Kuburan)" aria-label="Pengaturan">
+              <svg class="settings-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+              </svg>
+            </button>
+
+            <!-- Spooky Tombstone Settings Modal -->
+            <div class="settings-dropdown spooky-modal" id="settingsDropdown" aria-hidden="true">
+              <div class="spooky-modal-inner">
+                <div class="settings-dropdown-header">
+                  <span class="settings-title">RITUAL SETTINGS</span>
+                  <span class="settings-divider">✦ 🎃 ✦</span>
+                </div>
+                <div class="settings-dropdown-body">
+                  <!-- Switch 1: Kursor Arwah Reaper Melayang -->
+                  <div class="settings-row" id="rowToggleDragon">
+                    <div class="settings-info">
+                      <span class="settings-label">Arwah Reaper</span>
+                      <span class="settings-sub">Sabit gaib &amp; roh ungu</span>
+                    </div>
+                    <button type="button" class="spooky-switch active" id="btnToggleDragon" aria-label="Toggle Kursor Arwah Reaper" role="switch" aria-checked="true">
+                      <span class="switch-track"><span class="switch-knob"></span></span>
+                      <span class="switch-label">ON</span>
+                    </button>
+                  </div>
+
+                  <!-- Switch 2: Makhluk Kuburan (Tengkorak & Monster Labu) -->
+                  <div class="settings-row" id="rowToggleMascots">
+                    <div class="settings-info">
+                      <span class="settings-label">Makhluk Kubur</span>
+                      <span class="settings-sub">Skully &amp; Pumpling</span>
+                    </div>
+                    <button type="button" class="spooky-switch active" id="btnToggleMascots" aria-label="Toggle Makhluk Kuburan" role="switch" aria-checked="true">
+                      <span class="switch-track"><span class="switch-knob"></span></span>
+                      <span class="switch-label">ON</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- HERO SECTION -->
+      <section class="hero-section" id="home">
+        <div class="hero-container">
+          
+          <div class="hero-content">
+            <div class="hero-greeting">
+              <span class="pixel-prefix">GREETINGS, MORTAL... I'M</span>
+            </div>
+
+            <h1 class="hero-title">
+              <span class="line-1">Kaka Andrea</span>
+              <span class="line-2">Yahya</span>
+            </h1>
+
+            <!-- Decorative Halloween Divider -->
+            <div class="hero-divider">
+              <span class="divider-line left"></span>
+              <div class="divider-emblem" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="#FF7518">
+                  <path d="M12 2L14 8L21 9L16 14L18 21L12 17L6 21L8 14L3 9L10 8Z" />
+                  <circle cx="12" cy="12" r="3" fill="#8A2BE2" />
+                </svg>
+              </div>
+              <span class="divider-line right"></span>
+            </div>
+
+            <!-- Subtitle with Typing Animation -->
+            <p class="hero-subtitle">
+              <span class="typing-text" id="typingText">Code Necromancer &amp; Spooky Web Developer</span>
+              <span class="cursor">_</span>
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="hero-actions">
+              <a href="#projects" class="pixel-btn primary-btn">
+                <span class="btn-icon">🔮</span> Grimoire Proyek
+              </a>
+              <a href="#contact" class="pixel-btn summon-trigger-btn">
+                <span class="btn-icon">⚡</span> Ritual Kontak
+              </a>
+              <a href="#about" class="pixel-btn outline-btn">
+                <span class="btn-icon">💀</span> Bio Necromancer
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Scroll Down Indicator -->
+        <a href="#about" class="scroll-down-indicator" aria-label="Scroll ke Grimoire">
+          <span class="scroll-text">ENTER GRAVEYARD</span>
+          <div class="scroll-arrow">▼</div>
+        </a>
+      </section>
+
+      <!-- ABOUT SECTION (Grimoire Bio & Stats) -->
+      <section class="section about-section" id="about">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">THE NECROMANCER GRIMOIRE</h2>
+            <div class="section-divider">
+              <span class="line"></span>
+              <span class="star">✦ 🎃 ✦</span>
+              <span class="line"></span>
+            </div>
+            <p class="section-subtitle">Character Profile, Dark Syntax &amp; Arcane Stats</p>
+          </div>
+
+          <!-- Interactive Grimoire Container: Collapsed Portrait Card -> 3D Flip -> Expanded Scroll -->
+          <div class="grimoire-interactive-container" id="grimoireContainer">
+            
+            <!-- Rolled Card Wrapper with 3D Flip and Scroll Expansion -->
+            <div class="grimoire-card-frame collapsed" id="grimoireCardFrame">
+              
+              <!-- Left & Right Wooden Rollers for Scroll Effect -->
+              <div class="scroll-spindle spindle-left" aria-hidden="true"></div>
+              <div class="scroll-spindle spindle-right" aria-hidden="true"></div>
+
+              <!-- COLLAPSED PORTRAIT VIEW (TAMPILAN AWAL KARTU POTRET) -->
+              <div class="grimoire-collapsed-view" id="grimoireCollapsedView">
+                <div class="card-header">
+                  <span class="card-badge">CLASS: CODE NECROMANCER</span>
+                  <span class="card-hp">HP 100/100</span>
+                </div>
+
+                <div class="avatar-frame">
+                  <!-- 3D Flippable Avatar Card: Front (Pixel Art) <-> Back (Real Photo of Kaka) -->
+                  <div class="avatar-flip-card" id="avatarFlipCard" title="Arahkan kursor atau klik untuk membalik avatar & melihat foto asli!">
+                    <div class="avatar-card-inner" id="avatarCardInner">
+                      
+                      <!-- Front Face: The Iconic Pixel Art Necromancer -->
+                      <div class="avatar-face avatar-front">
+                        <div class="pixel-avatar-art">
+                          <svg viewBox="0 0 64 64" width="130" height="130" shape-rendering="crispEdges">
+                            <rect x="18" y="6" width="28" height="6" fill="#180b26"/>
+                            <rect x="14" y="12" width="36" height="8" fill="#2b1442"/>
+                            <rect x="10" y="20" width="44" height="24" fill="#12081d"/>
+                            <rect x="18" y="22" width="28" height="18" fill="#07030a"/>
+                            <rect x="23" y="29" width="5" height="4" fill="#a855f7"/>
+                            <rect x="36" y="29" width="5" height="4" fill="#a855f7"/>
+                            <rect x="25" y="30" width="2" height="2" fill="#ffffff"/>
+                            <rect x="38" y="30" width="2" height="2" fill="#ffffff"/>
+                            <rect x="20" y="44" width="24" height="16" fill="#200d33"/>
+                            <rect x="28" y="46" width="8" height="8" fill="#FF7518"/>
+                            <rect x="30" y="48" width="2" height="2" fill="#2b0000"/>
+                            <rect x="34" y="48" width="2" height="2" fill="#2b0000"/>
+                            <rect x="31" y="52" width="4" height="1" fill="#2b0000"/>
+                            <rect x="8" y="44" width="10" height="14" fill="#3b175c"/>
+                            <rect x="46" y="44" width="10" height="14" fill="#3b175c"/>
+                            <rect x="11" y="48" width="4" height="2" fill="#a855f7"/>
+                            <rect x="49" y="48" width="4" height="2" fill="#a855f7"/>
+                          </svg>
+                        </div>
+                        <div class="avatar-face-badge"><span>PIXEL ART</span></div>
+                      </div>
+
+                      <!-- Back Face: Real Portrait Photo of Kaka Andrea Yahya (KK.jpeg) -->
+                      <div class="avatar-face avatar-back">
+                        <div class="real-photo-art">
+                          <img src="./Assets/Images/kaka-portrait.jpg" alt="Foto Asli Kaka Andrea Yahya" class="kaka-real-photo" onerror="this.src='../referensi/KK.jpeg'">
+                          <div class="photo-overlay-vignette"></div>
+                        </div>
+                        <div class="avatar-face-badge real-badge"><span>REAL PORTRAIT</span></div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="avatar-flip-indicator">
+                    <span class="flip-sparkle">✦</span>
+                    <span class="flip-hint-text">Arahkan kursor / klik untuk putar potret asli</span>
+                    <span class="flip-sparkle">✦</span>
+                  </div>
+
+                  <div class="avatar-title">
+                    <h3>Kaka Andrea Yahya</h3>
+                    <span class="avatar-class">Software Artisan &amp; Code Necromancer</span>
+                  </div>
+                </div>
+
+                <p class="collapsed-brief-lore">
+                  Pengembang web beraliran retro-pixel art &amp; rekayasa modern. Membangkitkan baris kode kosong menjadi pengalaman digital interaktif yang bernyawa.
+                </p>
+
+                <!-- Mini preview stats -->
+                <div class="collapsed-quick-stats">
+                  <div class="quick-stat-pill"><span class="q-label">INT</span> <span class="q-val">94%</span></div>
+                  <div class="quick-stat-pill"><span class="q-label">WIS</span> <span class="q-val">90%</span></div>
+                  <div class="quick-stat-pill"><span class="q-label">DEX</span> <span class="q-val">93%</span></div>
+                  <div class="quick-stat-pill"><span class="q-label">STA</span> <span class="q-val">99%</span></div>
+                </div>
+
+                <div class="collapsed-footer-action">
+                  <button type="button" class="grimoire-expand-trigger-btn" id="btnExpandGrimoire">
+                    <span class="btn-icon">📜</span>
+                    <span>BUKA GULUNGAN LENGKAP ✦</span>
+                  </button>
+                  <span class="click-hint">(Klik kartu untuk memutar &amp; membentangkan)</span>
+                </div>
+              </div>
+
+              <!-- EXPANDED SCROLL VIEW (TAMPILAN MELEBAR SETELAH BERPUTAR) -->
+              <div class="grimoire-expanded-view" id="grimoireExpandedView">
+                <div class="expanded-header-bar">
+                  <div class="scroll-seal-tag">
+                    <span class="seal-gem">✦</span>
+                    <span>THE SACRED NECROMANCER SCROLL</span>
+                    <span class="seal-gem">✦</span>
+                  </div>
+                  <button type="button" class="grimoire-roll-back-btn" id="btnCloseGrimoireCorner" title="Gulung Kembali Kartu">
+                    <span>✖ Gulung Kembali Kartu</span>
+                  </button>
+                </div>
+
+                <div class="expanded-scroll-grid">
+                  <!-- Left Column: Solo Leveling Style "STATUS WINDOW" -->
+                  <div class="expanded-left-col status-window-box">
+                    
+                    <!-- Top Window Title Banner with Filigree Accents -->
+                    <div class="status-window-header">
+                      <span class="status-corner-filigree left">❖</span>
+                      <h3 class="status-window-title">STATUS WINDOW</h3>
+                      <span class="status-corner-filigree right">❖</span>
+                    </div>
+
+                    <!-- Hunter Identity Block -->
+                    <div class="status-identity-block">
+                      <div class="status-id-row">
+                        <div class="status-id-cell">
+                          <span class="id-tag">NAME:</span>
+                          <span class="id-val highlight-name">KAKA ANDREA YAHYA</span>
+                        </div>
+                        <div class="status-id-cell text-right">
+                          <span class="id-tag">LEVEL:</span>
+                          <span class="id-val highlight-lvl">99 (MAX)</span>
+                        </div>
+                      </div>
+
+                      <div class="status-id-row">
+                        <div class="status-id-cell">
+                          <span class="id-tag">CLASS:</span>
+                          <span class="id-val highlight-class">CODE NECROMANCER</span>
+                        </div>
+                        <div class="status-id-cell text-right">
+                          <span class="id-tag">FATIGUE:</span>
+                          <span class="id-val highlight-fatigue">0</span>
+                        </div>
+                      </div>
+
+                      <div class="status-id-row">
+                        <div class="status-id-cell full-width">
+                          <span class="id-tag">TITLE:</span>
+                          <span class="id-val highlight-title">SHADOW MONARCH OF CODE (ONE WHO SUMMONS LIVING BITS)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Divider 1 with Solo Leveling Diamond -->
+                    <div class="status-divider-bar">
+                      <span class="divider-line-sub"></span>
+                      <span class="divider-diamond">◆</span>
+                    </div>
+
+                    <!-- Vitals Section (HP & MP) -->
+                    <div class="status-vitals-block">
+                      <div class="vital-row">
+                        <div class="vital-info">
+                          <span class="vital-name hp-color">HP:</span>
+                          <span class="vital-numbers">9,999 / 9,999</span>
+                        </div>
+                        <div class="vital-track"><div class="vital-fill fill-hp" style="width: 100%;"></div></div>
+                      </div>
+                      <div class="vital-row">
+                        <div class="vital-info">
+                          <span class="vital-name mp-color">MP:</span>
+                          <span class="vital-numbers">6,666 / 6,666</span>
+                        </div>
+                        <div class="vital-track"><div class="vital-fill fill-mp" style="width: 100%;"></div></div>
+                      </div>
+                    </div>
+
+                    <!-- Divider 2 with Solo Leveling Diamond -->
+                    <div class="status-divider-bar">
+                      <span class="divider-line-sub"></span>
+                      <span class="divider-diamond">◆</span>
+                    </div>
+
+                    <!-- Core Attributes Grid (Strength, Health, Agility, Intelligence, Sense) -->
+                    <div class="status-attributes-table">
+                      <div class="attr-table-row">
+                        <div class="attr-entry" title="Kekuatan menghabisi bug & tantangan arsitektur sistem">
+                          <span class="attr-label">STRENGTH:</span>
+                          <span class="attr-value">88</span>
+                        </div>
+                        <div class="attr-entry" title="Daya tahan begadang & stamina maraton sprint">
+                          <span class="attr-label">HEALTH:</span>
+                          <span class="attr-value">99</span>
+                        </div>
+                      </div>
+
+                      <div class="attr-table-row">
+                        <div class="attr-entry" title="Kecepatan sprint delivery & pengetikan kode kilat">
+                          <span class="attr-label">AGILITY:</span>
+                          <span class="attr-value">93</span>
+                        </div>
+                        <div class="attr-entry highlight-int" title="Sihir logika algoritma, React & JavaScript modern">
+                          <span class="attr-label">INTELLIGENCE:</span>
+                          <span class="attr-value">96</span>
+                        </div>
+                      </div>
+
+                      <div class="attr-table-row single">
+                        <div class="attr-entry full" title="Kepekaan estetika visual, pixel art, & intuisi UI/UX">
+                          <span class="attr-label">SENSE:</span>
+                          <span class="attr-value">94</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Divider 3 -->
+                    <div class="status-divider-bar">
+                      <span class="divider-line-sub"></span>
+                      <span class="divider-diamond">◆</span>
+                    </div>
+
+                    <!-- Status Equipment & Active Buffs Footer -->
+                    <div class="status-inventory-block">
+                      <div class="inventory-line">
+                        <span class="inv-tag equip">EQUIPMENT</span>
+                        <span class="inv-text">⌨️ Cursed Mechanical Keyboard +9</span>
+                      </div>
+                      <div class="inventory-line">
+                        <span class="inv-tag buff">ACTIVE BUFF</span>
+                        <span class="inv-text">☕ Midnight Dark Roast (+50% Focus, 0 Fatigue)</span>
+                      </div>
+                      <div class="inventory-line">
+                        <span class="inv-tag army">SHADOW ARMY</span>
+                        <span class="inv-text">💀 12+ Summoned Projects in Production</span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Right Column: Full Lore, Highlights, & Skills Tree -->
+                  <div class="expanded-right-col">
+                    <div class="bio-card-inner">
+                      <h3 class="card-heading">THE NECROMANCER'S EXPANDED LOG</h3>
+                      <p class="bio-paragraph">
+                        Salam kegelapan! Saya <strong>Kaka Andrea Yahya</strong>, seorang pengembang perangkat lunak berjiwa <em>Code Necromancer</em> yang memadukan keindahan misterius retro-pixel art dengan sihir kode modern yang tangguh.
+                      </p>
+                      <p class="bio-paragraph">
+                        Dari baris kode kosong, saya membangkitkan antarmuka web interaktif yang bernyawa, beranimasi mulus, dan memberikan sensasi visual tak terlupakan bagi setiap pengembara digital yang singgah.
+                      </p>
+
+                      <div class="bio-highlights">
+                        <div class="highlight-box">
+                          <span class="highlight-number">3+</span>
+                          <span class="highlight-desc">Years Summoning Code</span>
+                        </div>
+                        <div class="highlight-box">
+                          <span class="highlight-number">12+</span>
+                          <span class="highlight-desc">Resurrected Quests</span>
+                        </div>
+                        <div class="highlight-box">
+                          <span class="highlight-number">100%</span>
+                          <span class="highlight-desc">Obsession &amp; Polish</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Skills Tree -->
+                    <div class="skills-card-inner">
+                      <h3 class="card-heading">FORBIDDEN SPELLS &amp; INVENTORY</h3>
+                      <div class="skills-tags">
+                        <span class="skill-tag">HTML5 &amp; Semantic Bones</span>
+                        <span class="skill-tag">CSS3 / Dark Theme Magic</span>
+                        <span class="skill-tag">JavaScript (ES6+ Sorcery)</span>
+                        <span class="skill-tag">React &amp; Modern Frameworks</span>
+                        <span class="skill-tag">Responsive Ghostly Layouts</span>
+                        <span class="skill-tag">Web Audio API (8-Bit SFX)</span>
+                        <span class="skill-tag">DOM Manipulation Rituals</span>
+                        <span class="skill-tag">Git &amp; GitHub Necromancy</span>
+                        <span class="skill-tag">RESTful API Summoning</span>
+                        <span class="skill-tag">UI/UX &amp; Spooky Aesthetics</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="expanded-bottom-bar">
+                  <button type="button" class="grimoire-collapse-pill-btn" id="btnCloseGrimoireBottom">
+                    <span>📜 Gulung Kembali Menjadi Kartu Potret</span>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS SHOWCASE SECTION -->
+      <section class="section projects-section" id="projects">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">GRIMOIRE OF SPELLS</h2>
+            <div class="section-divider">
+              <span class="line"></span>
+              <span class="star">✦ 🔮 ✦</span>
+              <span class="line"></span>
+            </div>
+            <p class="section-subtitle">Koleksi Proyek Unggulan yang Telah Dibangkitkan</p>
+          </div>
+
+          <!-- THE OPEN GRIMOIRE: Ancient 2-Page Spellbook (Option 1) -->
+          <div class="open-grimoire-container">
+            <div class="open-grimoire-book" id="openGrimoireBook">
+              <!-- Book Corner Ornaments -->
+              <span class="grimoire-corner corner-tl" aria-hidden="true"></span>
+              <span class="grimoire-corner corner-tr" aria-hidden="true"></span>
+              <span class="grimoire-corner corner-bl" aria-hidden="true"></span>
+              <span class="grimoire-corner corner-br" aria-hidden="true"></span>
+              
+              <!-- Center Leather Spine & Silk Ribbon Bookmark -->
+              <div class="grimoire-spine" aria-hidden="true">
+                <span class="spine-runes">᚛ ᚚ ᚠ ᛟ ᚜</span>
+                <span class="grimoire-ribbon"></span>
+              </div>
+
+              <!-- Halaman Kiri: The Spell Codex (Daftar Gulungan Mantra) -->
+              <div class="grimoire-page page-left">
+                <div class="page-ornament-header">
+                  <div class="page-tag-line">
+                    <span class="page-chapter-badge">LIBER I • CODEX</span>
+                    <span class="page-number-folio">FOLIO 01</span>
+                  </div>
+                  <h3 class="grimoire-page-title">DAFTAR MANTRA KUNO</h3>
+                  <div class="parchment-divider"><span>✦ ❖ ✦</span></div>
+                  <p class="page-instruction">Pilih gulungan mantra untuk membuka lembaran detail proyek di sebelah kanan:</p>
+                </div>
+
+                <!-- Spell Category Filter Pills -->
+                <div class="spell-filter-pills" id="spellFilterPills">
+                  <button type="button" class="spell-filter-btn active" data-filter="all">Semua</button>
+                  <button type="button" class="spell-filter-btn" data-filter="web">Web Artifact</button>
+                  <button type="button" class="spell-filter-btn" data-filter="mobile">Mobile App</button>
+                  <button type="button" class="spell-filter-btn" data-filter="system">Sistem</button>
+                  <button type="button" class="spell-filter-btn" data-filter="interactive">Interactive</button>
+                </div>
+
+                <!-- Scrollable Spell Index List -->
+                <div class="spell-codex-list" id="spellCodexList" role="tablist" aria-label="Daftar Mantra Proyek">
+                  <!-- Injected via JavaScript -->
+                </div>
+
+                <div class="page-footer-note">
+                  <span class="candle-icon">🕯️</span>
+                  <span>Sentuh atau klik gulungan mantra untuk membacakan lembaran kitab</span>
+                </div>
+              </div>
+
+              <!-- Halaman Kanan: Active Spell Inscription (Detail & Preview Lembaran Terpilih) -->
+              <div class="grimoire-page page-right" id="grimoirePageRight">
+                <div class="page-ornament-header">
+                  <div class="page-tag-line">
+                    <span class="page-chapter-badge active-tag" id="activeSpellStatus">✨ MANTRA AKTIF</span>
+                    <span class="page-number-folio" id="activeSpellFolio">FOLIO 02</span>
+                  </div>
+                  <h3 class="grimoire-page-title active-spell-heading" id="activeSpellTitle">Memuat Lembaran Mantra...</h3>
+                  <div class="parchment-divider"><span>✦ 🔮 ✦</span></div>
+                </div>
+
+                <!-- Crystal Scrying Frame (Project Mockup & Visual Frame) -->
+                <div class="spell-crystal-frame" id="spellCrystalFrame">
+                  <div class="crystal-lens-glow" aria-hidden="true"></div>
+                  <div class="crystal-top-bar">
+                    <span class="crystal-dot"></span>
+                    <span class="crystal-dot"></span>
+                    <span class="crystal-dot"></span>
+                    <span class="crystal-path" id="activeSpellCategoryBadge">WEB ARTIFACT</span>
+                  </div>
+                  <div class="crystal-preview-box" id="activeSpellPreviewBox">
+                    <!-- Dynamic Graphic Mockup injected by JS -->
+                  </div>
+                </div>
+
+                <!-- Spell Ingredients & Tech Stack -->
+                <div class="spell-ingredients-section">
+                  <span class="ingredients-label">✦ BAHAN RAMUAN &amp; MATRIKS KODE:</span>
+                  <div class="spell-tags-container" id="activeSpellTags">
+                    <!-- Tags injected by JS -->
+                  </div>
+                </div>
+
+                <!-- Spell Lore & Problem-Solution Inscription -->
+                <div class="spell-lore-scroll">
+                  <h4 class="lore-heading">✦ CATATAN KITAB KUNO:</h4>
+                  <p class="lore-text" id="activeSpellDesc">
+                    <!-- Description injected by JS -->
+                  </p>
+                </div>
+
+                <!-- Action Runes (Live Demo & GitHub Buttons) -->
+                <div class="spell-action-runes" id="activeSpellActions">
+                  <a href="#home" id="activeSpellDemoBtn" target="_blank" rel="noopener noreferrer" class="grimoire-btn btn-demo">
+                    <span class="btn-glyph">👁️</span>
+                    <span>Coba Mantra (Live Demo)</span>
+                  </a>
+                  <a href="https://github.com/Kalzz76" id="activeSpellGithubBtn" target="_blank" rel="noopener noreferrer" class="grimoire-btn btn-github">
+                    <span class="btn-glyph">📜</span>
+                    <span>Gulungan Kode (GitHub)</span>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CERTIFICATES SECTION -->
+      <section class="section cert-section" id="sertificat">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">SACRED RELICS &amp; CERTIFICATES</h2>
+            <div class="section-divider">
+              <span class="line"></span>
+              <span class="star">✦ 📜 ✦</span>
+              <span class="line"></span>
+            </div>
+            <p class="section-subtitle">Bukti Kompetensi &amp; Segel Pembelajaran Resmi</p>
+          </div>
+
+          <!-- Opsi A: Minimalist Spotlight Showcase & Thumbnail Filmstrip -->
+          <div class="cert-spotlight-wrapper">
+            <!-- Main Showcase Card -->
+            <div class="cert-spotlight-card" id="certSpotlightCard">
+              <div class="spotlight-visual-pane">
+                <div class="spotlight-frame" id="spotlightFrame">
+                  <img src="./Assets/Certificates/cert-web-dicoding.jpg" alt="Sertifikat" id="spotlightImg" class="spotlight-img" />
+                  <div class="spotlight-badge" id="spotlightBadge">DICODING ACADEMY</div>
+                  <button type="button" class="spotlight-quick-zoom" id="btnZoomSpotlightQuick" title="Lihat Ukuran Penuh" aria-label="Lihat Ukuran Penuh">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="spotlight-info-pane">
+                <div class="spotlight-header-meta">
+                  <span class="spotlight-index-pill" id="spotlightIndex">RELIC 01 / 03</span>
+                  <span class="spotlight-verified-badge">
+                    <span class="verified-dot"></span>
+                    <span>VERIFIED CREDENTIAL</span>
+                  </span>
+                </div>
+
+                <h3 class="spotlight-title" id="spotlightTitle">Belajar Dasar Pemrograman Web</h3>
+                
+                <p class="spotlight-desc" id="spotlightDesc">
+                  Sertifikasi resmi penguasaan fondasi HTML5, CSS3, teknik tata letak responsif modern (Flexbox &amp; CSS Grid), serta kode semantik berstandar industri.
+                </p>
+
+                <div class="spotlight-skills-group">
+                  <div class="skills-heading">KOMPETENSI TERUJI</div>
+                  <div class="spotlight-tags" id="spotlightTags">
+                    <!-- Dynamic skill tags -->
+                  </div>
+                </div>
+
+                <div class="spotlight-actions">
+                  <button type="button" class="spotlight-action-btn primary" id="btnZoomSpotlight">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <span>Perbesar Dokumen</span>
+                  </button>
+                  <a href="#" target="_blank" rel="noopener noreferrer" class="spotlight-action-btn secondary" id="spotlightVerifyLink">
+                    <span>↗ Cek Kredensial Resmi</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thumbnail Filmstrip Strip -->
+            <div class="cert-filmstrip-bar">
+              <button type="button" class="filmstrip-arrow prev" id="certStripPrev" aria-label="Sertifikat Sebelumnya">❮</button>
+              <div class="cert-filmstrip-track" id="certFilmstripTrack">
+                <!-- Dynamically built thumbnail cards -->
+              </div>
+              <button type="button" class="filmstrip-arrow next" id="certStripNext" aria-label="Sertifikat Berikutnya">❯</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SANCTUM GUESTBOOK & COMPANIONS (BUKU TAMU & KAWANAN MASKOT) -->
+      <section class="section shadow-army-section" id="shadows">
+        <div class="section-container">
+          
+          <!-- Section Main Header -->
+          <div class="shadow-section-header">
+            <div class="shadow-header-emblem">
+              <span class="solo-crown-gem">🎃</span>
+              <span class="shadow-monarch-crest">👻 🦇 🐱 💀 🧙‍♂️</span>
+              <span class="solo-crown-gem">🎃</span>
+            </div>
+            <h2 class="shadow-army-title">SANCTUM GUESTBOOK &amp; COMPANIONS</h2>
+            <div class="shadow-status-badge">
+              <span class="badge-dot"></span>
+              <span>BUKU TAMU &amp; KAWANAN MASKOT HALLOWEEN</span>
+              <span class="badge-dot"></span>
+            </div>
+            <p class="shadow-army-subtitle">
+              Buku tamu interaktif &amp; arena kawanan maskot sahabat yang singgah untuk memberikan dukungan serta pesan apresiasi dalam perjalanan portofolio Kaka Andrea Yahya.
+            </p>
+
+            <!-- Companions Live Telemetry HUD -->
+            <div class="shadow-hud-bar">
+              <div class="hud-item">
+                <span class="hud-lbl">AUTHOR / CREATOR:</span>
+                <span class="hud-val monarch-name">KAKA ANDREA YAHYA (WEB &amp; MOBILE DEV)</span>
+              </div>
+              <div class="hud-divider">◆</div>
+              <div class="hud-item">
+                <span class="hud-lbl">TOTAL MASKOT SAHABAT:</span>
+                <span class="hud-val highlight-corps" id="shadowTotalCount">6+ Sahabat Singgah</span>
+              </div>
+              <div class="hud-divider">◆</div>
+              <div class="hud-item">
+                <span class="hud-lbl">STATUS ARENA:</span>
+                <span class="hud-val zero-cost">RAMAH &amp; BERPATROLI BEBAS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMPANIONS DOMAIN (BOUNDED MASCOT PATROL PEN) -->
+          <div class="shadow-domain-container">
+
+            <!-- Bounded Box / Arena for Roaming Mascots -->
+            <div class="shadow-pen-box" id="shadowPenBox">
+              
+              <!-- Pen Header Ribbon -->
+              <div class="pen-header-ribbon">
+                <div class="pen-ribbon-title">
+                  <span class="pen-gem">❖</span>
+                  <span>SANCTUM COURTYARD • ARENA MASKOT PENGUNJUNG</span>
+                  <span class="pen-gem">❖</span>
+                </div>
+                <div class="pen-telemetry-badge">
+                  <span class="telemetry-pulse-dot"></span>
+                  <span id="penTelemetryCount">6 Maskot Sahabat Berpatroli</span>
+                </div>
+              </div>
+
+              <!-- Interactive Walking Ground Stage (2D Roaming Sandbox) -->
+              <div class="shadow-pen-stage" id="shadowPenStage">
+                <!-- Atmospheric Background Grid & Mist -->
+                <div class="pen-dungeon-grid" aria-hidden="true"></div>
+                <div class="pen-shadow-smoke" aria-hidden="true"></div>
+
+                <!-- Dynamically Spawned Wandering Mascots Roam Here -->
+              </div>
+
+              <!-- Interactive Hint Bar -->
+              <div class="pen-status-footer">
+                <div class="pen-hint">
+                  <span class="hint-spark">👁️</span>
+                  <span>Klik pada maskot mana saja untuk membuka <strong>Kartu Biodata &amp; Pesan Tamu</strong>! Maskot dapat berjalan bebas ke segala arah.</span>
+                </div>
+                
+                <button type="button" class="btn-arise-trigger compact-arise-btn" id="openAriseModalBtn">
+                  <span class="arise-spark">✨</span>
+                  <span class="arise-label">TITIP PESAN &amp; TAMBAH MASKOT</span>
+                  <span class="arise-spark">✨</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- HOLOGRAPHIC COMPANION VISITOR CARD -->
+        <div class="solo-status-backdrop" id="soloStatusOverlay" aria-hidden="true">
+          <div class="solo-status-window" role="dialog" aria-modal="true" aria-labelledby="statusWinName">
+            
+            <!-- Window Header -->
+            <div class="status-win-header">
+              <div class="status-win-title">
+                <span class="sys-bracket">[</span>
+                <span class="sys-title-text">KARTU BIODATA PENGUNJUNG SANCTUM</span>
+                <span class="sys-bracket">]</span>
+              </div>
+              <button type="button" class="status-win-close" id="closeStatusWinBtn" aria-label="Tutup jendela status">&times;</button>
+            </div>
+
+            <!-- Window Content -->
+            <div class="status-win-body">
+              
+              <div class="status-hero-banner">
+                <div class="status-avatar-emblem" id="statusWinAvatar">
+                  <span class="avatar-icon">🎃</span>
+                </div>
+                <div class="status-headline">
+                  <div class="status-rank-pill" id="statusWinRank">PUMPKIN SPIRIT</div>
+                  <h3 class="status-soldier-name" id="statusWinName">PUMPKIN PETE</h3>
+                  <div class="status-title-sub" id="statusWinTitle">Sahabat Pengunjung Sanctum</div>
+                </div>
+              </div>
+
+              <!-- Message Box -->
+              <div class="status-oath-panel">
+                <div class="oath-header-label">
+                  <span class="oath-glyph">❖</span>
+                  <span>PESAN &amp; KESAN DARI PENGUNJUNG:</span>
+                </div>
+                <div class="oath-quote-content" id="statusWinMessage">
+                  "Desain portofolionya keren banget! Nuansa retro dan animasinya bener-bener hidup!"
+                </div>
+                <div class="oath-origin-tag" id="statusWinDate">
+                  Tercatat di Sanctum • Status: Terverifikasi
+                </div>
+              </div>
+
+              <!-- Attributes & Vibe Meters -->
+              <div class="status-bars-section">
+                <div class="stat-gauge-row">
+                  <span class="gauge-label">ENERGY</span>
+                  <div class="gauge-track">
+                    <div class="gauge-fill hp-gauge" id="statusWinHpBar" style="width: 100%;"></div>
+                  </div>
+                  <span class="gauge-val" id="statusWinHpVal">100 / 100</span>
+                </div>
+                <div class="stat-gauge-row">
+                  <span class="gauge-label">VIBE</span>
+                  <div class="gauge-track">
+                    <div class="gauge-fill mp-gauge" id="statusWinMpBar" style="width: 100%;"></div>
+                  </div>
+                  <span class="gauge-val" id="statusWinMpVal">MAX / 100</span>
+                </div>
+              </div>
+
+              <!-- 5 Core Attributes -->
+              <div class="status-matrix-grid">
+                <div class="matrix-box">
+                  <span class="m-lbl">VIBE</span>
+                  <span class="m-val" id="attrStr">100</span>
+                </div>
+                <div class="matrix-box">
+                  <span class="m-lbl">CREAT</span>
+                  <span class="m-val" id="attrAgi">96</span>
+                </div>
+                <div class="matrix-box">
+                  <span class="m-lbl">LOGIC</span>
+                  <span class="m-val" id="attrInt">98</span>
+                </div>
+                <div class="matrix-box">
+                  <span class="m-lbl">SPIRIT</span>
+                  <span class="m-val" id="attrVit">99</span>
+                </div>
+                <div class="matrix-box">
+                  <span class="m-lbl">CHARM</span>
+                  <span class="m-val" id="attrPer">95</span>
+                </div>
+              </div>
+
+              <!-- Visitor Skills / Roles -->
+              <div class="status-skills-row">
+                <span class="skills-heading">ATRIBUT &amp; PERAN:</span>
+                <div class="skills-chip-list" id="statusWinSkills">
+                  <span class="skill-chip">Web Explorer</span>
+                  <span class="skill-chip">Code Appreciator</span>
+                  <span class="skill-chip">Spooky Good Vibes</span>
+                </div>
+              </div>
+
+              <!-- Close Action Button -->
+              <div class="status-action-row">
+                <button type="button" class="btn-dismiss-status" id="btnDismissStatus">
+                  <span>❖ TUTUP KARTU PENGUNJUNG</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- GUESTBOOK MESSAGE & MASCOT RECRUITMENT MODAL -->
+        <div class="shadow-modal-backdrop" id="shadowModalOverlay" aria-hidden="true">
+          <div class="shadow-modal-window" role="dialog" aria-modal="true">
+            
+            <!-- Window Header Bar -->
+            <div class="shadow-window-header">
+              <div class="window-decor-left">❖ BUKU TAMU SANCTUM ❖</div>
+              <button type="button" class="shadow-close-modal-btn" id="closeShadowModalBtn" aria-label="Tutup jendela">&times;</button>
+            </div>
+
+            <!-- Modal Content Inner -->
+            <div class="shadow-window-body">
+              <div class="extraction-ritual-banner">
+                <div class="monarch-callout">"WELCOME, TRAVELER!"</div>
+                <h3 class="extraction-title">TITIP PESAN &amp; PILIH MASKOTMU</h3>
+                <p class="extraction-desc">
+                  Tinggalkan jejak apresiasi, masukan, atau sapaanmu untuk Kaka. Pilih wujud maskot yang akan mewakili kehadiranmu di arena!
+                </p>
+              </div>
+
+              <form id="shadowExtractionForm" class="shadow-extraction-form">
+                
+                <div class="form-row-2col">
+                  <!-- Name Input -->
+                  <div class="shadow-field-group" id="shadowAuthorFieldWrap">
+                    <label for="shadowAuthorInput" class="shadow-field-label">NAMA ANDA / PANGGILAN</label>
+                    <input 
+                      type="text" 
+                      id="shadowAuthorInput" 
+                      class="shadow-input-field" 
+                      placeholder="Nama Anda / Alias..." 
+                      maxlength="24"
+                      required
+                    />
+                  </div>
+
+                  <!-- Mascot Type Selector -->
+                  <div class="shadow-field-group">
+                    <label for="shadowClassSelect" class="shadow-field-label">PILIH WUJUD MASKOT PENGUNJUNG</label>
+                    <select id="shadowClassSelect" class="shadow-input-field shadow-select">
+                      <option value="type-pumpkin" selected>🎃 Labu Ceria (Pumpkin Sprite)</option>
+                      <option value="type-ghost">👻 Hantu Imut (Friendly Ghost)</option>
+                      <option value="type-bat">🦇 Kelelawar Malam (Night Bat)</option>
+                      <option value="type-cat">🐱 Kucing Hitam (Midnight Cat)</option>
+                      <option value="type-skeleton">💀 Tengkorak Santuy (Chibi Skeleton)</option>
+                      <option value="type-wizard">🧙‍♂️ Penyihir Cilik (Little Wizard)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Message Field -->
+                <div class="shadow-field-group">
+                  <label for="shadowMessageInput" class="shadow-field-label">PESAN APRESIASI / MASUKAN / KESAN</label>
+                  <textarea 
+                    id="shadowMessageInput" 
+                    class="shadow-input-field shadow-textarea" 
+                    rows="3" 
+                    placeholder="Contoh: Keren banget portofolionya! Animasinya halus dan temanya sangat unik!" 
+                    required
+                  ></textarea>
+                </div>
+
+                <!-- Anonymous Checkbox -->
+                <div class="shadow-anon-row">
+                  <label class="shadow-anon-label" for="shadowAnonCheckbox">
+                    <input type="checkbox" id="shadowAnonCheckbox" class="shadow-checkbox" />
+                    <span class="shadow-custom-check"></span>
+                    <span>Kirim sebagai Pengunjung Anonim (Guest)</span>
+                  </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-extract-submit" id="btnSubmitArise">
+                  <span class="btn-pulse-flame"></span>
+                  <span class="btn-ico">✨</span>
+                  <span>KIRIM PESAN &amp; GABUNG KE ARENA</span>
+                  <span class="btn-ico">✨</span>
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT SECTION: THE CRYPT ALTAR (MEJA ALTAR KRIPTA KERAMAT) -->
+      <section class="section contact-section" id="contact">
+        <div class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">THE CRYPT ALTAR</h2>
+            <div class="section-divider">
+              <span class="line"></span>
+              <span class="star">✦ 🕯️ ✦</span>
+              <span class="line"></span>
+            </div>
+            <p class="section-subtitle">Meja Altar Batu Keramat • Lilin Arwah &amp; Transmisi Pesan Petualangan</p>
+          </div>
+
+          <!-- Altar Architectural Stage -->
+          <div class="crypt-altar-stage" id="cryptAltarStage">
+            
+            <!-- Left Standing Candelabra with Purple Spectral Flames -->
+            <div class="altar-candelabra candelabra-left" id="candelabraLeft" title="Klik lilin arwah untuk meniup / menyalakan mantra!">
+              <div class="candelabra-head">
+                <div class="altar-candle-stick c-1">
+                  <div class="candle-flame purple-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+                <div class="altar-candle-stick c-tall">
+                  <div class="candle-flame purple-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+                <div class="altar-candle-stick c-3">
+                  <div class="candle-flame purple-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+              </div>
+              <div class="candelabra-pillar">
+                <div class="skull-knob">💀</div>
+              </div>
+              <div class="candelabra-base"></div>
+            </div>
+
+            <!-- Central Gothic Stone Altar Table & Inscription Parchment Ledger -->
+            <!-- Central Gothic Stone Altar Table & Vault Structure -->
+            <div class="altar-table-monolith vault-closed" id="altarTableMonolith">
+              
+              <!-- 3D FOLDING DOUBLE DOORS (ANIME DUNGEON ALTAR GATE - MEZBAH KRIPTA) -->
+              <div class="altar-doors-overlay" id="altarDoorsOverlay">
+                <!-- Left Monolithic Basalt Door with Concentric Anime Magic Circle & Runes -->
+                <div class="altar-door door-left" id="altarDoorLeft">
+                  <div class="door-hinge hinge-top"></div>
+                  <div class="door-hinge hinge-middle"></div>
+                  <div class="door-hinge hinge-bottom"></div>
+
+                  <!-- Anime Runic Bevel Frame -->
+                  <div class="anime-door-panel">
+                    <!-- Concentric Magic Array Semi-Circle (Left Half) -->
+                    <div class="anime-gate-mandala left-mandala">
+                      <div class="mandala-ring outer-ring"></div>
+                      <div class="mandala-ring middle-ring"></div>
+                      <div class="mandala-ring inner-ring"></div>
+                      <div class="mandala-glyph-arc">
+                        <span>᚛</span><span>⛧</span><span>𖤍</span><span>ᛉ</span>
+                      </div>
+                    </div>
+
+                    <!-- Glowing Anime Mana Circuit Lines -->
+                    <div class="anime-mana-circuits">
+                      <div class="circuit-line cl-top"></div>
+                      <div class="circuit-line cl-diag"></div>
+                      <div class="circuit-line cl-bottom"></div>
+                      <span class="circuit-node cn-1">✦</span>
+                      <span class="circuit-node cn-2">❖</span>
+                    </div>
+
+                    <!-- Anime Monolith Inscription -->
+                    <div class="anime-gate-inscription">
+                      <span class="inscription-glyph">❖</span>
+                      <span class="inscription-text">SANCTUM PORTA • I</span>
+                      <span class="inscription-glyph">❖</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Center Anime Mana Seam (Vertical Mana Rift Beam) -->
+                <div class="door-center-seam anime-center-seam" aria-hidden="true">
+                  <div class="anime-seam-beam"></div>
+                  <div class="anime-seam-node node-top">❖</div>
+                  <div class="anime-seam-node node-mid">◆</div>
+                  <div class="anime-seam-node node-bot">❖</div>
+                </div>
+
+                <!-- Right Monolithic Basalt Door with Concentric Anime Magic Circle & Runes -->
+                <div class="altar-door door-right" id="altarDoorRight">
+                  <div class="door-hinge hinge-top"></div>
+                  <div class="door-hinge hinge-middle"></div>
+                  <div class="door-hinge hinge-bottom"></div>
+
+                  <!-- Anime Runic Bevel Frame -->
+                  <div class="anime-door-panel">
+                    <!-- Concentric Magic Array Semi-Circle (Right Half) -->
+                    <div class="anime-gate-mandala right-mandala">
+                      <div class="mandala-ring outer-ring"></div>
+                      <div class="mandala-ring middle-ring"></div>
+                      <div class="mandala-ring inner-ring"></div>
+                      <div class="mandala-glyph-arc">
+                        <span>ᛏ</span><span>𖤍</span><span>ᛋ</span><span>᚜</span>
+                      </div>
+                    </div>
+
+                    <!-- Glowing Anime Mana Circuit Lines -->
+                    <div class="anime-mana-circuits">
+                      <div class="circuit-line cl-top"></div>
+                      <div class="circuit-line cl-diag"></div>
+                      <div class="circuit-line cl-bottom"></div>
+                      <span class="circuit-node cn-1">✦</span>
+                      <span class="circuit-node cn-2">❖</span>
+                    </div>
+
+                    <!-- Anime Monolith Inscription -->
+                    <div class="anime-gate-inscription">
+                      <span class="inscription-glyph">❖</span>
+                      <span class="inscription-text">SANCTUM PORTA • II</span>
+                      <span class="inscription-glyph">❖</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Central Anime Mana Core Seal & Futuristic Fantasy Unlock Button -->
+                <div class="altar-vault-lock-seal anime-lock-seal" id="altarLockSeal">
+                  
+                  <!-- Floating Anime Mana Core Crystal -->
+                  <div class="anime-mana-core">
+                    <div class="mana-core-orb"></div>
+                    <div class="mana-core-ring ring-1"></div>
+                    <div class="mana-core-ring ring-2"></div>
+                    <span class="mana-core-emblem">❖</span>
+                  </div>
+
+                  <!-- Clean Anime Altar Gate Unlock Button (No Cluttered Warning Badges or Emojis) -->
+                  <button type="button" class="btn-unlock-altar anime-gate-btn" id="btnUnlockAltar">
+                    <span class="gate-btn-aura"></span>
+                    <span class="btn-gate-glyph">❖</span>
+                    <span class="btn-gate-text">BUKA GERBANG MEZBAH KRIPTA</span>
+                    <span class="btn-gate-glyph">❖</span>
+                  </button>
+
+                  <div class="anime-gate-seal-status">
+                    <span class="gate-status-dot"></span>
+                    <span class="gate-status-text">GERBANG MEZBAH KRIPTA TERSEGEL</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- INNER SANCTUARY CONTENT (TERBUKA SETELAH PINTU MENYIBAR) -->
+              <div class="altar-inner-sanctuary" id="altarInnerSanctuary">
+                
+                <!-- Stone Altar Table Top Slab with Carved Runes & Close Vault Button -->
+                <div class="altar-slab-header">
+                  <div class="altar-runes-carving">
+                    <span class="rune-glyph">᚛</span>
+                    <span class="rune-title">ALTAR OF SACRED CODE TRANSMISSION</span>
+                    <span class="rune-glyph">᚜</span>
+                  </div>
+                  <!-- Altar Table Atmosphere Accents & Close Button -->
+                  <div class="altar-accents">
+                    <span class="altar-prop quill-pen" title="Pena Bulu Gagak Necromancer">🪶</span>
+                    <span class="altar-prop skull-inkwell" title="Wadah Tinta Arwah Tengkorak">💀</span>
+                    <button type="button" class="altar-lock-back-btn" id="btnCloseAltarVault" title="Tutup Kembali Pintu Altar">
+                      <span>🔒 Tutup Pintu Altar</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Open Inscription Ledger (Parchment) -->
+                <div class="altar-parchment-ledger">
+                  <div class="altar-ledger-grid">
+                    
+                    <!-- Left Column: Altar Headquarters & Direct Transmit -->
+                    <div class="altar-info-col">
+                      <div class="altar-col-head">
+                        <span class="altar-head-icon">🔮</span>
+                        <h3>CRYPT HEADQUARTERS</h3>
+                      </div>
+                      <p class="altar-lore-text">
+                        Meja altar ini selalu terbuka bagi tawaran kolaborasi proyek, eksplorasi kode web, maupun sekadar bertukar sapa di keheningan malam.
+                      </p>
+
+                      <div class="altar-channels-list">
+                        <div class="altar-channel-item">
+                          <span class="ch-icon">📍</span>
+                          <div class="ch-content">
+                            <span class="ch-label">REALM / DOMAIN</span>
+                            <span class="ch-val">Bandung, Indonesia (Remote Friendly)</span>
+                          </div>
+                        </div>
+
+                        <div class="altar-channel-item">
+                          <span class="ch-icon">📧</span>
+                          <div class="ch-content">
+                            <span class="ch-label">SACRED PARCHMENT (EMAIL)</span>
+                            <a href="mailto:rafliar99@gmail.com" class="ch-val link">rafliar99@gmail.com</a>
+                          </div>
+                        </div>
+
+                        <div class="altar-channel-item">
+                          <span class="ch-icon">💬</span>
+                          <div class="ch-content">
+                            <span class="ch-label">WHATSAPP DISPATCH</span>
+                            <a href="https://wa.me/6285721726584" target="_blank" rel="noopener noreferrer" class="ch-val link">0857-2172-6584</a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Wax Seal Social Links -->
+                      <div class="altar-wax-socials">
+                        <span class="wax-title">TRANSMIT VIA RUNES:</span>
+                        <div class="wax-pills-row">
+                          <a href="https://github.com/Kalzz76" target="_blank" rel="noopener noreferrer" class="wax-seal-pill">
+                            <span class="seal-icon">🐱</span>
+                            <span>GitHub</span>
+                          </a>
+                          <a href="https://www.instagram.com/kalzzl?mdxt=Z3N4azJ5bGF4NHhh" target="_blank" rel="noopener noreferrer" class="wax-seal-pill">
+                            <span class="seal-icon">📸</span>
+                            <span>Instagram</span>
+                          </a>
+                          <a href="mailto:rafliar99@gmail.com" class="wax-seal-pill">
+                            <span class="seal-icon">✉️</span>
+                            <span>Email</span>
+                          </a>
+                          <a href="https://wa.me/6285721726584" target="_blank" rel="noopener noreferrer" class="wax-seal-pill">
+                            <span class="seal-icon">💬</span>
+                            <span>WhatsApp</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right Column: Inscription Message Form -->
+                    <div class="altar-form-col">
+                      <div class="altar-col-head">
+                        <span class="altar-head-icon">✒️</span>
+                        <h3>UKIR PESAN ARWAHMU</h3>
+                      </div>
+
+                      <form id="altarContactForm" class="altar-inscription-form">
+                        <div class="altar-form-row">
+                          <div class="altar-field">
+                            <label for="altarSenderName" class="altar-label">YOUR CALLSIGN / NAMA</label>
+                            <input type="text" id="altarSenderName" name="altarSenderName" class="altar-input" placeholder="Nama Anda..." required>
+                          </div>
+                          <div class="altar-field">
+                            <label for="altarSenderEmail" class="altar-label">SOUL ORB (EMAIL)</label>
+                            <input type="email" id="altarSenderEmail" name="altarSenderEmail" class="altar-input" placeholder="Email Anda..." required>
+                          </div>
+                        </div>
+
+                        <div class="altar-field">
+                          <label for="altarSenderSubject" class="altar-label">QUEST TOPIC (SUBJEK)</label>
+                          <input type="text" id="altarSenderSubject" name="altarSenderSubject" class="altar-input" placeholder="Contoh: Tawaran Kolaborasi Web / Proyek" required>
+                        </div>
+
+                        <div class="altar-field">
+                          <label for="altarSenderMessage" class="altar-label">INSCRIPTION (PESAN ANDA)</label>
+                          <textarea id="altarSenderMessage" name="altarSenderMessage" class="altar-input altar-textarea" rows="4" placeholder="Goreskan pesan petualangan Anda di atas meja altar ini..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="altar-submit-btn" id="btnSubmitAltar">
+                          <span class="wax-stamp">🩸</span>
+                          <span class="btn-text">SEGEL &amp; TRANSMISIKAN PESAN</span>
+                          <span class="btn-sparkle">✦</span>
+                        </button>
+                      </form>
+                    </div>
+
+                  </div>
+
+                  <!-- Close Bottom Bar -->
+                  <div class="altar-close-bar">
+                    <button type="button" class="altar-close-pill-btn" id="btnCloseAltarBottom">
+                      <span>🔒 Kunci Kembali Pintu Altar Keramat</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Stone Altar Foundation Base -->
+                <div class="altar-slab-footer">
+                  <span class="altar-moss">🌿</span>
+                  <span class="altar-motto">"HIC MORTUI VIVUNT, HIC SILENTIA LOQUUNTUR"</span>
+                  <span class="altar-moss">🌿</span>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Right Standing Candelabra with Orange Pumpkin Flames -->
+            <div class="altar-candelabra candelabra-right" id="candelabraRight" title="Klik lilin arwah untuk meniup / menyalakan mantra!">
+              <div class="candelabra-head">
+                <div class="altar-candle-stick c-1">
+                  <div class="candle-flame orange-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+                <div class="altar-candle-stick c-tall">
+                  <div class="candle-flame orange-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+                <div class="altar-candle-stick c-3">
+                  <div class="candle-flame orange-flame"></div>
+                  <div class="candle-body"></div>
+                </div>
+              </div>
+              <div class="candelabra-pillar">
+                <div class="skull-knob">🎃</div>
+              </div>
+              <div class="candelabra-base"></div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-star-divider">✦ 🎃 ✦</div>
+        <p class="footer-text">
+          &copy; 2026 <strong>Kaka Andrea Yahya</strong> (Code Necromancer). Crafted with Dark Syntax &amp; Pixel Sorcery.
+        </p>
+        <p class="footer-subtext">
+          <span class="blinking-prompt">PRESS START TO RESURRECT</span>
+        </p>
+        <a href="#home" class="back-to-top" title="Kembali ke atas">▲ TOP</a>
+      </div>
+    </footer>
+
+    <!-- Retro Toast Notification -->
+    <div class="pixel-toast" id="pixelToast" aria-live="polite">
+      <span class="toast-message" id="toastMessage">Pesan berhasil dikirim!</span>
+    </div>
+
+    <!-- Certificate Photo Lightbox Modal -->
+    <div class="cert-modal-backdrop" id="certModal" aria-hidden="true">
+      <div class="cert-modal-dialog" role="dialog" aria-modal="true">
+        <button class="cert-modal-close" id="certModalClose" aria-label="Tutup Pratinjau">&times;</button>
+        <div class="cert-modal-body">
+          <img src="" alt="Foto Sertifikat" id="modalCertImg" class="cert-modal-full-img">
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Stage Ground Bar -->
+    <div class="floor" aria-hidden="true"></div>
+
+    <!-- Stage Mascots: Tengkorak (Skully) & Monster Labu (Pumpling) -->
+    <div class="stage" id="stage" aria-hidden="true">
+      
+      <!-- Mascot A: Tengkorak (Skully) -->
+      <div class="char char-skeleton" id="a" style="left:12%">
+        <div class="bubble">Yo, Necromancer!</div>
+        <div class="hand">👋</div>
+        <div class="body">
+          <!-- Ribs & Glowing Eye Sockets -->
+          <div class="skeleton-head">
+            <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
+            <div class="skeleton-teeth"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="skeleton-ribs">
+            <span></span><span></span>
+          </div>
+        </div>
+        <div class="acc">💀</div>
+        <b class="z">z</b><b class="z">z</b>
+        <i class="leg l"></i><i class="leg r"></i>
+      </div>
+
+      <!-- Mascot B: Monster Labu Kecil (Pumpling) -->
+      <div class="char char-pumpkin" id="b" style="left:42%">
+        <div class="bubble">Trick or Treat!</div>
+        <div class="hand">👋</div>
+        <div class="body">
+          <i class="pumpkin-stem"></i>
+          <div class="pumpkin-carve">
+            <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
+            <div class="pumpkin-mouth"></div>
+          </div>
+        </div>
+        <div class="acc">🎃</div>
+        <b class="z">z</b><b class="z">z</b>
+        <i class="leg l"></i><i class="leg r"></i>
+      </div>
+
+    </div>
+
+    <!-- Floating Phantom Reaper Flying Cursor -->
+    <div class="dragon reaper-cursor" id="dragon" aria-hidden="true">
+      <i>
+        <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+          <!-- Spectral Tattered Cloak / Shadow Wings -->
+          <g class="reaper-cloak">
+            <path d="M42 22 C32 15 15 28 8 45 C18 42 24 50 30 62 C34 52 38 48 42 55 C46 48 54 52 58 62 C64 50 72 42 82 45 C75 28 58 15 48 22 Z" fill="#1b0c2e" stroke="#0a0312" stroke-width="2"/>
+            <path d="M26 40 C18 48 12 60 16 72 C22 64 30 65 34 58 Z" fill="#2d1347" opacity="0.8"/>
+            <path d="M64 40 C72 48 78 60 74 72 C68 64 60 65 56 58 Z" fill="#2d1347" opacity="0.8"/>
+          </g>
+
+          <!-- Deep Hood with Void Face -->
+          <ellipse cx="45" cy="30" rx="13" ry="16" fill="#07020d" stroke="#3b175c" stroke-width="1.8"/>
+          <!-- Piercing Glowing Purple/Cyan Eyes -->
+          <ellipse cx="41" cy="28" rx="2.5" ry="3.5" fill="#a855f7" filter="drop-shadow(0 0 4px #a855f7)"/>
+          <ellipse cx="49" cy="28" rx="2.5" ry="3.5" fill="#a855f7" filter="drop-shadow(0 0 4px #a855f7)"/>
+          <circle cx="41" cy="28" r="1" fill="#fff"/>
+          <circle cx="49" cy="28" r="1" fill="#fff"/>
+
+          <!-- Spectral Scythe in Hand -->
+          <!-- Handle -->
+          <line x1="28" y1="68" x2="68" y2="12" stroke="#523924" stroke-width="3" stroke-linecap="round"/>
+          <line x1="28" y1="68" x2="68" y2="12" stroke="#1f140a" stroke-width="1" stroke-linecap="round"/>
+          <!-- Scythe Curved Blade -->
+          <path d="M68 12 C78 8 92 16 94 30 C88 24 76 22 66 20 Z" fill="#b197c4" stroke="#c084fc" stroke-width="1.5" filter="drop-shadow(0 0 6px #c084fc)"/>
+          <!-- Blade cutting edge glow -->
+          <path d="M68 12 C76 9 88 15 94 30" stroke="#f3e8ff" stroke-width="1.8" fill="none"/>
+
+          <!-- Soul Sparkles floating around Reaper -->
+          <circle cx="22" cy="26" r="2" fill="#a855f7" opacity="0.85"/>
+          <circle cx="76" cy="38" r="2.5" fill="#39FF14" opacity="0.75"/>
+          <circle cx="50" cy="74" r="1.5" fill="#c084fc" opacity="0.9"/>
+        </svg>
+      </i>
+    </div>
+
+  </div> <!-- End earthquakeContainer -->
+
+  <!-- Main JavaScript File -->
+  <script type="module" src="./script.js"></script>
+</body>
 </html>
