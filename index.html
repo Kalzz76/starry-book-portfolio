@@ -796,12 +796,22 @@
                   <span class="lod-realm-badge">REALM OF SANCTUM</span>
                   <h3 class="lod-title" id="lodTtl">Land of Dusk</h3>
                 </div>
+                <button type="button" id="lodTopMascotToggle" class="lod-mascot-toggle-btn" title="Aktifkan / Sembunyikan Maskot di Peta Utama">
+                  <span class="toggle-icon">👻</span>
+                  <span class="toggle-label">Maskot Peta:</span>
+                  <span class="toggle-status" id="lodTopToggleStatus">OFF</span>
+                </button>
                 <span class="lod-hint" id="lodHint">Klik salah satu wilayah kerajaan untuk menjelajah asal-usul tempat &amp; maskot penghuninya</span>
               </div>
 
               <div class="lod-stage" id="lodStage">
                 <div class="lod-frame">
                   <button type="button" id="lodBk" class="lod-bk-btn in-map-bk-btn" hidden>↩ Kembali ke Peta Utama</button>
+                  <button type="button" id="lodMascotToggle" class="lod-mascot-toggle-btn in-map-toggle-btn" title="Aktifkan / Sembunyikan Maskot di Peta Utama">
+                    <span class="toggle-icon">👻</span>
+                    <span class="toggle-label">Maskot:</span>
+                    <span class="toggle-status" id="lodMascotToggleStatus">OFF</span>
+                  </button>
                   <div class="lod-world" id="lodWorld">
                     <canvas id="lodCv" width="256" height="144"></canvas>
                     <svg id="lodRoute" viewBox="0 0 1600 900" preserveAspectRatio="none"></svg>

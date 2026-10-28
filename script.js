@@ -1766,6 +1766,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const lodRgs = document.getElementById('lodRgs');
   const lodLayer = document.getElementById('lodLayer');
   const lodBk = document.getElementById('lodBk');
+  const lodMascotToggle = document.getElementById('lodMascotToggle');
+  const lodMascotToggleStatus = document.getElementById('lodMascotToggleStatus');
+  const lodTopMascotToggle = document.getElementById('lodTopMascotToggle');
+  const lodTopToggleStatus = document.getElementById('lodTopToggleStatus');
   const lodTtl = document.getElementById('lodTtl');
   const lodPanel = document.getElementById('lodPanel');
   const lodPh = document.getElementById('lodPh');
@@ -1963,6 +1967,41 @@ document.addEventListener('DOMContentLoaded', () => {
   let hv = -1;
   let tab = 0;
   let opened = "";
+  let isOverviewMascotsEnabled = false;
+  try {
+    const saved = localStorage.getItem('kaka_lod_mascots_overview');
+    if (saved !== null) {
+      isOverviewMascotsEnabled = saved === 'true';
+    }
+  } catch (_) {}
+
+  function updateMascotToggleUI() {
+    const statusText = isOverviewMascotsEnabled ? 'ON' : 'OFF';
+    [lodMascotToggle, lodTopMascotToggle].forEach((btn) => {
+      if (!btn) return;
+      btn.classList.toggle('active', isOverviewMascotsEnabled);
+    });
+    if (lodMascotToggleStatus) lodMascotToggleStatus.textContent = statusText;
+    if (lodTopToggleStatus) lodTopToggleStatus.textContent = statusText;
+  }
+  updateMascotToggleUI();
+
+  function toggleMascotMode(e) {
+    if (e) e.stopPropagation();
+    isOverviewMascotsEnabled = !isOverviewMascotsEnabled;
+    try {
+      localStorage.setItem('kaka_lod_mascots_overview', String(isOverviewMascotsEnabled));
+    } catch (_) {}
+    updateMascotToggleUI();
+    if (cur < 0) {
+      renderMascots();
+    }
+    playSound('blip');
+    const msg = isOverviewMascotsEnabled
+      ? 'Mode Maskot Peta Aktif (ON): Maskot dapat dilihat berpatroli di seluruh peta!'
+      : 'Mode Maskot Peta Nonaktif (OFF): Maskot disembunyikan di peta utama.';
+    showToast(msg, 'Land of Dusk', isOverviewMascotsEnabled ? '👻' : '🗺️');
+  }
 
   function updateHUDCount() {
     if (shadowTotalCount) {
@@ -2046,7 +2085,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderMascots() {
     if (!lodLayer) return;
     if (cur < 0) {
-      lodLayer.innerHTML = '';
+      if (!isOverviewMascotsEnabled) {
+        lodLayer.innerHTML = '';
+        return;
+      }
+      const mascotsHtml = M.map((m) => {
+        return '<div class="mc" data-m="' + escapeHTML(m.n) + '" style="left:' + (m.x * 100) + '%;top:' + (m.y * 100) + '%">' +
+          '<div class="mc-bubble"><span></span></div>' +
+          '<div class="mc-avatar">' + getMascotChibiHTML(m) + '</div>' +
+          '<em>' + escapeHTML(m.n) + '</em>' +
+          '</div>';
+      }).join('');
+      lodLayer.innerHTML = mascotsHtml;
       return;
     }
     const r = R[cur];
@@ -2067,8 +2117,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function roamMascots() {
-    if (cur < 0) return;
-    const visibleMascots = M.filter((m) => m.g === cur);
+    if (cur < 0 && !isOverviewMascotsEnabled) return;
+    const visibleMascots = cur >= 0 ? M.filter((m) => m.g === cur) : M;
     visibleMascots.forEach((m) => {
       if (m._isScared) return;
       const stepDist = 0.012 + Math.random() * 0.022;
@@ -2115,8 +2165,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(roamMascots, 2500);
 
   setInterval(() => {
-    if (cur < 0) return;
-    const list = M.filter((m) => m.g === cur);
+    if (cur < 0 && !isOverviewMascotsEnabled) return;
+    const list = cur >= 0 ? M.filter((m) => m.g === cur) : M;
     if (list.length === 0) return;
     const randomMascot = list[Math.floor(Math.random() * list.length)];
     sayMascotGreeting(randomMascot.n);
@@ -2162,6 +2212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (lodStage) lodStage.classList.add('sel');
     if (lodBk) lodBk.hidden = false;
+    if (lodMascotToggle) lodMascotToggle.hidden = true;
     if (lodTtl) lodTtl.textContent = 'Land of Dusk · ' + r.n;
     renderMascots();
     paint(i, 1);
@@ -2179,6 +2230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (lodStage) lodStage.classList.remove('sel');
     if (lodBk) lodBk.hidden = true;
+    if (lodMascotToggle) lodMascotToggle.hidden = false;
     if (lodTtl) lodTtl.textContent = 'Land of Dusk';
     renderMascots();
     paint(-1);
@@ -2291,6 +2343,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (lodT0) lodT0.addEventListener('click', () => { tab = 0; fill(); playSound('click'); });
   if (lodT1) lodT1.addEventListener('click', () => { tab = 1; fill(); playSound('click'); });
   if (lodBk) lodBk.addEventListener('click', back);
+  if (lodMascotToggle) lodMascotToggle.addEventListener('click', toggleMascotMode);
+  if (lodTopMascotToggle) lodTopMascotToggle.addEventListener('click', toggleMascotMode);
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
