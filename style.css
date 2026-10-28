@@ -4068,6 +4068,29 @@ body.mode-tengah-malam #settingsDropdown {
     white-space: normal !important;
     text-align: center !important;
   }
+  .witch-manor,
+  .cottage-fence,
+  #c,
+  #d,
+  #grave-3,
+  #grave-5,
+  #grave-6 {
+    display: none !important;
+  }
+  #grave-1 {
+    left: 42% !important;
+  }
+  #a {
+    left: 28% !important;
+  }
+  #b {
+    left: 72% !important;
+  }
+  .stage .witch-cottage {
+    left: 4px !important;
+    transform: scale(0.85);
+    transform-origin: bottom left;
+  }
 }
 
 /* --------------------------------------------------------------------------
