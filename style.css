@@ -4080,16 +4080,19 @@ body.mode-tengah-malam #settingsDropdown {
   #grave-1 {
     left: 42% !important;
   }
-  #a {
-    left: 28% !important;
-  }
-  #b {
-    left: 72% !important;
-  }
   .stage .witch-cottage {
     left: 4px !important;
     transform: scale(0.85);
     transform-origin: bottom left;
+  }
+  .stage .char {
+    transform: scale(0.5);
+  }
+  .stage .char.look-l {
+    transform: scale(0.5) scaleX(-1);
+  }
+  .stage .char.look-r {
+    transform: scale(0.5) scaleX(1);
   }
 }
 

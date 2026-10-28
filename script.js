@@ -2993,6 +2993,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (const m of allMascots) {
       if (!m || m === mascot || !m.el) continue;
+      if (m.el.offsetParent === null) continue;
       if (m.busy || m.sleeping || m.fleeing || m.insideCottage || m.isUnderground) continue;
       const dist = Math.abs(p1 - m.el.offsetLeft);
       if (dist <= minDist) {
@@ -3170,19 +3171,21 @@ document.addEventListener('DOMContentLoaded', () => {
     async walk() {
       if (!this.el || this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) return;
       const stageEl = this.el.parentElement || document.getElementById('stage');
-      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 50;
+      const isMobile = window.innerWidth <= 860;
+      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - (isMobile ? 36 : 50);
       const from = this.el.offsetLeft;
       
-      const maxRightBound = Math.max(160, W - 30);
-      let to = randNum(this.minLeftBound, maxRightBound);
+      const minLeft = isMobile ? 65 : this.minLeftBound;
+      const maxRightBound = Math.max(120, W - (isMobile ? 15 : 30));
+      let to = randNum(minLeft, maxRightBound);
       
-      const maxDist = randNum(140, 280);
+      const maxDist = isMobile ? randNum(60, 160) : randNum(140, 280);
       if (Math.abs(to - from) > maxDist) {
         to = to > from ? from + maxDist : from - maxDist;
       }
-      to = Math.min(maxRightBound, Math.max(this.minLeftBound, to));
+      to = Math.min(maxRightBound, Math.max(minLeft, to));
 
-      const dur = Math.max(0.7, Math.abs(to - from) / 95);
+      const dur = Math.max(0.6, Math.abs(to - from) / (isMobile ? 75 : 95));
       const isLeft = to < from;
 
       this.el.style.transitionDuration = dur + 's';
@@ -3193,28 +3196,29 @@ document.addEventListener('DOMContentLoaded', () => {
       await waitMs(dur * 1000);
       this.el.classList.remove('walk');
 
-      // Check if a companion mascot is nearby to strike up a friendly chat!
       if (!this.busy && !this.sleeping && !this.fleeing && !this.insideCottage && !this.isUnderground && !isAnyMascotSocializing) {
-        const friend = findNearbyAvailableMascot(this, 175);
+        const friend = findNearbyAvailableMascot(this, isMobile ? 130 : 175);
         if (friend && Math.random() < 0.65) {
           triggerMascotSocialEncounter(this, friend);
         }
       }
     }
 
-    // Grave Dwellers (Skeleton & Zombie): Burrow Underground into ANY chosen grave
     async enterGrave() {
       if (!this.canEnterGrave || !this.el || this.isUnderground || this.sleeping || this.fleeing || this.busy) return;
-      const allGraves = [].slice.call(document.querySelectorAll('.gravesite.grave-item'));
+      const allGraves = [].slice.call(document.querySelectorAll('.gravesite.grave-item')).filter(g => {
+        return window.getComputedStyle(g).display !== 'none';
+      });
       if (!allGraves.length) return;
 
       const grave = allGraves[Math.floor(Math.random() * allGraves.length)];
       this.currentGrave = grave;
       this.busy = true;
 
-      // 1. Walk toward chosen grave
+      const isMobile = window.innerWidth <= 860;
+      const minLeft = isMobile ? 65 : this.minLeftBound;
       const from = this.el.offsetLeft;
-      const to = Math.max(this.minLeftBound, grave.offsetLeft - 8);
+      const to = Math.max(minLeft, grave.offsetLeft - 8);
       const dur = Math.max(0.6, Math.abs(to - from) / 110);
       this.el.style.transitionDuration = dur + 's';
       this.el.classList.remove('look-l', 'look-r');
@@ -3311,18 +3315,20 @@ document.addEventListener('DOMContentLoaded', () => {
       this.busy = true;
 
       const stageEl = this.el.parentElement || document.getElementById('stage');
+      const isMobile = window.innerWidth <= 860;
       const manorX = stageEl ? Math.max(200, stageEl.clientWidth - 110) : (window.innerWidth - 140);
-      const houses = [
-        { id: 'witchCottage', doorId: 'cottageDoor', bubbleId: 'cottageBubble', targetX: 54, name: 'Pondok Nenek Sihir' },
-        { id: 'witchManor', doorId: 'manorDoor', bubbleId: 'manorBubble', targetX: manorX, name: 'Menara Alkimia' }
-      ];
+      const houses = isMobile
+        ? [{ id: 'witchCottage', doorId: 'cottageDoor', bubbleId: 'cottageBubble', targetX: 38, name: 'Pondok Nenek Sihir' }]
+        : [
+            { id: 'witchCottage', doorId: 'cottageDoor', bubbleId: 'cottageBubble', targetX: 54, name: 'Pondok Nenek Sihir' },
+            { id: 'witchManor', doorId: 'manorDoor', bubbleId: 'manorBubble', targetX: manorX, name: 'Menara Alkimia' }
+          ];
 
       const chosenHouse = houses[Math.floor(Math.random() * houses.length)];
       this.currentOccupiedHouse = chosenHouse;
       const houseEl = document.getElementById(chosenHouse.id);
       const bubbleEl = document.getElementById(chosenHouse.bubbleId);
 
-      // 1. Walk toward chosen house door
       const from = this.el.offsetLeft;
       const to = chosenHouse.targetX;
       const dur = Math.max(0.6, Math.abs(to - from) / 110);
@@ -3333,20 +3339,16 @@ document.addEventListener('DOMContentLoaded', () => {
       await waitMs(dur * 1000);
       this.el.classList.remove('walk');
 
-      // 2. Open door
       if (houseEl) houseEl.classList.add('door-open');
       playMascotSound('stone');
       await waitMs(350);
 
-      // 3. Step inside
       this.el.classList.add('entering');
       this.insideCottage = true;
       await waitMs(450);
 
-      // 4. Close door
       if (houseEl) houseEl.classList.remove('door-open');
 
-      // 5. House activity bubble
       if (bubbleEl) {
         bubbleEl.textContent = this.el.id === 'd' 
           ? 'Witch Hazel lagi meracik ramuan rahasia! 🔮' 
@@ -3357,53 +3359,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
       this.busy = false;
 
-      // Rest inside house for 5 to 8.5 seconds
       await waitMs(randNum(5000, 8500));
 
-      // Exit house
       if (this.insideCottage) {
         await this.exitCottage();
       }
     }
 
-    // House Dwellers: Exit the currently occupied house
     async exitCottage() {
       if (!this.insideCottage || !this.el) return;
       this.busy = true;
 
       const stageEl = this.el.parentElement || document.getElementById('stage');
-      const houses = [
-        { id: 'witchCottage', targetX: 64, name: 'Pondok Nenek Sihir' },
-        { id: 'witchManor', targetX: (stageEl ? stageEl.clientWidth - 130 : 600), name: 'Menara Alkimia' }
-      ];
+      const isMobile = window.innerWidth <= 860;
+      const houses = isMobile
+        ? [{ id: 'witchCottage', targetX: 42, name: 'Pondok Nenek Sihir' }]
+        : [
+            { id: 'witchCottage', targetX: 64, name: 'Pondok Nenek Sihir' },
+            { id: 'witchManor', targetX: (stageEl ? stageEl.clientWidth - 130 : 600), name: 'Menara Alkimia' }
+          ];
 
-      // Dual House Exit Choice: Either exit original house OR emerge from the other witch house!
-      let exitHouse = this.currentOccupiedHouse || houses[0];
-      if (Math.random() < 0.45) {
+      let exitHouse = isMobile ? houses[0] : (this.currentOccupiedHouse || houses[0]);
+      if (!isMobile && Math.random() < 0.45) {
         exitHouse = (exitHouse.id === 'witchCottage') ? houses[1] : houses[0];
       }
 
       const houseEl = document.getElementById(exitHouse.id);
 
-      // 1. Open door
       if (houseEl) houseEl.classList.add('door-open');
       playMascotSound('stone');
       await waitMs(350);
 
-      // 2. Step outside
       this.insideCottage = false;
       this.el.classList.remove('entering');
       const startX = (exitHouse.id === 'witchManor') 
         ? (stageEl ? stageEl.clientWidth - 130 : 600) 
-        : 64;
+        : (isMobile ? 42 : 64);
       this.el.style.left = startX + 'px';
       await waitMs(300);
 
-      // 3. Walk out onto the stage road
       const isRightHouse = (exitHouse.id === 'witchManor');
       const to = isRightHouse 
         ? Math.max(120, (stageEl ? stageEl.clientWidth - randNum(180, 300) : 500)) 
-        : randNum(140, 260);
+        : (isMobile ? randNum(55, 120) : randNum(140, 260));
       const from = this.el.offsetLeft;
       const dur = Math.max(0.6, Math.abs(to - from) / 100);
       this.el.style.transitionDuration = dur + 's';
@@ -3485,18 +3483,20 @@ document.addEventListener('DOMContentLoaded', () => {
         this.sleeping = false;
         this.el.classList.remove('sleep');
       }
+      const isMobile = window.innerWidth <= 860;
+      const minLeft = isMobile ? 65 : this.minLeftBound;
       const stageEl = this.el.parentElement || document.getElementById('stage');
-      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 80;
+      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - (isMobile ? 36 : 80);
       const from = this.el.offsetLeft;
       const dir = (from + 38 < mx) ? -1 : 1;
-      let to = from + dir * randNum(160, 280);
-      const maxRightBound = Math.max(160, W - 250);
-      if (to < this.minLeftBound || to > maxRightBound) {
-        to = dir < 0 ? maxRightBound - randNum(0, 40) : this.minLeftBound + randNum(0, 40);
+      let to = from + dir * (isMobile ? randNum(60, 140) : randNum(160, 280));
+      const maxRightBound = Math.max(120, W - (isMobile ? 20 : 250));
+      if (to < minLeft || to > maxRightBound) {
+        to = dir < 0 ? maxRightBound - randNum(0, 30) : minLeft + randNum(0, 30);
       }
-      to = Math.min(maxRightBound, Math.max(this.minLeftBound, to));
+      to = Math.min(maxRightBound, Math.max(minLeft, to));
 
-      const dur = Math.max(0.35, Math.abs(to - from) / 320);
+      const dur = Math.max(0.35, Math.abs(to - from) / (isMobile ? 220 : 320));
       const isLeft = to < from;
 
       this.el.style.transitionDuration = dur + 's';
