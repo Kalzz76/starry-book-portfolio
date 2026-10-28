@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const bgSunset = document.getElementById('bgSunset');
   const bgDay = document.getElementById('bgDay');
   const soundToggle = document.getElementById('soundToggle');
+  const settingsToggle = document.getElementById('settingsToggle');
+  const settingsDropdown = document.getElementById('settingsDropdown');
+  // settings elements declared at top in Elements Selection
+  const dr = document.getElementById('dragon');
+  const witchCottage = document.getElementById('witchCottage');
+  const witchManor = document.getElementById('witchManor');
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const navLinks = document.getElementById('navLinks');
   const navLinksItems = document.querySelectorAll('.nav-link');
@@ -26,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const musicHudCard = document.getElementById('musicHudCard');
   const musicHudBtn = document.getElementById('musicHudBtn');
   const musicHudIconBox = document.getElementById('musicHudIconBox');
+  const musicHudCollapseBtn = document.getElementById('musicHudCollapseBtn');
   const musicHudTitle = document.getElementById('musicHudTitle');
   const musicHudSub = document.getElementById('musicHudSub');
   const musicSpeakerOn = document.getElementById('musicSpeakerOn');
@@ -39,6 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   let audioCtx = null;
   let isSoundEnabled = true;
+  try {
+    const savedSound = localStorage.getItem('kaka_sound_enabled');
+    if (savedSound !== null) {
+      isSoundEnabled = savedSound === 'true';
+    }
+  } catch (_) {}
   let isBGMPlaying = false;
   let hasUserInteracted = false;
   let currentBGMVolume = 0.15;
@@ -53,6 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
+  }
+
+  function isMusicActive() {
+    return isBGMPlaying || (bgMusicAudio && !bgMusicAudio.paused);
+  }
+
+  function playMascotSound(type = 'blip') {
+    // If background music is actively playing, mute mascot audio sounds completely!
+    if (isMusicActive() || !isSoundEnabled) return;
+    playSound(type, true);
   }
 
   function playSound(type = 'blip') {
@@ -375,17 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Sound toggle button
-  if (soundToggle) {
-    soundToggle.addEventListener('click', () => {
-      isSoundEnabled = !isSoundEnabled;
-      soundToggle.classList.toggle('muted', !isSoundEnabled);
-      if (isSoundEnabled) {
-        playSound('blip');
-      }
-      showToast(isSoundEnabled ? '🔔 Dentang lonceng arwah bergema!' : '🤫 Kripta hening tanpa suara...');
-    });
-  }
+  // Sound toggle button is wired in Halloween navbar tools section
 
   // -------------------------------------------------------------------------
   // Minecraft Achievement Toast Notification Helper & Chime
@@ -523,6 +536,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     updateThemeDynamicTexts(theme);
+    if (themeToggle) {
+      if (theme === 'day') {
+        themeToggle.title = 'Mode Siang (Cahaya Mentari) — Klik untuk Ganti ke Sore';
+        themeToggle.setAttribute('aria-label', 'Mode Siang (Klik untuk ganti ke Mode Sore)');
+      } else if (theme === 'sunset') {
+        themeToggle.title = 'Mode Sore / Senja (Lembayung Magis) — Klik untuk Ganti ke Malam';
+        themeToggle.setAttribute('aria-label', 'Mode Sore (Klik untuk ganti ke Mode Malam)');
+      } else {
+        themeToggle.title = 'Mode Malam (Bulan Purnama) — Klik untuk Ganti ke Siang';
+        themeToggle.setAttribute('aria-label', 'Mode Malam (Klik untuk ganti ke Mode Siang)');
+      }
+    }
     localStorage.setItem('kaka_theme', theme);
   }
 
@@ -562,56 +587,158 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------------------
-  // 4. Header Shadow & Active Section Spy
-  // -------------------------------------------------------------------------
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      headerContainer.classList.add('scrolled');
-    } else {
-      headerContainer.classList.remove('scrolled');
-    }
-    updateActiveNavLink();
-  });
+  // 4. Halloween Navbar Controller (from Navbar Halloween.html)
+  const navEl = document.getElementById('nav');
+  const navHead = document.getElementById('head');
+  const navCur = document.getElementById('cur');
+  const navLinksList = [].slice.call(document.querySelectorAll('#links a'));
+  let isNavPinned = false;
 
-  const sections = document.querySelectorAll('section[id]');
-  function updateActiveNavLink() {
-    const scrollPos = window.scrollY + 160;
-    sections.forEach(sec => {
-      const top = sec.offsetTop;
-      const height = sec.offsetHeight;
-      const id = sec.getAttribute('id');
-      if (scrollPos >= top && scrollPos < top + height) {
-        navLinksItems.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === `#${id}`) {
-            link.classList.add('active');
-          }
-        });
+  const isNarrowNav = () => window.matchMedia('(max-width: 720px)').matches;
+
+  const SECTION_MAP = [
+    { id: 'home', name: 'Sanctum' },
+    { id: 'about', name: 'Grimoire' },
+    { id: 'projects', name: 'Spells' },
+    { id: 'sertificat', name: 'Relics' },
+    { id: 'shadows', name: 'Companions' },
+    { id: 'contact', name: 'Altar' }
+  ];
+
+  function updateHalloweenNav() {
+    if (!navEl) return;
+    let current = SECTION_MAP[0];
+    SECTION_MAP.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el && el.getBoundingClientRect().top <= 140) {
+        current = item;
+      }
+    });
+
+    navLinksList.forEach(a => {
+      const isActive = (a.dataset.t === current.id);
+      a.classList.toggle('on', isActive);
+      if (isActive) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+
+    if (navCur) navCur.textContent = current.name;
+
+    // Mini mode when scrolled down (> 40px)
+    if (!isNarrowNav() && window.scrollY > 40 && !isNavPinned) {
+      navEl.classList.add('mini');
+    } else {
+      navEl.classList.remove('mini');
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    isNavPinned = false;
+    updateHalloweenNav();
+  }, { passive: true });
+
+  window.addEventListener('resize', updateHalloweenNav);
+
+  if (navEl) {
+    navEl.addEventListener('mouseenter', () => {
+      if (!isNarrowNav()) {
+        isNavPinned = true;
+        updateHalloweenNav();
+      }
+    });
+
+    navEl.addEventListener('mouseleave', () => {
+      isNavPinned = false;
+      updateHalloweenNav();
+    });
+  }
+
+  if (navHead) {
+    navHead.addEventListener('click', (e) => {
+      if (isNarrowNav()) {
+        navEl.classList.toggle('open');
+      } else {
+        isNavPinned = !isNavPinned;
+        updateHalloweenNav();
       }
     });
   }
 
-  // Mobile Navigation
-  if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-      playSound('click');
+  navLinksList.forEach(a => {
+    a.addEventListener('click', (e) => {
+      const href = a.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const sec = document.querySelector(href);
+        if (sec) {
+          e.preventDefault();
+          if (!isBGMPlaying) playSound('click');
+          if (navEl) navEl.classList.remove('open');
+          isNavPinned = false;
+          sec.scrollIntoView({ behavior: 'smooth' });
+          setTimeout(updateHalloweenNav, 400);
+        }
+      }
     });
+  });
 
-    navLinksItems.forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
+  // Tools in Halloween navbar:
+  // Sound & Music button
+  function updateSoundToggleUI(enabled) {
+    if (!soundToggle) return;
+    soundToggle.classList.toggle('sound-off', !enabled);
+    soundToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+    soundToggle.title = enabled 
+      ? 'Suara 8-Bit & Musik: NYALA (Klik untuk Mematikan)' 
+      : 'Suara 8-Bit & Musik: MATI (Klik untuk Menyalakan)';
+    soundToggle.setAttribute('aria-label', enabled ? 'Matikan Suara 8-Bit' : 'Nyalakan Suara 8-Bit');
+  }
+
+  updateSoundToggleUI(isSoundEnabled);
+
+  if (soundToggle) {
+    soundToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isSoundEnabled = !isSoundEnabled;
+      try {
+        localStorage.setItem('kaka_sound_enabled', isSoundEnabled ? 'true' : 'false');
+      } catch (_) {}
+
+      if (isSoundEnabled) {
+        initAudio();
         playSound('click');
-      });
+        if (!isBGMPlaying) {
+          playBGM();
+        }
+        showToast('🎵 Suara 8-Bit & Musik Dinyalakan');
+      } else {
+        if (isBGMPlaying) {
+          pauseBGM();
+        }
+        showToast('🔇 Suara 8-Bit & Musik Dimatikan');
+      }
+
+      updateSoundToggleUI(isSoundEnabled);
     });
   }
 
-  // Click sounds for general buttons
-  document.querySelectorAll('.pixel-btn, .filter-btn, .proj-btn, .cert-btn').forEach(btn => {
-    btn.addEventListener('click', () => playSound('click'));
-  });
+  // Settings toggle button
+  if (settingsToggle && settingsDropdown) {
+    settingsToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!isBGMPlaying) playSound('click');
+      settingsDropdown.classList.toggle('show');
+    });
 
-  // -------------------------------------------------------------------------
+    document.addEventListener('click', (e) => {
+      if (settingsDropdown && !settingsDropdown.contains(e.target) && e.target !== settingsToggle) {
+        settingsDropdown.classList.remove('show');
+      }
+    });
+  }
+
+  updateHalloweenNav();
+
+    // -------------------------------------------------------------------------
   // 5. Typing Effect on Subtitle
   // -------------------------------------------------------------------------
   const typingElement = document.getElementById('typingText');
@@ -776,367 +903,396 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------------------
-  // 6. THE OPEN GRIMOIRE: Ancient 2-Page Spellbook (Option 1)
+  // 6. ASTA'S 5-LEAF CLOVER GRIMOIRE: 3D Realistic Turn-Page Projects Book
   // -------------------------------------------------------------------------
-  const grimoireSpells = [
+  const PROJECTS_DATA = [
     {
-      id: "klinik-mapping",
-      title: "Sistem Mapping Klinik Pratama Bumi Sehat Bahagia",
-      shortTitle: "Klinik Bumi Sehat GIS",
-      category: "web",
-      catLabel: "WEB & GIS",
-      tier: "MASTER LARAVEL",
-      year: "2025",
-      icon: "🏥",
-      bgGradient: "linear-gradient(135deg, #064e3b 0%, #022c22 60%, #041f17 100%)",
-      tech: ["Laravel 10", "Leaflet.js", "MySQL", "Bootstrap 5", "GIS Mapping", "REST API"],
-      desc: "Sistem web terintegrasi untuk pemetaan sebaran dan manajemen operasional Klinik Pratama Bumi Sehat Bahagia. Memungkinkan pemantauan lokasi pasien, visualisasi peta interaktif dengan Leaflet.js, serta pencatatan rekam medis dan data poli secara terstruktur, cepat, dan aman.",
-      demoUrl: "#projects",
-      githubUrl: "https://github.com/Kalzz76"
+      y: "2025 • WEB & GIS MAPPING",
+      n: "SISTEM MAPPING KLINIK PRATAMA",
+      l: "Fullstack Developer • Laravel 10 & Leaflet.js",
+      img: "./Assets/Projects/project-clinic.jpg",
+      d: "Sistem web terintegrasi pemetaan sebaran dan manajemen operasional Klinik Pratama Bumi Sehat Bahagia dengan visualisasi GIS real-time.",
+      b: [
+        "Visualisasi spasial interaktif dengan Leaflet.js & marker clustering",
+        "Pencatatan rekam medis & data poli pasien terenkripsi aman",
+        "Dashboard analitik kunjungan pasien & reporting PDF otomatis"
+      ],
+      q: "“Pendidikan dan latihan tanpa henti adalah mantra terkuat untuk melampaui batas diri.”",
+      tags: ["Laravel 10", "Leaflet.js", "MySQL", "Bootstrap 5", "GIS API"],
+      demo: "#projects",
+      github: "https://github.com/Kalzz76"
     },
     {
-      id: "classio-system",
-      title: "Classio - Integrated School Management System",
-      shortTitle: "Classio School System",
-      category: "system",
-      catLabel: "ENTERPRISE SYSTEM",
-      tier: "C# ASP.NET",
-      year: "2024 - 2025",
-      icon: "🏫",
-      bgGradient: "linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #020617 100%)",
-      tech: ["C# ASP.NET", "MySQL", "REST API", "Tailwind CSS", "JWT Auth", "Responsive UI"],
-      desc: "Platform manajemen sekolah terpusat untuk siswa, guru, dan staf administrasi. Dilengkapi modul presensi cerdas, input nilai akademik berstandar kurikulum, jadwal pelajaran dinamis, serta laporan otomatis yang menghemat 80% waktu rekapitulasi data.",
-      demoUrl: "#projects",
-      githubUrl: "https://github.com/Kalzz76"
+      y: "2024 - 2025 • ENTERPRISE SYSTEM",
+      n: "CLASSIO SCHOOL MANAGEMENT",
+      l: "Enterprise Developer • C# ASP.NET & MySQL",
+      img: "./Assets/Projects/project-school.jpg",
+      d: "Platform manajemen sekolah terpusat untuk siswa, guru, dan staf administrasi dengan modul presensi cerdas dan input nilai akademik.",
+      b: [
+        "Modul presensi cerdas & rekapitulasi nilai sesuai kurikulum",
+        "Arsitektur REST API cepat dengan otentikasi JWT terstandar",
+        "Menghemat hingga 80% waktu rekapitulasi data sekolah tahunan"
+      ],
+      q: "“Disiplin dan dedikasi menghasilkan sistem yang kokoh tak tergoyahkan.”",
+      tags: ["C# ASP.NET", "MySQL", "REST API", "Tailwind CSS", "JWT Auth"],
+      demo: "#projects",
+      github: "https://github.com/Kalzz76"
     },
     {
-      id: "perpustakaan-rpl",
-      title: "Sistem Sirkulasi & Nilai Perpustakaan RPL",
-      shortTitle: "Sistem Perpustakaan RPL",
-      category: "system",
-      catLabel: "ACADEMIC SYSTEM",
-      tier: "FULLSTACK PHP",
-      year: "2024",
-      icon: "📚",
-      bgGradient: "linear-gradient(135deg, #312e81 0%, #1e1b4b 60%, #09090b 100%)",
-      tech: ["PHP Laravel", "MySQL", "JavaScript", "Chart.js", "Barcode Scan", "Bootstrap"],
-      desc: "Aplikasi manajemen perpustakaan modern khusus laboratorium Rekayasa Perangkat Lunak SMKN 13 Bandung. Mempermudah peminjaman dan pengembalian buku dengan barcode scan, pelacakan denda otomatis, dan rekapitulasi nilai kompetensi siswa.",
-      demoUrl: "#projects",
-      githubUrl: "https://github.com/Kalzz76"
+      y: "2024 • INTERACTIVE PORTFOLIO",
+      n: "CODE NECROMANCER SANCTUM",
+      l: "Frontend Sorcerer • Pure Vanilla JS & Web Audio",
+      img: "./Assets/Projects/project-sanctum.jpg",
+      d: "Portofolio developer interaktif bertema retro gothic Halloween dengan Pixel Dynamic Island dan maskot otonom berkeliaran bebas.",
+      b: [
+        "Pixel Dynamic Island dengan transisi minimalis otomatis saat scroll",
+        "Stage maskot otonom (Skeleton, Zombie, Witch, Pumpkin) dengan 7 makam",
+        "Grimoire Semanggi 5 interaktif dengan animasi pembalikan halaman 3D"
+      ],
+      q: "“Dalam lembar ke-5, bersemayam iblis sang penakluk bug dan kode masa depan!”",
+      tags: ["Pure Vanilla JS", "HTML5 Canvas", "Web Audio API", "CSS 3D"],
+      demo: "#home",
+      github: "https://github.com/Kalzz76"
     },
     {
-      id: "mobile-biodata",
-      title: "Mobile Biodata & Profil Siswa RPL",
-      shortTitle: "Mobile Biodata RPL",
-      category: "mobile",
-      catLabel: "MOBILE APP",
-      tier: "FLUTTER & DART",
-      year: "2025",
-      icon: "📱",
-      bgGradient: "linear-gradient(135deg, #4a044e 0%, #2e1065 60%, #090514 100%)",
-      tech: ["Flutter", "Dart", "Provider State", "Material 3", "SQLite", "Cross-Platform"],
-      desc: "Aplikasi mobile responsif dan mulus untuk pencatatan biodata lengkap, riwayat portofolio, dan sertifikasi siswa RPL SMKN 13 Bandung. Menyediakan offline storage lokal dengan SQLite, animasi UI modern, dan sinkronisasi cloud.",
-      demoUrl: "#projects",
-      githubUrl: "https://github.com/Kalzz76"
+      y: "2024 • WEB APPLICATION",
+      n: "PERPUSTAKAAN DIGITAL JURUSAN RPL",
+      l: "Web Developer • PHP Native & MySQL",
+      img: "./Assets/Projects/project-library.jpg",
+      d: "Sistem informasi perpustakaan digital untuk otomasi peminjaman, katalog buku berkode QR, serta laporan sirkulasi inventaris buku.",
+      b: [
+        "Sistem sirkulasi peminjaman & pengembalian buku berbasis barcode",
+        "Statistik peminjaman visual interaktif dengan Chart.js",
+        "Otentikasi multi-level untuk pustakawan, guru, dan siswa"
+      ],
+      q: "“Buku adalah jendela ilmu, dan kode adalah arsitek pembangunnya.”",
+      tags: ["PHP Native", "MySQL", "Bootstrap 5", "Chart.js", "QR Code"],
+      demo: "#projects",
+      github: "https://github.com/Kalzz76"
     },
     {
-      id: "berkah-pancing",
-      title: "E-Commerce Berkah Pancing & Fishing Store",
-      shortTitle: "Berkah Pancing Store",
-      category: "web",
-      catLabel: "FULLSTACK E-COMMERCE",
-      tier: "PHP & PAYMENT API",
-      year: "2024",
-      icon: "🎣",
-      bgGradient: "linear-gradient(135deg, #0c4a6e 0%, #082f49 60%, #020617 100%)",
-      tech: ["PHP Native", "MySQL", "Bootstrap", "Midtrans Payment", "AJAX", "Cart Engine"],
-      desc: "Website e-commerce katalog produk perlengkapan pancing dengan keranjang belanja interaktif, kalkulator ongkir otomatis, integrasi payment gateway Midtrans, dan dasbor admin untuk manajemen stok realtime.",
-      demoUrl: "#projects",
-      githubUrl: "https://github.com/Kalzz76"
-    },
-    {
-      id: "haunted-portfolio",
-      title: "Haunted Gothic Sanctum Portfolio & Grimoire",
-      shortTitle: "Necromancer Portfolio",
-      category: "interactive",
-      catLabel: "INTERACTIVE WEB",
-      tier: "CREATIVE JS & CANVAS",
-      year: "2026",
-      icon: "🎃",
-      bgGradient: "linear-gradient(135deg, #431407 0%, #2e1065 60%, #020617 100%)",
-      tech: ["Vanilla JS", "HTML5 Canvas", "Web Audio API", "CSS Art", "Vite", "Local Storage"],
-      desc: "Website portofolio berkonsep rumah angker Halloween retro. Memiliki 6 maskot bersahabat yang berpatroli mandiri ke segala arah, buku mantra kuno 2 halaman berdampingan, kartu biodata holografik, sistem audio 8-bit, serta sinkronisasi tema Siang, Sore, dan Malam.",
-      demoUrl: "#home",
-      githubUrl: "https://github.com/Kalzz76"
+      y: "2024 • RETRO APPLICATION",
+      n: "PIXELPOS: RUNIC CASHIER PORTAL",
+      l: "Fullstack Developer • JavaScript & Web Bluetooth",
+      img: "./Assets/Projects/project-cashier.jpg",
+      d: "Aplikasi kasir web modern berkecepatan tinggi dengan integrasi cetak struk thermal via Web Bluetooth dan offline caching IndexedDB.",
+      b: [
+        "Dukungan cetak struk kasir via Web Bluetooth Thermal printer",
+        "Offline-first state storage menggunakan browser IndexedDB",
+        "Perhitungan transaksi kilat dengan barcode scanner support"
+      ],
+      q: "“Kecepatan dan keandalan adalah kunci utama setiap transaksi sukses.”",
+      tags: ["JavaScript", "IndexedDB", "Web Bluetooth", "Tailwind CSS"],
+      demo: "#projects",
+      github: "https://github.com/Kalzz76"
     }
   ];
 
-  let currentGrimoireSpellIdx = 0;
-  let currentGrimoireFilter = 'all';
+  let currentProjectIdx = 0;
+  let isGrimoireBusy = false;
 
-  const spellFilterPills = document.getElementById('spellFilterPills');
-  const spellCodexList = document.getElementById('spellCodexList');
-  const activeSpellStatus = document.getElementById('activeSpellStatus');
-  const activeSpellFolio = document.getElementById('activeSpellFolio');
-  const activeSpellTitle = document.getElementById('activeSpellTitle');
-  const activeSpellCategoryBadge = document.getElementById('activeSpellCategoryBadge');
-  const activeSpellPreviewBox = document.getElementById('activeSpellPreviewBox');
-  const activeSpellTags = document.getElementById('activeSpellTags');
-  const activeSpellDesc = document.getElementById('activeSpellDesc');
-  const activeSpellDemoBtn = document.getElementById('activeSpellDemoBtn');
-  const activeSpellGithubBtn = document.getElementById('activeSpellGithubBtn');
-  const grimoirePageRight = document.getElementById('grimoirePageRight');
+  const stageGrimoire = document.getElementById('stageGrimoire');
+  const grimoireBook = document.getElementById('book');
+  const grimoireCover = document.getElementById('cover');
+  const grimoireBack = document.getElementById('back');
+  const grimoirePl = document.getElementById('pl');
+  const grimoirePr = document.getElementById('pr');
+  const grimoireQuote = document.getElementById('quote');
+  const grimoireMetaBadge = document.getElementById('metaBadge');
+  const grimoireYr = document.getElementById('yr');
+  const grimoireNm = document.getElementById('nm');
+  const grimoireLv = document.getElementById('lv');
+  const grimoireDs = document.getElementById('ds');
+  const grimoireUl = document.getElementById('ul');
+  const grimoireDots = document.getElementById('dots');
+  const grimoirePrevBtn = document.getElementById('prev');
+  const grimoireNextBtn = document.getElementById('next');
+  const grimoireCloseBtn = document.getElementById('close');
+  const projectDemoBtn = document.getElementById('projectDemoBtn');
+  const projectGithubBtn = document.getElementById('projectGithubBtn');
 
-  function renderSpellCodexList() {
-    if (!spellCodexList) return;
-    spellCodexList.innerHTML = '';
-
-    grimoireSpells.forEach((spell, idx) => {
-      const match = currentGrimoireFilter === 'all' || spell.category === currentGrimoireFilter;
-      if (!match) return;
-
-      const isActive = idx === currentGrimoireSpellIdx;
-      const item = document.createElement('div');
-      item.className = 'spell-codex-item' + (isActive ? ' active' : '');
-      item.dataset.idx = idx;
-      item.setAttribute('role', 'tab');
-      item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      item.tabIndex = 0;
-
-      const numStr = idx < 9 ? `SPELL 0${idx + 1}` : `SPELL ${idx + 1}`;
-      const itemGlyph = spell.icon || '📜';
-      const flame = isActive ? '🔥' : itemGlyph;
-
-      item.innerHTML = `
-        <div class="item-left-block">
-          <span class="item-flame-icon">${flame}</span>
-          <div class="item-meta">
-            <div class="item-tag-row">
-              <span class="item-num">${numStr}</span>
-              <span class="item-cat">${spell.catLabel}</span>
-            </div>
-            <span class="item-title">${escapeHTML(spell.shortTitle || spell.title)}</span>
-          </div>
-        </div>
-        <span class="item-chevron">❯</span>
-      `;
-
-      item.addEventListener('click', () => {
-        if (currentGrimoireSpellIdx !== idx) {
-          selectGrimoireSpell(idx);
-          playSound('click');
-        }
-      });
-
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectGrimoireSpell(idx);
-          playSound('click');
-        }
-      });
-
-      spellCodexList.appendChild(item);
-    });
+  function renderGrimoireProject() {
+    renderGrimoireLeft(currentProjectIdx);
+    renderGrimoireRight(currentProjectIdx);
   }
 
-  function selectGrimoireSpell(idx) {
-    currentGrimoireSpellIdx = idx;
-    const spell = grimoireSpells[idx];
-    if (!spell) return;
-
-    // Refresh active state in left list
-    renderSpellCodexList();
-
-    // Soft page transition effect on right page
-    if (grimoirePageRight) {
-      grimoirePageRight.style.opacity = '0.4';
-      grimoirePageRight.style.transform = 'translateY(4px)';
-      setTimeout(() => {
-        grimoirePageRight.style.opacity = '1';
-        grimoirePageRight.style.transform = 'translateY(0)';
-      }, 140);
+  function renderGrimoireLeft(idx) {
+    const p = PROJECTS_DATA[idx];
+    if (!p) return;
+    const projectIllustrationImg = document.getElementById('projectIllustrationImg');
+    if (projectIllustrationImg && p.img) {
+      projectIllustrationImg.src = p.img;
+      projectIllustrationImg.alt = p.n;
     }
-
-    if (activeSpellTitle) activeSpellTitle.textContent = spell.title;
-    if (activeSpellFolio) activeSpellFolio.textContent = `FOLIO 0${idx + 1}`;
-    if (activeSpellCategoryBadge) activeSpellCategoryBadge.textContent = `${spell.catLabel} • ${spell.year}`;
-
-    if (activeSpellPreviewBox) {
-      activeSpellPreviewBox.style.background = spell.bgGradient;
-      activeSpellPreviewBox.innerHTML = `
-        <div class="crystal-rune-emblem">${spell.icon}</div>
-        <div class="crystal-tagline">${escapeHTML(spell.shortTitle)}</div>
-        <div class="crystal-sub-tagline">MATRIKS TINGKAT: ${spell.tier}</div>
-      `;
+    if (grimoireQuote) {
+      grimoireQuote.textContent = p.q;
     }
-
-    if (activeSpellTags) {
-      activeSpellTags.innerHTML = '';
-      spell.tech.forEach(t => {
-        const pill = document.createElement('span');
-        pill.className = 'ingredient-pill';
-        pill.innerHTML = `<span>✦</span> ${escapeHTML(t)}`;
-        activeSpellTags.appendChild(pill);
-      });
+    if (grimoireMetaBadge) {
+      grimoireMetaBadge.innerHTML = p.tags.map(t => `<span class="pg-tag">${t}</span>`).join('');
     }
-
-    if (activeSpellDesc) activeSpellDesc.textContent = spell.desc;
-    if (activeSpellDemoBtn) activeSpellDemoBtn.href = spell.demoUrl;
-    if (activeSpellGithubBtn) activeSpellGithubBtn.href = spell.githubUrl;
   }
 
-  // Filter Pills setup
-  if (spellFilterPills) {
-    const filterButtons = spellFilterPills.querySelectorAll('.spell-filter-btn');
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentGrimoireFilter = btn.dataset.filter || 'all';
+  function renderGrimoireRight(idx) {
+    const p = PROJECTS_DATA[idx];
+    if (grimoireYr) grimoireYr.textContent = p.y;
+    if (grimoireNm) grimoireNm.textContent = p.n;
+    if (grimoireLv) grimoireLv.textContent = p.l;
+    if (grimoireDs) grimoireDs.textContent = p.d;
+    if (grimoireUl) {
+      grimoireUl.innerHTML = p.b.map(b => `<li>${b}</li>`).join('');
+    }
+    if (projectDemoBtn) projectDemoBtn.href = p.demo;
+    if (projectGithubBtn) projectGithubBtn.href = p.github;
 
-        // Find first project matching filter
-        const firstMatchIdx = grimoireSpells.findIndex(s => currentGrimoireFilter === 'all' || s.category === currentGrimoireFilter);
-        if (firstMatchIdx !== -1) {
-          selectGrimoireSpell(firstMatchIdx);
-        } else {
-          renderSpellCodexList();
-        }
-        playSound('toggle');
-      });
-    });
+    if (grimoireDots) {
+      grimoireDots.innerHTML = PROJECTS_DATA.map((_, j) => `<i class="${j === idx ? 'on' : ''}"></i>`).join('');
+    }
+    if (grimoirePrevBtn) {
+      grimoirePrevBtn.textContent = idx === 0 ? "◂ Sampul" : "◂ Kembali";
+    }
+    if (grimoireNextBtn) {
+      grimoireNextBtn.textContent = idx === PROJECTS_DATA.length - 1 ? "Tutup ▸" : "Next ▸";
+    }
   }
 
-  // Initial Open Grimoire Render
-  selectGrimoireSpell(0);
+  function isWideScreen() {
+    return !window.matchMedia("(max-width: 640px)").matches;
+  }
 
-  // -------------------------------------------------------------------------
-  // 6B. ASTA'S 5-LEAF CLOVER GRIMOIRE: Buka - Tutup Interaktif (Open / Close)
-  // -------------------------------------------------------------------------
-  const cloverGrimoireMaster = document.getElementById('cloverGrimoireMaster');
-  const cloverTomeBook = document.getElementById('cloverTomeBook');
-  const btnOpenCloverBook = document.getElementById('btnOpenCloverBook');
-  const btnCloseCloverBook = document.getElementById('btnCloseCloverBook');
-  const btnCloseCloverBottom = document.getElementById('btnCloseCloverBottom');
+  function deskGrimoireTransition(actionKey) {
+    isGrimoireBusy = true;
+    if (stageGrimoire) stageGrimoire.classList.add('transitioning');
+    const bk = grimoireBook;
+    const pl = grimoirePl;
+    const pr = grimoirePr;
+    const cv = grimoireCover;
+    const bc = grimoireBack;
+    const isOpening = actionKey[0] === 'o';
+    const isFront = actionKey[1] === 'f';
+    const isNext = (isOpening === isFront);
+    const shift = isFront ? "calc(var(--wp) * -.5)" : "calc(var(--wp) * .5)";
 
-  let isCloverBookAnimating = false;
+    const stripIds = (html) => html.replace(/ id="[^"]*"/g, "");
+    const createFace = (cls, html) => {
+      const el = document.createElement("div");
+      el.className = cls;
+      el.innerHTML = stripIds(html);
+      return el;
+    };
 
-  function openCloverGrimoire() {
-    if (!cloverGrimoireMaster || isCloverBookAnimating) return;
-    if (cloverGrimoireMaster.classList.contains('open')) return;
+    const leaf = document.createElement("div");
+    let faceFront, faceBack;
+    const hiddenPage = isFront ? pl : pr;
+    const activeCover = isFront ? cv : bc;
 
-    isCloverBookAnimating = true;
+    if (isOpening) {
+      currentProjectIdx = isFront ? 0 : PROJECTS_DATA.length - 1;
+      renderGrimoireProject();
+    }
+
+    if (actionKey === 'of') {
+      faceFront = createFace("face cover-grimoire", cv.innerHTML);
+      faceBack = createFace("face bk pg-grimoire l", pl.innerHTML);
+    } else if (actionKey === 'ob') {
+      faceFront = createFace("face cover-grimoire back", bc.innerHTML);
+      faceBack = createFace("face bk pg-grimoire r", pr.innerHTML);
+    } else if (actionKey === 'cf') {
+      faceFront = createFace("face pg-grimoire l", pl.innerHTML);
+      faceBack = createFace("face bk cover-grimoire", cv.innerHTML);
+    } else if (actionKey === 'cb') {
+      faceFront = createFace("face pg-grimoire r", pr.innerHTML);
+      faceBack = createFace("face bk cover-grimoire back", bc.innerHTML);
+    }
+
+    leaf.className = "leaf " + (isNext ? "next" : "prev");
+    leaf.appendChild(faceFront);
+    leaf.appendChild(faceBack);
+
+    if (isOpening) {
+      playSound('arise');
+      playSound('unroll');
+      bk.style.transition = "none";
+      bk.classList.add("open", "pre");
+      bk.style.transform = "translateX(" + shift + ")";
+      hiddenPage.style.visibility = "hidden";
+      bk.appendChild(leaf);
+      activeCover.style.display = "none";
+      void bk.offsetWidth;
+      bk.style.transition = "";
+      leaf.classList.add("go");
+      bk.classList.remove("pre");
+      bk.style.transform = "";
+    } else {
+      playSound('stone');
+      playSound('roll');
+      hiddenPage.style.visibility = "hidden";
+      bk.appendChild(leaf);
+      void leaf.offsetWidth;
+      leaf.classList.add("go");
+      bk.classList.add("pre");
+      bk.style.transform = "translateX(" + shift + ")";
+    }
+
+    setTimeout(() => {
+      if (!isOpening) {
+        bk.classList.remove("open", "pre");
+        bk.style.transform = "";
+        activeCover.style.display = "flex";
+      }
+      pl.style.visibility = "";
+      pr.style.visibility = "";
+      leaf.remove();
+      if (stageGrimoire) stageGrimoire.classList.remove('transitioning');
+      isGrimoireBusy = false;
+    }, 950);
+  }
+
+  function flipGrimoire(direction) {
+    if (isGrimoireBusy) return;
+    playSound('spin');
+
+    if (!isWideScreen()) {
+      currentProjectIdx += direction;
+      renderGrimoireProject();
+      [grimoirePl, grimoirePr].forEach(el => {
+        if (!el) return;
+        el.classList.remove('fade');
+        void el.offsetWidth;
+        el.classList.add('fade');
+      });
+      return;
+    }
+
+    isGrimoireBusy = true;
+    if (stageGrimoire) stageGrimoire.classList.add('transitioning');
+    const bk = grimoireBook;
+    const pl = grimoirePl;
+    const pr = grimoirePr;
+    const oldIdx = currentProjectIdx;
+    const newIdx = currentProjectIdx + direction;
+
+    const stripIds = (html) => html.replace(/ id="[^"]*"/g, "");
+    const leaf = document.createElement("div");
+    const faceF = document.createElement("div");
+    const faceB = document.createElement("div");
+
+    leaf.className = "leaf " + (direction > 0 ? "next" : "prev");
+    faceF.className = "face pg-grimoire " + (direction > 0 ? "r" : "l");
+    faceB.className = "face bk pg-grimoire " + (direction > 0 ? "l" : "r");
+
+    if (direction > 0) {
+      faceF.innerHTML = stripIds(pr.innerHTML);
+      renderGrimoireLeft(newIdx);
+      faceB.innerHTML = stripIds(pl.innerHTML);
+      renderGrimoireLeft(oldIdx);
+      renderGrimoireRight(newIdx);
+    } else {
+      faceF.innerHTML = stripIds(pl.innerHTML);
+      renderGrimoireRight(newIdx);
+      faceB.innerHTML = stripIds(pr.innerHTML);
+      renderGrimoireRight(oldIdx);
+      renderGrimoireLeft(newIdx);
+    }
+
+    leaf.appendChild(faceF);
+    leaf.appendChild(faceB);
+    bk.appendChild(leaf);
+    void leaf.offsetWidth;
+    leaf.classList.add("go");
+
+    setTimeout(() => {
+      currentProjectIdx = newIdx;
+      renderGrimoireProject();
+      leaf.remove();
+      if (stageGrimoire) stageGrimoire.classList.remove('transitioning');
+      isGrimoireBusy = false;
+    }, 900);
+  }
+
+  function openGrimoireFrom(el) {
+    if (isGrimoireBusy) return;
+    if (isWideScreen()) {
+      return deskGrimoireTransition(el.id === 'back' ? 'ob' : 'of');
+    }
+    isGrimoireBusy = true;
+    if (stageGrimoire) stageGrimoire.classList.add('transitioning');
     playSound('arise');
     playSound('unroll');
-
-    // Trigger cover opening 3D swing
-    cloverGrimoireMaster.classList.remove('closed');
-    cloverGrimoireMaster.classList.add('opening');
-
-    // Spawn Anti-Magic Crimson Spark particles
-    if (cloverTomeBook) {
-      const rect = cloverTomeBook.getBoundingClientRect();
-      for (let i = 0; i < 14; i++) {
-        const spark = document.createElement('span');
-        spark.className = 'ghost-spirit';
-        spark.textContent = Math.random() < 0.6 ? '⛧' : '✦';
-        spark.style.color = '#ff1744';
-        spark.style.left = (rect.left + rect.width / 2 + (Math.random() * 120 - 60)) + 'px';
-        spark.style.top = (rect.top + rect.height / 2 + (Math.random() * 120 - 60)) + 'px';
-        spark.style.setProperty('--dx', (Math.random() * 180 - 90) + 'px');
-        spark.style.setProperty('--dy', (Math.random() * -140 - 40) + 'px');
-        document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 900);
-      }
-    }
+    el.classList.add('opening');
 
     setTimeout(() => {
-      cloverGrimoireMaster.classList.remove('opening');
-      cloverGrimoireMaster.classList.add('open');
-      isCloverBookAnimating = false;
-      showToast('⚔️ Kitab Semanggi 5 Asta Terbuka! Gulungan mantra siap dibacakan.');
-    }, 400);
+      currentProjectIdx = el.id === 'back' ? PROJECTS_DATA.length - 1 : 0;
+      if (grimoireBook) grimoireBook.classList.add('open', 'bookin');
+      renderGrimoireProject();
+    }, 450);
+
+    setTimeout(() => {
+      el.style.display = 'none';
+      el.classList.remove('opening');
+      if (grimoireBook) grimoireBook.classList.remove('bookin');
+      if (stageGrimoire) stageGrimoire.classList.remove('transitioning');
+      isGrimoireBusy = false;
+    }, 950);
   }
 
-  function closeCloverGrimoire() {
-    if (!cloverGrimoireMaster || isCloverBookAnimating) return;
-    if (cloverGrimoireMaster.classList.contains('closed')) return;
-
-    isCloverBookAnimating = true;
+  function closeGrimoireTo(el) {
+    if (isGrimoireBusy) return;
+    if (isWideScreen()) {
+      return deskGrimoireTransition(el.id === 'back' ? 'cb' : 'cf');
+    }
+    isGrimoireBusy = true;
+    if (stageGrimoire) stageGrimoire.classList.add('transitioning');
     playSound('stone');
     playSound('roll');
-
-    // Trigger 3D book pages slam shut
-    cloverGrimoireMaster.classList.remove('open');
-    cloverGrimoireMaster.classList.add('closing');
-
-    // Particle burst of closing seal
-    const openBookEl = document.getElementById('openGrimoireBook');
-    if (openBookEl) {
-      const rect = openBookEl.getBoundingClientRect();
-      for (let i = 0; i < 8; i++) {
-        const spark = document.createElement('span');
-        spark.className = 'ghost-spirit';
-        spark.textContent = '🔒';
-        spark.style.left = (rect.left + rect.width / 2 + (Math.random() * 100 - 50)) + 'px';
-        spark.style.top = (rect.top + rect.height / 2 + (Math.random() * 60 - 30)) + 'px';
-        spark.style.setProperty('--dx', (Math.random() * 140 - 70) + 'px');
-        spark.style.setProperty('--dy', (Math.random() * -100 - 20) + 'px');
-        document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 850);
-      }
-    }
+    if (grimoireBook) grimoireBook.classList.add('bookout');
 
     setTimeout(() => {
-      cloverGrimoireMaster.classList.remove('closing');
-      cloverGrimoireMaster.classList.add('closed', 'just-closed');
-      playSound('stone');
-      showToast('🔒 Kitab Semanggi 5 Berhasil Disegel Kembali!');
+      if (grimoireBook) grimoireBook.classList.remove('open', 'bookout');
+      el.style.display = 'flex';
+      el.classList.add('closing');
+    }, 450);
 
-      const projectsSec = document.getElementById('projects');
-      if (projectsSec) {
-        projectsSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      el.classList.remove('closing');
+      if (stageGrimoire) stageGrimoire.classList.remove('transitioning');
+      isGrimoireBusy = false;
+    }, 1350);
+  }
+
+  if (grimoireCover) {
+    grimoireCover.addEventListener('click', () => openGrimoireFrom(grimoireCover));
+  }
+  if (grimoireBack) {
+    grimoireBack.addEventListener('click', () => openGrimoireFrom(grimoireBack));
+  }
+  if (grimoireCloseBtn) {
+    grimoireCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeGrimoireTo(currentProjectIdx < PROJECTS_DATA.length / 2 ? grimoireCover : grimoireBack);
+    });
+  }
+  if (grimoirePrevBtn) {
+    grimoirePrevBtn.addEventListener('click', () => {
+      if (isGrimoireBusy) return;
+      if (currentProjectIdx > 0) {
+        flipGrimoire(-1);
+      } else {
+        closeGrimoireTo(grimoireCover);
       }
-
-      setTimeout(() => {
-        cloverGrimoireMaster.classList.remove('just-closed');
-        isCloverBookAnimating = false;
-      }, 500);
-    }, 400);
+    });
   }
-
-  if (cloverTomeBook) {
-    cloverTomeBook.addEventListener('click', openCloverGrimoire);
-    cloverTomeBook.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openCloverGrimoire();
+  if (grimoireNextBtn) {
+    grimoireNextBtn.addEventListener('click', () => {
+      if (isGrimoireBusy) return;
+      if (currentProjectIdx < PROJECTS_DATA.length - 1) {
+        flipGrimoire(1);
+      } else {
+        closeGrimoireTo(grimoireBack);
       }
     });
   }
 
-  if (btnOpenCloverBook) {
-    btnOpenCloverBook.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openCloverGrimoire();
-    });
-  }
-
-  if (btnCloseCloverBook) {
-    btnCloseCloverBook.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeCloverGrimoire();
-    });
-  }
-
-  if (btnCloseCloverBottom) {
-    btnCloseCloverBottom.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeCloverGrimoire();
-    });
-  }
-
-  // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
   // 7. Sacred Relics & Certificates: Opsi A (Spotlight Showcase & Filmstrip)
   // -------------------------------------------------------------------------
   const certificates = [
@@ -1369,536 +1525,861 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // -------------------------------------------------------------------------
-  // 8. Sanctum Guestbook: Companions & 2D Roaming Mascot Arena
-  // -------------------------------------------------------------------------
   const mascotTypeMap = {
     'type-pumpkin': { label: '🎃 Labu Ceria (Pumpkin Sprite)', icon: '🎃', role: 'Pumpkin Sprite' },
     'type-ghost': { label: '👻 Hantu Imut (Friendly Ghost)', icon: '👻', role: 'Friendly Ghost' },
     'type-bat': { label: '🦇 Kelelawar Malam (Night Bat)', icon: '🦇', role: 'Night Bat' },
     'type-cat': { label: '🐱 Kucing Hitam (Midnight Cat)', icon: '🐱', role: 'Midnight Cat' },
     'type-skeleton': { label: '💀 Tengkorak Santuy (Chibi Skeleton)', icon: '💀', role: 'Chibi Skeleton' },
-    'type-wizard': { label: '🧙‍♂️ Penyihir Cilik (Little Wizard)', icon: '🧙‍♂️', role: 'Little Wizard' }
+    'type-wizard': { label: '🧙‍♂️ Penyihir Cilik (Little Wizard)', icon: '🧙‍♂️', role: 'Little Wizard' },
+    'type-frog': { label: '🐸 Katak Rawa (Swamp Guardian Toad)', icon: '🐸', role: 'Swamp Guardian Toad' },
+    'type-voyager': { label: '🎭 Tamu Bertopeng (Mysterious Voyager)', icon: '🎭', role: 'Mysterious Voyager' }
   };
 
-  const defaultCompanions = [
+  const R = [
     {
-      id: 1,
-      name: "Pumpkin Pete",
-      role: "Pumpkin Sprite",
-      mascotType: "type-pumpkin",
-      icon: "🎃",
-      time: "Sanctum Guestbook",
-      text: "Portofolio dan animasinya keren banget! Suasana retro Halloween-nya berasa hidup!",
-      skills: ["Visual Aesthetics", "Pumpkin Glow", "Good Vibes"]
+      n: "Moonlit Manor",
+      e: "🏚️",
+      s: [0.5, 0.24],
+      c: ["#7a54b8", "#5b3a8c", "#3d2766"],
+      a: [255, 226, 122],
+      d: "Rumah besar di bawah naungan bulan purnama abadi. Tempat pusat segala cerita dan takdir, di mana para penjaga menyambut tamu dengan kebijaksanaan malam.",
+      p: [
+        ["Grand Hall", "Aula megah penyambut tamu sanctum", 0.44, 0.2],
+        ["Attic Library", "Perpustakaan kitab mantra kuno", 0.57, 0.16],
+        ["Black Cat Garden", "Taman rahasia kucing hitam berkabut", 0.58, 0.31]
+      ]
     },
     {
-      id: 2,
-      name: "Boo Casper",
-      role: "Friendly Ghost",
-      mascotType: "type-ghost",
-      icon: "👻",
-      time: "Sanctum Guestbook",
-      text: "Suka banget sama transisi warnanya dari siang ke sore dan malam! Halus dan ramah di mata.",
-      skills: ["Floating Spirit", "UI Appreciation", "Spooky Kindness"]
+      n: "Whispering Graveyard",
+      e: "💀",
+      s: [0.22, 0.36],
+      c: ["#7d8aa0", "#5d6a7d", "#434d5e"],
+      a: [200, 210, 225],
+      d: "Pemakaman tua tenang yang diselimuti kabut perak. Di sini roh-roh ramah saling bersenda gurau di antara batu nisan dan denting musik 8-bit.",
+      p: [
+        ["Tombstone Row", "Barisan nisan kuno pahlawan masa lalu", 0.16, 0.31],
+        ["Lantern Crypt", "Kripta keramat dengan lentera biru abadi", 0.27, 0.42],
+        ["Old Chapel", "Kapel tua tempat berkumpulnya jiwa santai", 0.28, 0.29]
+      ]
     },
     {
-      id: 3,
-      name: "Battie",
-      role: "Night Bat",
-      mascotType: "type-bat",
-      icon: "🦇",
-      time: "Sanctum Guestbook",
-      text: "Responsif di semua ukuran layar dan efek suaranya seru banget! Keren Kaka!",
-      skills: ["Radar Navigation", "Clean Code", "Night Flight"]
+      n: "Pumpkin Hollow",
+      e: "🎃",
+      s: [0.8, 0.38],
+      c: ["#e08a2c", "#c8741f", "#9a5316"],
+      a: [255, 210, 60],
+      d: "Lembah ladang labu raksasa yang bercahaya oranye hangat. Setiap labu menyala dengan semangat pantang menyerah dan aroma kayu manis musim gugur.",
+      p: [
+        ["Gourd Gate", "Gerbang kayu lentera labu utama", 0.74, 0.33],
+        ["Jack's Farm", "Kebun lentera labu magis berpanen emas", 0.86, 0.44],
+        ["Scarecrow Hill", "Bukit jerami dengan pemandangan lembah ceria", 0.85, 0.3]
+      ]
     },
     {
-      id: 4,
-      name: "Luna",
-      role: "Midnight Cat",
-      mascotType: "type-cat",
-      icon: "🐱",
-      time: "Sanctum Guestbook",
-      text: "Meong! Kodenya rapi dan tanpa error sama sekali. Sangat menginspirasi!",
-      skills: ["Bug Hunting", "Agility", "Curiosity"]
+      n: "Batwing Caverns",
+      e: "🦇",
+      s: [0.3, 0.7],
+      c: ["#8a4848", "#6b3030", "#4a2020"],
+      a: [183, 140, 255],
+      d: "Gua kristal violet yang berdengung kepakan sayap kelelawar. Labirin lorong bawah tanah yang menyimpan rahasia sonar dan jalan pintas tersembunyi.",
+      p: [
+        ["Echo Grotto", "Gua kristal gema tanpa batas", 0.24, 0.66],
+        ["Moon Roost", "Sarang puncak kelelawar pengintai", 0.35, 0.63],
+        ["Guano Falls", "Mata air mineral gelap berpendar ungu", 0.33, 0.78]
+      ]
     },
     {
-      id: 5,
-      name: "Skully",
-      role: "Chibi Skeleton",
-      mascotType: "type-skeleton",
-      icon: "💀",
-      time: "Sanctum Guestbook",
-      text: "Sangat cocok buat dipresentasikan di depan guru dan juri kompetisi. Sukses terus Kaka!",
-      skills: ["Sturdy Bones", "Logic Mastery", "Exam Slayer"]
+      n: "Bubbling Bog",
+      e: "🧪",
+      s: [0.58, 0.7],
+      c: ["#57a05e", "#3f7a45", "#2c5a33"],
+      a: [140, 255, 110],
+      d: "Rawa zamrud berkabut tebal yang selalu menggelegak dengan ramuan alkimia. Tempat penelitian magis para penyihir muda dan habitat katak penjaga teratai.",
+      p: [
+        ["Cauldron Pond", "Danau kuali alkimia berasap hijau", 0.51, 0.65],
+        ["Toad Hut", "Gubuk teratai sang penjaga rawa", 0.65, 0.77],
+        ["Fogwood", "Hutan lumut fosfor yang menyala", 0.67, 0.63]
+      ]
     },
     {
-      id: 6,
-      name: "Archie",
-      role: "Little Wizard",
-      mascotType: "type-wizard",
-      icon: "🧙‍♂️",
-      time: "Sanctum Guestbook",
-      text: "Keren maskotnya sekarang bisa jalan menyebar ke segala arah! Terlihat lebih hidup dan seru!",
-      skills: ["Spell Crafting", "DOM Alchemy", "Infinite Energy"]
+      n: "Ghost Ship Bay",
+      e: "⚓",
+      s: [0.83, 0.72],
+      c: ["#4aa5a5", "#3b8a8a", "#2a6a6a"],
+      a: [240, 240, 255],
+      d: "Teluk misterius tempat kapal hantu bercahaya toska berlabuh dari samudra dimensi. Tempat singgah para musafir lintas alam yang membawa pesan rahasia.",
+      p: [
+        ["Wreck Dock", "Dermaga kayu terapung kapal legendaris", 0.77, 0.67],
+        ["Siren Rock", "Karang laut bersenandung kidung samudra", 0.89, 0.77],
+        ["Old Lighthouse", "Mercusuar berkabut pemandu jalan dimensi", 0.85, 0.63]
+      ]
     }
   ];
 
-  let companionsList = [];
+  const defaultMascots = [
+    { n: "Luna", i: "🐱", r: "Midnight Cat", b: "Meong! Arsip bayangan tercatat rapi dan tanpa bug.", g: 0, x: 0.49, y: 0.28 },
+    { n: "Boo Casper", i: "👻", r: "Friendly Ghost", b: "Halo pengembara! Senang bertemu teman baru di pemakaman!", g: 1, x: 0.21, y: 0.4 },
+    { n: "Skully", i: "💀", r: "Chibi Skeleton", b: "Hidup santuy sambil ngopi di atas nisan, musik 8-bit tetap jalan!", g: 1, x: 0.26, y: 0.34 },
+    { n: "Pumpkin Pete", i: "🎃", r: "Pumpkin Sprite", b: "Lentera oranye kami akan selalu menerangi jalan pulangmu!", g: 2, x: 0.79, y: 0.43 },
+    { n: "Battie", i: "🦇", r: "Night Bat", b: "Sonar aktif! Siap bermanuver di langit malam dan bangkit lagi!", g: 3, x: 0.29, y: 0.73 },
+    { n: "Archie", i: "🧙‍♂️", r: "Little Wizard", b: "Satu tetes ramuan, seribu baris kode tercipta! Semangat belajar!", g: 4, x: 0.54, y: 0.73 },
+    { n: "Gully", i: "🐸", r: "Marsh Scout", b: "Ribbit! Awas lumpur licin, ikuti jejak daun teratai fosfor!", g: 4, x: 0.62, y: 0.7 },
+    { n: "Pengunjung Misterius", i: "🎭", r: "Dimensional Voyager", b: "Aku berlayar melintasi dimensi untuk mengagumi semesta portofolio ini.", g: 5, x: 0.82, y: 0.74 }
+  ];
+
+  const defaultMX = {
+    "Luna": {
+      o: "Menara Jam Hantu, Moonlit Manor",
+      d: "Kucing hitam penjaga arsip takdir Moonlit Manor yang bermata zamrud kembar.",
+      m: "Dilahirkan di bawah gerhana purnama merah di lantai tertinggi Menara Jam Hantu. Luna memiliki kemampuan mencium keanehan kode dan bug sebelum program dijalankan. Selalu menemani para pengelana yang mencari arah di tengah labirin malam.",
+      h: [["Boo Casper", "Sahabat Karib"], ["Archie", "Mitra Alkimia"], ["Pengunjung Misterius", "Pengamat Dimensi"]]
+    },
+    "Boo Casper": {
+      o: "Tombstone Row, Whispering Graveyard",
+      d: "Hantu cilik berhati lembut yang mengapung ramah menyapa setiap tamu yang melintas.",
+      m: "Berbeda dari hantu menyeramkan pada umumnya, Casper memilih menyebarkan senyuman dan kehangatan. Setiap senja ia melayang dari barisan nisan kuno menuju kapel untuk menyalakan lilin persahabatan bagi siapa pun yang singgah.",
+      h: [["Skully", "Rekan Sekubur"], ["Luna", "Sahabat Karib"], ["Pumpkin Pete", "Kawan Festival"]]
+    },
+    "Skully": {
+      o: "Old Chapel, Whispering Graveyard",
+      d: "Tengkorak santuy penikmat kopi yang paling rileks dan bijak di seantero alam baka.",
+      m: "Bangkit di teras kapel kuno pemakaman. Hobinya adalah mendengarkan alunan melodi chiptune 8-bit sembari menyeruput kopi hitam di atas peti batu. Skully percaya bahwa ketenangan pikiran adalah kunci menyelesaikan masalah serumit apa pun.",
+      h: [["Boo Casper", "Rekan Sekubur"], ["Battie", "Teman Begadang"], ["Pumpkin Pete", "Rekan Pesta"]]
+    },
+    "Pumpkin Pete": {
+      o: "Gourd Gate, Pumpkin Hollow",
+      d: "Pangeran lentera labu musim gugur yang apinya tidak pernah redup oleh angin badai.",
+      m: "Lahir dari benih labu emas terbesar di gerbang utama Pumpkin Hollow. Pete mengemban tugas sakral menyalakan api lentera setiap petang agar para musafir tidak tersesat di kegelapan rimba, menyebarkan aroma rempah manis yang menenangkan.",
+      h: [["Luna", "Kawan Festival"], ["Gully", "Tetangga Lembah"], ["Battie", "Rival Lomba Lari"]]
+    },
+    "Battie": {
+      o: "Echo Grotto, Batwing Caverns",
+      d: "Kelelawar pengintai bersayap violet yang menguasai seni navigasi gema gua terdalam.",
+      m: "Menetas di dalam kristal gema gua Batwing Caverns. Pandangan matanya tajam menembus pekatnya malam, mencatat setiap pergerakan di langit Land of Dusk. Sekalipun terjatuh berkali-kali, ia selalu bangkit mengepakkan sayap dengan gigih.",
+      h: [["Skully", "Teman Begadang"], ["Boo Casper", "Sahabat Langit"], ["Gully", "Mitra Patroli"]]
+    },
+    "Archie": {
+      o: "Cauldron Pond, Bubbling Bog",
+      d: "Penyihir muda bersemangat tinggi yang meneliti sintesis ramuan magis dan algoritma kuno.",
+      m: "Mengenakan topi runcing berukuran besar yang diwariskan leluhurnya. Dari gubuk rawa Bubbling Bog, Archie tak henti bereksperimen menggabungkan lumut bersinar dengan logika pemrograman untuk menciptakan mantra web yang memukau.",
+      h: [["Gully", "Asisten Lab"], ["Luna", "Mitra Alkimia"], ["Pengunjung Misterius", "Rekan Diskusi"]]
+    },
+    "Gully": {
+      o: "Toad Hut, Bubbling Bog",
+      d: "Katak rawa cerdik pelindung teratai yang memiliki indera tajam membaca cuaca dan kabut.",
+      m: "Penjaga setia jalan rawa berkabut. Gully mengenali setiap jengkal lumut dan genangan air magis. Ketika ia melompat dan berkwek nyaring, hal itu menandakan ada tamu istimewa yang baru saja tiba di perbatasan Land of Dusk.",
+      h: [["Archie", "Asisten Lab"], ["Pumpkin Pete", "Tetangga Lembah"], ["Battie", "Mitra Patroli"]]
+    },
+    "Pengunjung Misterius": {
+      o: "Wreck Dock, Ghost Ship Bay",
+      d: "Musafir bertopeng yang berlayar melintasi samudra dimensi membawa kekaguman dunia luar.",
+      m: "Sosok pengelana legendaris yang kapalnya berlabuh di Ghost Ship Bay setiap kali ada karya baru yang bangkit di Sanctum. Ia mengumpulkan jejak apresiasi dari para pengunjung dan menyimpannya dalam peti harta karun digital abadi.",
+      h: [["Luna", "Pengamat Dimensi"], ["Boo Casper", "Tamu Kehormatan"], ["Archie", "Rekan Diskusi"]]
+    }
+  };
+
+  const mascotGreetings = {
+    "Luna": [
+      "Meong! Menara Jam Hantu aman terkendali! 🌙",
+      "Arsip bayangan mencatat kedatanganmu! ✨",
+      "Sstt, rahasia malam ada di balik bintang! 🐱",
+      "Kode bersih tanpa bug di malam purnama! 🐾"
+    ],
+    "Boo Casper": [
+      "Halo pengembara! Mau kuajak keliling nisan? 👻",
+      "Hehe, jangan takut, aku hantu ramah! ✨",
+      "Lilin persahabatan selalu menyala untukmu! 🕯️",
+      "Melayang di Whispering Graveyard asyik lho! 💨"
+    ],
+    "Skully": [
+      "Santuy dulu, seruput kopi hitam panas! ☕💀",
+      "Musik 8-bit paling asik dinikmati di kuburan! 🎵",
+      "Rebahan di atas nisan itu nikmat abadi! 💀",
+      "Tenang kawan, hidup cuma sekali, santuy selamanya! ☕"
+    ],
+    "Pumpkin Pete": [
+      "Labu lentera kami siap menerangi jalanmu! 🎃",
+      "Aroma kayu manis musim gugur harum sekali! 🍂",
+      "Semangat terus dalam petualangan portofolio! 🔥",
+      "Lentera oranye tidak akan pernah padam! 🎃"
+    ],
+    "Battie": [
+      "Sonar gua mendeteksi keberadaanmu! 🦇",
+      "Gema lorong kristal sangat merdu malam ini! 💎",
+      "Sayap violet siap bermanuver di kegelapan! ⚡",
+      "Jalan pintas gua ada di balik stalaktit ini! 🌌"
+    ],
+    "Archie": [
+      "Satu tetes embun rawa untuk ramuan ajaib! 🧪",
+      "Kuali alkimia meletupkan ide kreatif baru! 🧙‍♂️",
+      "Belajar web dan mobile itu sangat magis! ✨",
+      "Lumut fosfor ini bisa menyala ungu lho! 🔮"
+    ],
+    "Gully": [
+      "Ribbit! Awas jangan terpeleset di lumpur rawa! 🐸",
+      "Kwek! Daun teratai di sini empuk sekali! 🌿",
+      "Selamat datang di rawa berkabut fosfor! 💚",
+      "Lompat satu daun, sampai ke Toad Hut! 🐸"
+    ],
+    "Pengunjung Misterius": [
+      "Kapal hantu dimensi membawa salam hangat! ⚓",
+      "Karya di Sanctum ini sungguh menakjubkan! 🎭",
+      "Aku datang dari seberang samudra kosmik! 🌌",
+      "Jejak petualanganmu tercatat abadi di sini! 📜"
+    ]
+  };
+
+  let visitorMascots = [];
   try {
-    const saved = localStorage.getItem('kaka_companions_guestbook_v2');
-    companionsList = saved ? JSON.parse(saved) : defaultCompanions;
-  } catch (e) {
-    companionsList = defaultCompanions;
-  }
+    const raw = localStorage.getItem('kaka_land_of_dusk_mascots_v2');
+    if (raw) visitorMascots = JSON.parse(raw);
+  } catch (e) {}
 
-  const openAriseModalBtn = document.getElementById('openAriseModalBtn');
-  const closeShadowModalBtn = document.getElementById('closeShadowModalBtn');
-  const shadowModalOverlay = document.getElementById('shadowModalOverlay');
-  const shadowExtractionForm = document.getElementById('shadowExtractionForm');
-  const shadowMessageInput = document.getElementById('shadowMessageInput');
-  const shadowAuthorInput = document.getElementById('shadowAuthorInput');
-  const shadowClassSelect = document.getElementById('shadowClassSelect');
-  const shadowAnonCheckbox = document.getElementById('shadowAnonCheckbox');
-  const shadowAuthorFieldWrap = document.getElementById('shadowAuthorFieldWrap');
-  const shadowTotalCount = document.getElementById('shadowTotalCount');
-  const shadowPenStage = document.getElementById('shadowPenStage');
-  const penTelemetryCount = document.getElementById('penTelemetryCount');
+  let M = [...defaultMascots];
+  let MX = Object.assign({}, defaultMX);
 
-  // Status Window Elements
-  const soloStatusOverlay = document.getElementById('soloStatusOverlay');
-  const closeStatusWinBtn = document.getElementById('closeStatusWinBtn');
-  const btnDismissStatus = document.getElementById('btnDismissStatus');
-  const statusWinAvatar = document.getElementById('statusWinAvatar');
-  const statusWinRank = document.getElementById('statusWinRank');
-  const statusWinName = document.getElementById('statusWinName');
-  const statusWinTitle = document.getElementById('statusWinTitle');
-  const statusWinMessage = document.getElementById('statusWinMessage');
-  const statusWinDate = document.getElementById('statusWinDate');
-  const statusWinHpBar = document.getElementById('statusWinHpBar');
-  const statusWinHpVal = document.getElementById('statusWinHpVal');
-  const statusWinMpBar = document.getElementById('statusWinMpBar');
-  const statusWinMpVal = document.getElementById('statusWinMpVal');
-  const attrStr = document.getElementById('attrStr');
-  const attrAgi = document.getElementById('attrAgi');
-  const attrInt = document.getElementById('attrInt');
-  const attrVit = document.getElementById('attrVit');
-  const attrPer = document.getElementById('attrPer');
-  const statusWinSkills = document.getElementById('statusWinSkills');
-
-  const defaultGreetings = [
-    "Halo pengembara!",
-    "Selamat datang di Sanctum Kaka!",
-    "Semoga harimu menyenangkan!",
-    "Portofolio ini keren banget!",
-    "Senang bisa singgah di sini!",
-    "Meong! Kode bersih tanpa bug!",
-    "Tetap semangat belajar web & mobile!",
-    "Maskot siap menemani jalan-jalan!"
-  ];
-
-  let wanderingMascotsList = [];
-
-  class WanderingCompanionMascot {
-    constructor(companion, initialX, initialY, containerEl) {
-      this.companion = companion;
-      this.container = containerEl;
-      this.x = initialX;
-      this.y = initialY;
-      this.isHovered = false;
-      this.facing = Math.random() < 0.5 ? 'right' : 'left';
-      this.bubbleTimeout = null;
-      this.walkTimeout = null;
-      this.speechTimeout = null;
-
-      this.createDOM();
-      this.setupEvents();
-      this.startPatrolLoop();
-      this.scheduleRandomSpeech();
-    }
-
-    createDOM() {
-      const el = document.createElement('div');
-      const typeClass = this.companion.mascotType || 'type-pumpkin';
-      el.className = `pen-mascot facing-${this.facing} mascot-${typeClass}`;
-      el.dataset.id = this.companion.id;
-      el.style.left = `${this.x}px`;
-      el.style.top = `${this.y}px`;
-      el.style.zIndex = Math.floor(this.y) + 5;
-
-      const name = escapeHTML(this.companion.name);
-
-      let spriteHTML = '';
-      if (typeClass === 'type-pumpkin') {
-        spriteHTML = `
-          <div class="mascot-sprite-wrap">
-            <div class="pumpkin-stem"></div>
-            <div class="mascot-torso pumpkin-body">
-              <div class="pumpkin-carved-eyes">
-                <span class="tri-eye"></span>
-                <span class="tri-eye"></span>
-              </div>
-              <div class="pumpkin-carved-mouth"></div>
-            </div>
-            <div class="mascot-legs">
-              <span class="mascot-leg leg-l"></span>
-              <span class="mascot-leg leg-r"></span>
-            </div>
-          </div>
-        `;
-      } else if (typeClass === 'type-ghost') {
-        spriteHTML = `
-          <div class="mascot-sprite-wrap ghost-wrap">
-            <div class="mascot-torso ghost-body">
-              <div class="ghost-eyes">
-                <span class="round-eye"></span>
-                <span class="round-eye"></span>
-              </div>
-              <div class="ghost-cheeks">
-                <span class="ghost-blush"></span>
-                <span class="ghost-mouth"></span>
-                <span class="ghost-blush"></span>
-              </div>
-              <div class="ghost-skirt-waves">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
-          </div>
-        `;
-      } else if (typeClass === 'type-bat') {
-        spriteHTML = `
-          <div class="mascot-sprite-wrap bat-wrap">
-            <div class="bat-ears">
-              <span class="bat-ear ear-l"></span>
-              <span class="bat-ear ear-r"></span>
-            </div>
-            <span class="bat-wing wing-l"></span>
-            <div class="mascot-torso bat-body">
-              <div class="bat-eyes">
-                <span class="glow-red"></span>
-                <span class="glow-red"></span>
-              </div>
-              <div class="bat-fangs"><span></span><span></span></div>
-            </div>
-            <span class="bat-wing wing-r"></span>
-            <div class="mascot-legs">
-              <span class="mascot-leg leg-l"></span>
-              <span class="mascot-leg leg-r"></span>
-            </div>
-          </div>
-        `;
-      } else if (typeClass === 'type-cat') {
-        spriteHTML = `
-          <div class="mascot-sprite-wrap cat-wrap">
-            <div class="cat-ears">
-              <span class="cat-ear ear-l"></span>
-              <span class="cat-ear ear-r"></span>
-            </div>
-            <span class="cat-tail"></span>
-            <div class="mascot-torso cat-body">
-              <div class="cat-eyes">
-                <span class="slit-eye"></span>
-                <span class="slit-eye"></span>
-              </div>
-              <div class="cat-muzzle">
-                <span class="cat-whiskers-l"></span>
-                <span class="cat-nose"></span>
-                <span class="cat-whiskers-r"></span>
-              </div>
-            </div>
-            <div class="mascot-legs">
-              <span class="mascot-leg leg-l"></span>
-              <span class="mascot-leg leg-r"></span>
-            </div>
-          </div>
-        `;
-      } else if (typeClass === 'type-skeleton') {
-        spriteHTML = `
-          <div class="mascot-sprite-wrap">
-            <div class="mascot-torso skull-body">
-              <div class="skull-sockets">
-                <span class="skull-socket"><span class="skull-pupil"></span></span>
-                <span class="skull-socket"><span class="skull-pupil"></span></span>
-              </div>
-              <div class="skull-nose"></div>
-              <div class="skull-jaw">
-                <span class="skull-tooth"></span>
-                <span class="skull-tooth"></span>
-                <span class="skull-tooth"></span>
-              </div>
-            </div>
-            <div class="mascot-legs">
-              <span class="mascot-leg leg-l bone"></span>
-              <span class="mascot-leg leg-r bone"></span>
-            </div>
-          </div>
-        `;
-      } else { // type-wizard
-        spriteHTML = `
-          <div class="mascot-sprite-wrap wizard-wrap">
-            <div class="wizard-hat">
-              <div class="hat-cone"><span class="hat-star">★</span></div>
-              <div class="hat-brim"></div>
-            </div>
-            <div class="mascot-torso wizard-body">
-              <div class="wizard-eyes">
-                <span class="starlight"></span>
-                <span class="starlight"></span>
-              </div>
-              <div class="wizard-belt"></div>
-            </div>
-            <div class="wizard-wand"><span class="wand-sparkle">✦</span></div>
-            <div class="mascot-legs">
-              <span class="mascot-leg leg-l"></span>
-              <span class="mascot-leg leg-r"></span>
-            </div>
-          </div>
-        `;
-      }
-
-      el.innerHTML = `
-        <div class="pen-bubble"><span class="bubble-txt">${name}</span></div>
-        ${spriteHTML}
-        <div class="pen-mascot-name">${name}</div>
-      `;
-
-      this.el = el;
-      this.bubbleEl = el.querySelector('.pen-bubble');
-      this.bubbleTxt = el.querySelector('.bubble-txt');
-      this.container.appendChild(el);
-    }
-
-    setupEvents() {
-      this.el.addEventListener('mouseenter', () => {
-        this.isHovered = true;
-        this.el.classList.remove('walking');
-        const speech = this.companion.text ? `"${this.companion.text}"` : 'Halo pengembara!';
-        this.showSpeech(speech, 3500);
-      });
-
-      this.el.addEventListener('mouseleave', () => {
-        this.isHovered = false;
-      });
-
-      this.el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        playSound('ghost');
-        openSoloStatusWindow(this.companion);
-      });
-    }
-
-    showSpeech(text, duration = 3000) {
-      if (!this.bubbleEl || !this.bubbleTxt) return;
-      this.bubbleTxt.textContent = text;
-      this.bubbleEl.classList.add('show');
-
-      clearTimeout(this.bubbleTimeout);
-      this.bubbleTimeout = setTimeout(() => {
-        this.bubbleEl.classList.remove('show');
-      }, duration);
-    }
-
-    scheduleRandomSpeech() {
-      const delay = randNum(8000, 20000);
-      this.speechTimeout = setTimeout(() => {
-        if (!this.isHovered) {
-          const useComment = Math.random() < 0.65 && this.companion.text;
-          const speechText = useComment 
-            ? `"${this.companion.text}"` 
-            : defaultGreetings[Math.floor(Math.random() * defaultGreetings.length)];
-          this.showSpeech(speechText, 3200);
-        }
-        this.scheduleRandomSpeech();
-      }, delay);
-    }
-
-    startPatrolLoop() {
-      const planNextStep = () => {
-        const pauseDuration = randNum(2500, 6500);
-        this.walkTimeout = setTimeout(() => {
-          if (!this.isHovered) {
-            this.stepToNewPosition();
-          }
-          planNextStep();
-        }, pauseDuration);
-      };
-      planNextStep();
-    }
-
-    stepToNewPosition() {
-      if (!this.container || !this.el) return;
-      const containerW = this.container.clientWidth || 900;
-      const containerH = this.container.clientHeight || 320;
-      const minX = 25;
-      const maxX = Math.max(minX + 60, containerW - 85);
-      const minY = 25;
-      const maxY = Math.max(minY + 40, containerH - 110);
-
-      // Localized wandering vector: take grounded, gentle steps rather than teleporting across the arena
-      const stepDistX = randNum(-110, 110);
-      const stepDistY = randNum(-45, 45);
-      let targetX = this.x + stepDistX;
-      let targetY = this.y + stepDistY;
-
-      // Keep strictly within boundaries
-      targetX = Math.max(minX, Math.min(maxX, targetX));
-      targetY = Math.max(minY, Math.min(maxY, targetY));
-
-      const dx = targetX - this.x;
-      const dy = targetY - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 18) return;
-
-      this.facing = dx >= 0 ? 'right' : 'left';
-      this.el.classList.remove('facing-left', 'facing-right');
-      this.el.classList.add(`facing-${this.facing}`);
-
-      // Duration proportional to distance for a natural, steady walking pace
-      const dur = Math.max(2.2, Math.min(4.5, dist / 32));
-      this.el.style.transition = `left ${dur}s cubic-bezier(0.25, 0.8, 0.25, 1), top ${dur}s cubic-bezier(0.25, 0.8, 0.25, 1)`;
-      this.el.classList.add('walking');
-      
-      this.x = targetX;
-      this.y = targetY;
-      this.el.style.left = `${this.x}px`;
-      this.el.style.top = `${this.y}px`;
-      this.el.style.zIndex = Math.floor(this.y) + 5;
-
-      setTimeout(() => {
-        if (this.el) {
-          this.el.classList.remove('walking');
-        }
-      }, dur * 1000);
-    }
-
-    destroy() {
-      clearTimeout(this.bubbleTimeout);
-      clearTimeout(this.walkTimeout);
-      clearTimeout(this.speechTimeout);
-      if (this.el) this.el.remove();
-    }
-  }
-
-  function initShadowPenArena() {
-    if (!shadowPenStage) return;
-    shadowPenStage.innerHTML = `
-      <div class="pen-dungeon-grid" aria-hidden="true"></div>
-      <div class="pen-shadow-smoke" aria-hidden="true"></div>
-    `;
-
-    wanderingMascotsList.forEach(m => m.destroy());
-    wanderingMascotsList = [];
-
-    const containerW = shadowPenStage.clientWidth || 900;
-    const containerH = shadowPenStage.clientHeight || 320;
-    const count = companionsList.length;
-    const spacingX = Math.max(45, (containerW - 120) / Math.max(1, count));
-
-    companionsList.forEach((companion, idx) => {
-      const startX = Math.min(containerW - 90, Math.max(20, 25 + idx * spacingX + randNum(-15, 15)));
-      const startY = randNum(25, containerH - 110);
-      const mascot = new WanderingCompanionMascot(companion, startX, startY, shadowPenStage);
-      wanderingMascotsList.push(mascot);
+  visitorMascots.forEach((vm) => {
+    M.push({
+      n: vm.name,
+      i: vm.icon,
+      r: vm.role,
+      b: '"' + vm.text + '"',
+      g: vm.region,
+      x: vm.x || (R[vm.region].s[0] + (Math.random() * 0.1 - 0.05)),
+      y: vm.y || (R[vm.region].s[1] + (Math.random() * 0.1 - 0.05)),
+      isGuest: true
     });
+    MX[vm.name] = {
+      o: R[vm.region].p[0] ? R[vm.region].p[0][0] + ", " + R[vm.region].n : R[vm.region].n,
+      d: 'Pengunjung Sanctum berwujud ' + vm.role + ' dari ' + R[vm.region].n + '.',
+      m: 'Bergabung di Land of Dusk melalui Sanctum Guestbook. Pesan: "' + vm.text + '"',
+      h: [[defaultMascots[vm.region % defaultMascots.length].n, "Teman Sekawasan"]]
+    };
+  });
 
-    updateShadowHUD();
+  const lodWrapper = document.getElementById('lodWrapper');
+  const lodStage = document.getElementById('lodStage');
+  const lodWorld = document.getElementById('lodWorld');
+  const lodCv = document.getElementById('lodCv');
+  const lodRoute = document.getElementById('lodRoute');
+  const lodRgs = document.getElementById('lodRgs');
+  const lodLayer = document.getElementById('lodLayer');
+  const lodBk = document.getElementById('lodBk');
+  const lodTtl = document.getElementById('lodTtl');
+  const lodPanel = document.getElementById('lodPanel');
+  const lodPh = document.getElementById('lodPh');
+  const lodPb = document.getElementById('lodPb');
+  const lodT0 = document.getElementById('lodT0');
+  const lodT1 = document.getElementById('lodT1');
+  const lodDt = document.getElementById('lodDt');
+  const lodDtC = document.getElementById('lodDtC');
+  const lodDtE = document.getElementById('lodDtE');
+  const lodDtN = document.getElementById('lodDtN');
+  const lodDtD = document.getElementById('lodDtD');
+  const lodDtM = document.getElementById('lodDtM');
+  const lodMore = document.getElementById('lodMore');
+  const lodDtH = document.getElementById('lodDtH');
+  const lodDtX = document.getElementById('lodDtX');
+  const lodSnd = document.getElementById('lodSnd');
+  const shadowTotalCount = document.getElementById('shadowTotalCount');
+
+  const W = 256;
+  const H = 144;
+  const N = W * H;
+  let cx = lodCv ? lodCv.getContext('2d') : null;
+  let img = cx ? cx.createImageData(W, H) : null;
+  const px = new Uint8ClampedArray(N * 4);
+  const reg = new Int8Array(N).fill(-1);
+  const bd = new Uint8Array(N);
+
+  function rgb(h) {
+    return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+  }
+  function hsh(x, y) {
+    const n = Math.sin(x * 127.1 + y * 311.7 + 7) * 43758.5453;
+    return n - Math.floor(n);
+  }
+  function vn(x, y) {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const xf = x - xi;
+    const yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf);
+    const v = yf * yf * (3 - 2 * yf);
+    return hsh(xi, yi) * (1 - u) * (1 - v) + hsh(xi + 1, yi) * u * (1 - v) + hsh(xi, yi + 1) * (1 - u) * v + hsh(xi + 1, yi + 1) * u * v;
+  }
+  function fb(x, y) {
+    return vn(x, y) * 0.6 + vn(x * 2, y * 2) * 0.3 + vn(x * 4, y * 4) * 0.1;
   }
 
-  function updateShadowHUD() {
-    const txt = `${companionsList.length}+ Sahabat Terdaftar`;
-    if (shadowTotalCount) shadowTotalCount.textContent = txt;
-    if (penTelemetryCount) penTelemetryCount.textContent = `${companionsList.length} Maskot Sahabat Berpatroli`;
+  R.forEach((r) => {
+    r.k = r.c.map(rgb);
+  });
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const k = y * W + x;
+      const u = x / W;
+      const v = y / H;
+      const e = Math.hypot((u - 0.5) / 0.5, (v - 0.5) / 0.5);
+      const o = k * 4;
+      let c;
+      if (fb(u * 7, v * 4) + (1 - e) > 0.62) {
+        const wu = u + (fb(u * 9 + 3, v * 5) - 0.5) * 0.14;
+        const wv = v + (fb(u * 9, v * 5 + 7) - 0.5) * 0.14;
+        let b = 0;
+        let m = 9;
+        R.forEach((r, i) => {
+          const q = Math.hypot((wu - r.s[0]) * 1.78, wv - r.s[1]);
+          if (q < m) {
+            m = q;
+            b = i;
+          }
+        });
+        reg[k] = b;
+        const n = fb(u * 42, v * 24) + ((x + y) & 1) * 0.05;
+        c = n < 0.42 ? R[b].k[2] : n < 0.62 ? R[b].k[1] : R[b].k[0];
+        if (hsh(x, y) > 0.991 || (x > 0 && reg[k - 1] === b && hsh(x - 1, y) > 0.991) || (y > 0 && reg[k - W] === b && hsh(x, y - 1) > 0.991)) {
+          c = R[b].a;
+        }
+      } else {
+        const n2 = fb(u * 30, v * 17);
+        c = (n2 > 0.6 && ((x >> 1) + y) % 3 === 0) ? [40, 36, 102] : [26, 20, 71];
+      }
+      px[o] = c[0];
+      px[o + 1] = c[1];
+      px[o + 2] = c[2];
+      px[o + 3] = 255;
+    }
   }
 
-  function openSoloStatusWindow(companion) {
-    if (!soloStatusOverlay || !companion) return;
-
-    playSound('victory');
-
-    if (statusWinAvatar) {
-      statusWinAvatar.innerHTML = `<span class="avatar-icon">${companion.icon || '🎃'}</span>`;
+  for (let k = 0; k < N; k++) {
+    const x = k % W;
+    const y = (k / W) | 0;
+    const r = reg[k];
+    const o = k * 4;
+    let w = 0;
+    let t = 0;
+    let s = 0;
+    [x > 0 ? k - 1 : -1, x < W - 1 ? k + 1 : -1, y > 0 ? k - W : -1, y < H - 1 ? k + W : -1].forEach((q) => {
+      if (q < 0 || reg[q] === r) return;
+      bd[k] = 1;
+      if (r >= 0) {
+        if (reg[q] < 0) w = 1;
+        else t = 1;
+      } else if (reg[q] >= 0) {
+        s = 1;
+      }
+    });
+    if (w) {
+      px[o] = 14;
+      px[o + 1] = 9;
+      px[o + 2] = 28;
+    } else if (t) {
+      px[o] = px[o] * 0.6 + 102;
+      px[o + 1] = px[o + 1] * 0.6 + 96;
+      px[o + 2] = px[o + 2] * 0.6 + 86;
+    } else if (s) {
+      px[o] = 88;
+      px[o + 1] = 84;
+      px[o + 2] = 170;
     }
-    if (statusWinRank) {
-      statusWinRank.textContent = (companion.role || 'SANCTUM COMPANION').toUpperCase();
-    }
-    if (statusWinName) {
-      statusWinName.textContent = companion.name || 'PENGUNJUNG SANCTUM';
-    }
-    if (statusWinTitle) {
-      statusWinTitle.textContent = `Sahabat Terverifikasi di Portofolio Kaka Andrea Yahya`;
-    }
-    if (statusWinMessage) {
-      statusWinMessage.textContent = companion.text 
-        ? `"${companion.text}"` 
-        : `"Salam hangat untuk Kaka! Desain dan kodenya luar biasa!"`;
-    }
-    if (statusWinDate) {
-      statusWinDate.textContent = `Kategori: ${companion.role || 'Visitor'} • Status: Terverifikasi di Sanctum`;
-    }
-
-    if (statusWinHpVal) statusWinHpVal.textContent = "100 / 100";
-    if (statusWinMpVal) statusWinMpVal.textContent = "MAX / 100";
-    if (attrStr) attrStr.textContent = 100;
-    if (attrAgi) attrAgi.textContent = 96;
-    if (attrInt) attrInt.textContent = 98;
-    if (attrVit) attrVit.textContent = 99;
-    if (attrPer) attrPer.textContent = 95;
-
-    if (statusWinSkills) {
-      const skills = companion.skills && companion.skills.length 
-        ? companion.skills 
-        : ["Web Explorer", "Code Appreciator", "Good Vibes"];
-      statusWinSkills.innerHTML = skills.map(s => `<span class="skill-chip">${s}</span>`).join('');
-    }
-
-    soloStatusOverlay.classList.add('open');
-    soloStatusOverlay.setAttribute('aria-hidden', 'false');
-    // Lock background scroll so user cannot scroll the page behind the status window
-    document.body.style.overflow = 'hidden';
   }
 
-  function closeSoloStatusWindow() {
-    if (!soloStatusOverlay) return;
-    soloStatusOverlay.classList.remove('open');
-    soloStatusOverlay.setAttribute('aria-hidden', 'true');
-    // Restore background scroll
-    document.body.style.overflow = '';
+  function paint(s, st) {
+    if (!cx || !img) return;
+    const d = img.data;
+    const fo = st ? 0.36 : 0.72;
+    for (let k = 0; k < N; k++) {
+      const r = reg[k];
+      const o = k * 4;
+      const f = s < 0 ? 1 : (r === s ? 1.1 : fo);
+      if (s >= 0 && r === s && bd[k]) {
+        d[o] = 255;
+        d[o + 1] = 138;
+        d[o + 2] = 31;
+      } else {
+        d[o] = Math.min(255, px[o] * f);
+        d[o + 1] = Math.min(255, px[o + 1] * f);
+        d[o + 2] = Math.min(255, px[o + 2] * f);
+      }
+      d[o + 3] = 255;
+    }
+    cx.putImageData(img, 0, 0);
+  }
+
+  const EDGES = [[1, 0], [0, 2], [2, 5], [5, 4], [4, 3], [3, 1], [0, 4], [1, 4], [2, 4], [0, 5], [1, 2], [3, 5]];
+
+  function buildRouteNetwork() {
+    if (!lodRoute) return;
+    const A = {};
+    const P = {};
+    let out = "";
+    EDGES.forEach((g, n) => {
+      [[g[0], g[1]], [g[1], g[0]]].forEach((p) => {
+        const s = R[p[0]].s;
+        const t = R[p[1]].s;
+        (A[p[0]] = A[p[0]] || []).push({
+          n: n,
+          t: Math.atan2((t[1] - s[1]) * 900, (t[0] - s[0]) * 1600)
+        });
+      });
+    });
+    for (const r in A) {
+      const L = A[r].sort((a, b) => a.t - b.t);
+      let m0 = 0;
+      let m1 = 0;
+      L.forEach((q) => { m0 += q.t; });
+      for (let i = 1; i < L.length; i++) {
+        if (L[i].t - L[i - 1].t < 0.62) L[i].t = L[i - 1].t + 0.62;
+      }
+      L.forEach((q) => { m1 += q.t; });
+      const sh = (m1 - m0) / L.length;
+      L.forEach((q) => {
+        const t = q.t - sh;
+        P[q.n + "_" + r] = [
+          R[r].s[0] * 1600 + Math.cos(t) * 165,
+          R[r].s[1] * 900 + Math.sin(t) * 58
+        ];
+      });
+    }
+    EDGES.forEach((g, n) => {
+      const a = P[n + "_" + g[0]];
+      const b = P[n + "_" + g[1]];
+      if (!a || !b) return;
+      const dx = b[0] - a[0];
+      const dy = b[1] - a[1];
+      const l = Math.hypot(dx, dy) || 1;
+      const k = (n % 2 ? -1 : 1) * Math.min(70, l * 0.12);
+      const d = "M" + a[0] + "," + a[1] + " Q" + ((a[0] + b[0]) / 2 - dy / l * k) + "," + ((a[1] + b[1]) / 2 + dx / l * k) + " " + b[0] + "," + b[1];
+      out += '<path class="rt1" d="' + d + '"/><path class="rt2" d="' + d + '"/>';
+    });
+    lodRoute.innerHTML = out;
+  }
+  buildRouteNetwork();
+
+  let cur = -1;
+  let hv = -1;
+  let tab = 0;
+  let opened = "";
+
+  function updateHUDCount() {
+    if (shadowTotalCount) {
+      shadowTotalCount.textContent = M.length + " Sahabat Singgah";
+    }
+  }
+  updateHUDCount();
+
+  if (lodRgs) {
+    lodRgs.innerHTML = R.map((r, i) => {
+      const count = M.filter((m) => m.g === i).length;
+      return '<button class="rg" data-i="' + i + '" style="left:' + (r.s[0] * 100) + '%;top:' + (r.s[1] * 100) + '%"><b>' + r.e + '</b><span>' + r.n + ' (' + count + ')</span></button>';
+    }).join('');
+  }
+
+  function regAt(e) {
+    if (!lodWorld) return -1;
+    const b = lodWorld.getBoundingClientRect();
+    const x = Math.floor((e.clientX - b.left) / b.width * W);
+    const y = Math.floor((e.clientY - b.top) / b.height * H);
+    return x < 0 || y < 0 || x >= W || y >= H ? -1 : reg[y * W + x];
+  }
+
+  function isInsideRegion(nx, ny, targetRegionIndex) {
+    if (nx < 0.04 || nx > 0.96 || ny < 0.04 || ny > 0.96) return false;
+    const px = Math.min(W - 1, Math.max(0, Math.floor(nx * W)));
+    const py = Math.min(H - 1, Math.max(0, Math.floor(ny * H)));
+    return reg[py * W + px] === targetRegionIndex;
+  }
+
+  function escapeHTML(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function getMascotChibiHTML(m) {
+    const name = m && m.n ? m.n : '';
+    if (name === 'Boo Casper') {
+      return '<svg class="chibi-svg chibi-casper" viewBox="0 0 48 52"><defs><filter id="gw-casper" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.8"/></filter></defs><path d="M 24 8 C 15 8 12 18 12 30 C 9 28 6 29 6 32 C 6 35 9 37 12 35 C 12 42 16 45 19 41 C 22 38 26 38 29 41 C 32 45 36 42 36 35 C 39 37 42 35 42 32 C 42 29 39 28 36 30 C 36 18 33 8 24 8 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8" filter="url(#gw-casper)"/><ellipse cx="17" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="31" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="19" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><ellipse cx="29" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><circle cx="20" cy="21" r="0.9" fill="#ffffff"/><circle cx="30" cy="21" r="0.9" fill="#ffffff"/><path d="M 22 26 Q 24 28 26 26" fill="none" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M 37 28 Q 44 24 43 19 Q 40 18 37 23" fill="#ffffff" stroke="#38bdf8" stroke-width="1.5"/></svg>';
+    }
+    if (name === 'Skully') {
+      return '<svg class="chibi-svg chibi-skully" viewBox="0 0 48 52"><defs><filter id="gw-skully" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#a855f7" flood-opacity="0.75"/></filter></defs><path d="M 24 33 L 24 45" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round"/><path d="M 18 36 Q 24 34 30 36" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 17 39 Q 24 37 31 39" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 19 42 Q 24 40 29 42" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 20 46 Q 24 48 28 46" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/><path d="M 28 35 Q 36 36 34 42" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/><g class="skully-coffee"><rect x="33" y="38" width="8" height="7" rx="1.5" fill="#78350f" stroke="#f59e0b" stroke-width="1"/><path d="M 41 40 Q 44 41.5 41 43" fill="none" stroke="#f59e0b" stroke-width="1"/><path class="steam" d="M 35 36 Q 36 34 35 32 M 38 36 Q 39 34 38 31" fill="none" stroke="#fef08a" stroke-width="0.9" opacity="0.8"/></g><g class="skully-head"><path d="M 14 20 C 14 10 34 10 34 20 C 34 24 31 25 31 28 C 31 30 29 31 24 31 C 19 31 17 30 17 28 C 17 25 14 24 14 20 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" filter="url(#gw-skully)"/><ellipse class="skull-eye l" cx="19.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil l" cx="20" cy="19" r="1.2" fill="#38bdf8"/><ellipse class="skull-eye r" cx="28.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil r" cx="28" cy="19" r="1.2" fill="#38bdf8"/><path d="M 24 23 L 23 25 L 25 25 Z" fill="#1e293b"/><path d="M 20 28 L 28 28 M 22 27 L 22 29 M 24 27 L 24 29 M 26 27 L 26 29" stroke="#64748b" stroke-width="1" stroke-linecap="round"/><path d="M 26 12 L 28 14 L 27 16" fill="none" stroke="#cbd5e1" stroke-width="0.8"/><g class="skull-sweat"><path d="M 11 15 Q 9 17 11 18 Q 12 17 11 15 Z" fill="#38bdf8"/><path d="M 37 14 Q 39 16 37 17 Q 36 16 37 14 Z" fill="#38bdf8"/></g></g></svg>';
+    }
+    if (name === 'Pumpkin Pete') {
+      return '<svg class="chibi-svg chibi-pete" viewBox="0 0 48 52"><defs><filter id="gw-pete" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/></filter><radialGradient id="gd-pete" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#fdba74"/><stop offset="60%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/></radialGradient></defs><path d="M 24 16 Q 25 8 28 7 Q 31 6 30 10 Q 29 14 26 16" fill="#15803d" stroke="#166534" stroke-width="1.2"/><path d="M 27 11 Q 32 10 33 13 Q 34 16 31 15" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="16" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="32" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="24" cy="31" rx="10" ry="14" fill="url(#gd-pete)" stroke="#7c2d12" stroke-width="1.4" filter="url(#gw-pete)"/><polygon points="18,25 22,28 17,29" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="30,25 31,29 26,28" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="24,28 23,31 25,31" fill="#fef08a"/><path d="M 17 33 L 19 35 L 21 34 L 23 36 L 25 34 L 27 35 L 29 33 Q 24 39 17 33 Z" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><circle cx="11" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/><circle cx="37" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/></svg>';
+    }
+    if (name === 'Battie') {
+      return '<svg class="chibi-svg chibi-battie" viewBox="0 0 48 52"><defs><filter id="gw-battie" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#a855f7" flood-opacity="0.85"/></filter></defs><path class="bat-wing l" d="M 16 28 C 10 20 4 23 3 28 C 4 33 8 32 10 37 C 12 34 14 36 17 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><path class="bat-wing r" d="M 32 28 C 38 20 44 23 45 28 C 44 33 40 32 38 37 C 36 34 34 36 31 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><ellipse cx="24" cy="31" rx="10" ry="11" fill="#3b0764" stroke="#c084fc" stroke-width="1.6" filter="url(#gw-battie)"/><polygon points="17,23 13,11 20,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="16,21 14,14 18,18" fill="#f43f5e"/><polygon points="31,23 35,11 28,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="32,21 34,14 30,18" fill="#f43f5e"/><ellipse cx="20" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="19.5" cy="27.5" r="0.9" fill="#ffffff"/><ellipse cx="28" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="27.5" cy="27.5" r="0.9" fill="#ffffff"/><path d="M 21 33 Q 24 36 27 33" fill="none" stroke="#f3e8ff" stroke-width="1.2"/><polygon points="21,33 22,36 23,33" fill="#ffffff"/><polygon points="25,33 26,36 27,33" fill="#ffffff"/><path d="M 21 42 L 21 44 M 27 42 L 27 44" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    }
+    if (name === 'Luna') {
+      return '<svg class="chibi-svg chibi-luna" viewBox="0 0 48 52"><defs><filter id="gw-luna" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#fbbf24" flood-opacity="0.8"/></filter></defs><path class="cat-tail" d="M 32 38 Q 42 36 41 27 Q 40 24 37 25" fill="none" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="24" cy="33" rx="10" ry="11" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.6"/><polygon points="15,22 13,10 21,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="15,20 14,13 19,17" fill="#ec4899"/><polygon points="33,22 35,10 27,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="33,20 34,13 29,17" fill="#ec4899"/><polygon points="24,9 20,18 28,18" fill="#4338ca" stroke="#fbbf24" stroke-width="1"/><ellipse cx="24" cy="18" rx="6" ry="1.8" fill="#312e81" stroke="#fbbf24" stroke-width="0.8"/><path d="M 23 16 Q 24 14 25 16" fill="none" stroke="#fde047" stroke-width="1"/><ellipse cx="19" cy="27" rx="3" ry="3.5" fill="#fde047" filter="url(#gw-luna)"/><ellipse cx="19" cy="27" rx="1" ry="3" fill="#0f172a"/><ellipse cx="29" cy="27" rx="3" ry="3.5" fill="#fde047" filter="url(#gw-luna)"/><ellipse cx="29" cy="27" rx="1" ry="3" fill="#0f172a"/><polygon points="24,31 23,32.5 25,32.5" fill="#f472b6"/><path d="M 15 31 L 8 30 M 15 33 L 9 34 M 33 31 L 40 30 M 33 33 L 39 34" stroke="#818cf8" stroke-width="1" stroke-linecap="round"/><circle cx="20" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/><circle cx="28" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/></svg>';
+    }
+    if (name === 'Archie') {
+      return '<svg class="chibi-svg chibi-archie" viewBox="0 0 48 52"><defs><filter id="gw-archie" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#38bdf8" flood-opacity="0.8"/></filter></defs><path d="M 17 32 L 14 45 L 34 45 L 31 32 Z" fill="#312e81" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 32 L 24 45" stroke="#fbbf24" stroke-width="1.2"/><g class="alchem-flask"><path d="M 33 38 L 35 34 L 37 34 L 39 38 C 41 41 38 45 35 45 C 32 45 31 41 33 38 Z" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1" filter="url(#gw-archie)"/><path d="M 32.5 40 C 33 44 38 44 38.5 40 Z" fill="#22c55e"/><circle cx="35" cy="41" r="0.8" fill="#ffffff"/><circle cx="36.5" cy="39" r="0.6" fill="#ffffff"/></g><circle cx="24" cy="27" r="7.5" fill="#fed7aa"/><path d="M 18 29 C 18 36 24 39 24 39 C 24 39 30 36 30 29 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/><ellipse cx="21" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="21.5" cy="25.5" r="0.7" fill="#38bdf8"/><ellipse cx="27" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="26.5" cy="25.5" r="0.7" fill="#38bdf8"/><circle cx="24" cy="28.5" r="1" fill="#f97316"/><path d="M 12 23 Q 24 19 36 23 Q 24 21 12 23 Z" fill="#1e1b4b"/><ellipse cx="24" cy="22" rx="14" ry="3.5" fill="#4338ca" stroke="#818cf8" stroke-width="1.2"/><path d="M 15 21 Q 20 8 30 6 Q 26 12 32 20 Z" fill="#3730a3" stroke="#818cf8" stroke-width="1.2"/><path d="M 16 20 Q 24 18 31 20" stroke="#f59e0b" stroke-width="2.5" fill="none"/><polygon points="24,17 25,19 27,19 25.5,20.5 26,22.5 24,21 22,22.5 22.5,20.5 21,19 23,19" fill="#fef08a"/></svg>';
+    }
+    if (name === 'Gully') {
+      return '<svg class="chibi-svg chibi-gully" viewBox="0 0 48 52"><defs><filter id="gw-gully" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#22c55e" flood-opacity="0.8"/></filter></defs><ellipse cx="24" cy="33" rx="12" ry="11" fill="#22c55e" stroke="#15803d" stroke-width="1.6" filter="url(#gw-gully)"/><ellipse cx="24" cy="35" rx="8" ry="7" fill="#86efac"/><circle cx="17" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="17" cy="21" r="4" fill="#ffffff"/><circle cx="17.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="18" cy="20" r="0.8" fill="#ffffff"/><circle cx="31" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="31" cy="21" r="4" fill="#ffffff"/><circle cx="30.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="30" cy="20" r="0.8" fill="#ffffff"/><ellipse cx="16" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><ellipse cx="32" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><path d="M 18 30 Q 24 35 30 30" fill="none" stroke="#14532d" stroke-width="1.6" stroke-linecap="round"/><path d="M 12 36 Q 9 37 11 39 M 36 36 Q 39 37 37 39" stroke="#15803d" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="17" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/><ellipse cx="31" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/></svg>';
+    }
+    if (name === 'Pengunjung Misterius') {
+      return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><defs><filter id="gw-voyager" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#a855f7" flood-opacity="0.85"/></filter></defs><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6" filter="url(#gw-voyager)"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
+    }
+    const icon = m && m.i ? escapeHTML(m.i) : '✨';
+    return '<svg class="chibi-svg chibi-visitor" viewBox="0 0 48 52"><defs><filter id="gw-v" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f59e0b" flood-opacity="0.8"/></filter></defs><path d="M 16 30 L 13 45 L 35 45 L 32 30 Z" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.4"/><circle cx="24" cy="24" r="11" fill="#2e1065" stroke="#f59e0b" stroke-width="1.6" filter="url(#gw-v)"/><text x="24" y="27" font-size="13" text-anchor="middle" dominant-baseline="central">' + icon + '</text></svg>';
+  }
+
+  function sayMascotGreeting(mascotName, customText) {
+    const el = document.querySelector('.mc[data-m="' + mascotName + '"]');
+    if (!el) return;
+    const bubble = el.querySelector('.mc-bubble');
+    if (!bubble) return;
+    const textSpan = bubble.querySelector('span');
+    const pool = mascotGreetings[mascotName] || ["Halo traveler! ✨", "Selamat datang di Land of Dusk! 🎃"];
+    const text = customText || pool[Math.floor(Math.random() * pool.length)];
+    if (textSpan) textSpan.textContent = text;
+    bubble.classList.add('show');
+    clearTimeout(el._bubbleTimer);
+    el._bubbleTimer = setTimeout(() => {
+      bubble.classList.remove('show');
+    }, 3400);
+  }
+
+  function renderMascots() {
+    if (!lodLayer) return;
+    if (cur < 0) {
+      lodLayer.innerHTML = '';
+      return;
+    }
+    const r = R[cur];
+    const pinsHtml = (r && r.p)
+      ? r.p.map((p) => '<div class="pl" style="left:' + (p[2] * 100) + '%;top:' + (p[3] * 100) + '%"><i></i><span>' + p[0] + '</span></div>').join('')
+      : '';
+
+    const visibleMascots = M.filter((m) => m.g === cur);
+    const mascotsHtml = visibleMascots.map((m) => {
+      return '<div class="mc" data-m="' + escapeHTML(m.n) + '" style="left:' + (m.x * 100) + '%;top:' + (m.y * 100) + '%">' +
+        '<div class="mc-bubble"><span></span></div>' +
+        '<div class="mc-avatar">' + getMascotChibiHTML(m) + '</div>' +
+        '<em>' + escapeHTML(m.n) + '</em>' +
+        '</div>';
+    }).join('');
+
+    lodLayer.innerHTML = pinsHtml + mascotsHtml;
+  }
+
+  function roamMascots() {
+    if (cur < 0) return;
+    const visibleMascots = M.filter((m) => m.g === cur);
+    visibleMascots.forEach((m) => {
+      if (m._isScared) return;
+      const stepDist = 0.012 + Math.random() * 0.022;
+      const angle = Math.random() * Math.PI * 2;
+      const nx = m.x + Math.cos(angle) * stepDist;
+      const ny = m.y + Math.sin(angle) * stepDist;
+
+      if (isInsideRegion(nx, ny, m.g)) {
+        m.x = nx;
+        m.y = ny;
+        const el = document.querySelector('.mc[data-m="' + m.n + '"]');
+        if (el) {
+          el.style.left = (m.x * 100) + '%';
+          el.style.top = (m.y * 100) + '%';
+          const avatar = el.querySelector('.mc-avatar');
+          if (avatar) {
+            if (Math.cos(angle) < -0.15) {
+              avatar.style.transform = 'scaleX(-1)';
+            } else if (Math.cos(angle) > 0.15) {
+              avatar.style.transform = 'scaleX(1)';
+            }
+          }
+        }
+      } else {
+        const center = R[m.g].s;
+        const dx = center[0] - m.x;
+        const dy = center[1] - m.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const nudgeX = m.x + (dx / dist) * 0.018;
+        const nudgeY = m.y + (dy / dist) * 0.018;
+        if (isInsideRegion(nudgeX, nudgeY, m.g)) {
+          m.x = nudgeX;
+          m.y = nudgeY;
+          const el = document.querySelector('.mc[data-m="' + m.n + '"]');
+          if (el) {
+            el.style.left = (m.x * 100) + '%';
+            el.style.top = (m.y * 100) + '%';
+          }
+        }
+      }
+    });
+  }
+
+  setInterval(roamMascots, 2500);
+
+  setInterval(() => {
+    if (cur < 0) return;
+    const list = M.filter((m) => m.g === cur);
+    if (list.length === 0) return;
+    const randomMascot = list[Math.floor(Math.random() * list.length)];
+    sayMascotGreeting(randomMascot.n);
+  }, 5200);
+
+  function fill() {
+    if (!lodPh || !lodPb || cur < 0) return;
+    const r = R[cur];
+    const ms = M.filter((m) => m.g === cur);
+    lodPh.innerHTML = '<span class="em">' + r.e + '</span><h2>' + r.n + '</h2>';
+    if (lodT0) lodT0.classList.toggle('on', tab === 0);
+    if (lodT1) lodT1.classList.toggle('on', tab === 1);
+    if (tab === 0) {
+      lodPb.innerHTML = '<p>' + r.d + '</p><div class="lb lod-lb">Tempat &amp; Landmark Ikonik</div>' +
+        r.p.map((p) => '<div class="cd lod-cd"><b>' + p[0] + '</b><small>' + p[1] + '</small></div>').join('');
+    } else {
+      lodPb.innerHTML = '<div class="lb lod-lb">Penghuni &amp; Pengunjung (' + ms.length + ')</div>' +
+        ms.map((m) => {
+          const o = opened === m.n;
+          return '<div class="cd lod-cd mm lod-mm' + (o ? ' o' : '') + '" data-m="' + escapeHTML(m.n) + '">' +
+            '<span class="av lod-av">' + getMascotChibiHTML(m) + '</span>' +
+            '<div><b>' + escapeHTML(m.n) + '</b><small>' + escapeHTML(m.r) + '</small></div>' +
+            '<u>Detail</u>' +
+            (o ? '<q>' + escapeHTML(m.b) + '</q>' : '') +
+            '</div>';
+        }).join('');
+    }
+  }
+
+  function sel(i) {
+    cur = i;
+    tab = 0;
+    opened = "";
+    const r = R[i];
+    const z = 2.15;
+    const nar = window.innerWidth <= 760;
+    const cl = (t) => Math.max(-(z - 1) / 2, Math.min((z - 1) / 2, t));
+    const tx = cl((nar ? 0.5 : 0.33) - 0.5 - z * (r.s[0] - 0.5));
+    const ty = cl(0 - z * (r.s[1] - 0.5));
+    if (lodWorld) {
+      lodWorld.style.setProperty('--z', z);
+      lodWorld.style.transform = 'translate(' + (tx * 100) + '%,' + (ty * 100) + '%) scale(' + z + ')';
+    }
+    if (lodStage) lodStage.classList.add('sel');
+    if (lodBk) lodBk.hidden = false;
+    if (lodTtl) lodTtl.textContent = 'Land of Dusk · ' + r.n;
+    renderMascots();
+    paint(i, 1);
+    fill();
+    if (lodPb) lodPb.scrollTop = 0;
+    playSound('blip');
+  }
+
+  function back() {
+    cur = -1;
+    hv = -1;
+    if (lodWorld) {
+      lodWorld.style.setProperty('--z', 1);
+      lodWorld.style.transform = '';
+    }
+    if (lodStage) lodStage.classList.remove('sel');
+    if (lodBk) lodBk.hidden = true;
+    if (lodTtl) lodTtl.textContent = 'Land of Dusk';
+    renderMascots();
+    paint(-1);
     playSound('click');
   }
 
-  if (closeStatusWinBtn) closeStatusWinBtn.addEventListener('click', closeSoloStatusWindow);
-  if (btnDismissStatus) btnDismissStatus.addEventListener('click', closeSoloStatusWindow);
-  if (soloStatusOverlay) {
-    soloStatusOverlay.addEventListener('click', (e) => {
-      if (e.target === soloStatusOverlay) closeSoloStatusWindow();
+  function openM(n) {
+    tab = 1;
+    opened = (opened === n ? '' : n);
+    fill();
+  }
+
+  if (lodRgs) {
+    lodRgs.addEventListener('click', (e) => {
+      const b = e.target.closest('.rg');
+      if (b) sel(+b.dataset.i);
     });
   }
 
-  document.addEventListener('keydown', (e) => {
+  if (lodWorld) {
+    lodWorld.addEventListener('click', (e) => {
+      const m = e.target.closest('.mc');
+      if (m) {
+        openD(m.dataset.m);
+        return;
+      }
+      if (e.target.closest('.rg')) return;
+      const r = regAt(e);
+      if (r >= 0 && r !== cur) sel(r);
+    });
+
+    lodWorld.addEventListener('mousemove', (e) => {
+      if (cur < 0) {
+        const r = regAt(e);
+        if (r !== hv) {
+          hv = r;
+          paint(r, 0);
+          lodWorld.style.cursor = r >= 0 ? 'pointer' : 'default';
+        }
+      }
+
+      const skullyEl = document.querySelector('.mc[data-m="Skully"]');
+      if (skullyEl && !skullyEl._isScared && (!skullyEl._lastScared || Date.now() - skullyEl._lastScared > 4000)) {
+        const rect = skullyEl.getBoundingClientRect();
+        const dist = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
+        if (dist < 65) {
+          skullyEl._isScared = true;
+          skullyEl._lastScared = Date.now();
+          skullyEl.classList.add('scared');
+          playSound('blip');
+
+          const scaredQuotes = [
+            "Waa kaget! Jangan sergap mendadak dong, kopiku tumpah nih! ☕💀💦",
+            "Aduh copot tulangku! Kirain siapa! 😱💀",
+            "Ampun Tuan! Aku tengkorak santuy penikmat damai! 💀☕",
+            "Waduh waduh! Tulang rusukku bergetar hebat! 🦴⚡"
+          ];
+          sayMascotGreeting("Skully", scaredQuotes[Math.floor(Math.random() * scaredQuotes.length)]);
+
+          const mSkully = M.find((x) => x.n === "Skully");
+          if (mSkully) {
+            const angle = Math.atan2((rect.top + rect.height / 2) - e.clientY, (rect.left + rect.width / 2) - e.clientX);
+            const fleeX = mSkully.x + Math.cos(angle) * 0.045;
+            const fleeY = mSkully.y + Math.sin(angle) * 0.045;
+            if (isInsideRegion(fleeX, fleeY, mSkully.g)) {
+              mSkully.x = fleeX;
+              mSkully.y = fleeY;
+              skullyEl.style.left = (mSkully.x * 100) + '%';
+              skullyEl.style.top = (mSkully.y * 100) + '%';
+            }
+          }
+
+          setTimeout(() => {
+            skullyEl.classList.remove('scared');
+            skullyEl._isScared = false;
+            sayMascotGreeting("Skully", "Huft... santuy lagi... lanjut ngopi ☕💀");
+          }, 2600);
+        }
+      }
+    });
+
+    lodWorld.addEventListener('mouseover', (e) => {
+      const mc = e.target.closest('.mc');
+      if (mc && mc.dataset.m) {
+        sayMascotGreeting(mc.dataset.m);
+        playSound('blip');
+      }
+    });
+
+    lodWorld.addEventListener('mouseleave', () => {
+      if (cur < 0 && hv >= 0) {
+        hv = -1;
+        paint(-1);
+      }
+    });
+  }
+
+  if (lodPb) {
+    lodPb.addEventListener('click', (e) => {
+      const c = e.target.closest('[data-m]');
+      if (!c) return;
+      if (e.target.tagName === 'U') {
+        openD(c.dataset.m);
+      } else {
+        openM(c.dataset.m);
+      }
+    });
+  }
+
+  if (lodT0) lodT0.addEventListener('click', () => { tab = 0; fill(); playSound('click'); });
+  if (lodT1) lodT1.addEventListener('click', () => { tab = 1; fill(); playSound('click'); });
+  if (lodBk) lodBk.addEventListener('click', back);
+
+  window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      closeSoloStatusWindow();
-      closeShadowModal();
+      if (lodDt && !lodDt.hidden) {
+        lodDt.hidden = true;
+      } else if (cur >= 0) {
+        back();
+      }
     }
   });
 
-  initShadowPenArena();
+  paint(-1);
+  renderMascots();
 
-  function escapeHTML(str) {
-    return (str || '').replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag));
+  function openD(n) {
+    const m = M.find((x) => x.n === n);
+    if (!m) return;
+    const X = MX[n] || {
+      o: R[m.g].n,
+      d: m.r,
+      m: m.b,
+      h: []
+    };
+    const r = R[m.g];
+    if (lodDtC) {
+      lodDtC.style.background = 'radial-gradient(circle at 50% 38%, ' + r.c[0] + ', ' + r.c[2] + ' 70%, #140b22)';
+      lodDtC.innerHTML = getMascotChibiHTML(m);
+    }
+    if (lodDtN) lodDtN.textContent = m.n;
+    if (lodDtD) {
+      lodDtD.innerHTML = '<span class="lod-role-pill">' + escapeHTML(m.r) + '</span><br>' +
+        '<strong>🚩 Asal Usul / Kelahiran:</strong> <em>' + escapeHTML(X.o || r.n) + '</em><br>' +
+        escapeHTML(X.d) + '<br><span class="q">' + escapeHTML(m.b) + '</span>';
+    }
+    if (lodDtM) {
+      lodDtM.textContent = X.m;
+      lodDtM.hidden = true;
+    }
+    if (lodMore) lodMore.textContent = 'Lebih Banyak Cerita';
+    if (lodDtH) {
+      if (X.h && X.h.length > 0) {
+        lodDtH.innerHTML = X.h.map((h) => {
+          const targetMascot = M.find((x) => x.n === h[0]) || { n: h[0], i: '✨' };
+          return '<button type="button" class="hi" data-m="' + escapeHTML(h[0]) + '"><span class="av">' + getMascotChibiHTML(targetMascot) + '</span><small>' + escapeHTML(h[1]) + '</small><span class="hi-name">' + escapeHTML(h[0]) + '</span></button>';
+        }).join('');
+      } else {
+        lodDtH.innerHTML = '<em style="color:#a89bc2;font-size:12px;">Belum ada relasi tercatat</em>';
+      }
+    }
+    if (lodDt) lodDt.hidden = false;
+    playSound('blip');
   }
 
-  // Guestbook Modal Handlers
+  if (lodDtX) lodDtX.addEventListener('click', () => { if (lodDt) lodDt.hidden = true; playSound('click'); });
+  if (lodDt) {
+    lodDt.addEventListener('click', (e) => {
+      if (e.target === lodDt) lodDt.hidden = true;
+      const h = e.target.closest('.hi');
+      if (h) openD(h.dataset.m);
+    });
+  }
+  if (lodMore) {
+    lodMore.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!lodDtM) return;
+      lodDtM.hidden = !lodDtM.hidden;
+      lodMore.textContent = lodDtM.hidden ? 'Lebih Banyak Cerita' : 'Lebih Sedikit Cerita';
+      playSound('click');
+    });
+  }
+  if (lodSnd) {
+    lodSnd.addEventListener('click', () => playSound('blip'));
+  }
+
+  const shadowModalOverlay = document.getElementById('shadowModalOverlay');
+  const openAriseModalBtn = document.getElementById('openAriseModalBtn');
+  const closeShadowModalBtn = document.getElementById('closeShadowModalBtn');
+  const shadowExtractionForm = document.getElementById('shadowExtractionForm');
+  const shadowAuthorInput = document.getElementById('shadowAuthorInput');
+  const shadowAuthorFieldWrap = document.getElementById('shadowAuthorFieldWrap');
+  const shadowClassSelect = document.getElementById('shadowClassSelect');
+  const shadowRegionSelect = document.getElementById('shadowRegionSelect');
+  const shadowMessageInput = document.getElementById('shadowMessageInput');
+  const shadowAnonCheckbox = document.getElementById('shadowAnonCheckbox');
+
   function openShadowModal() {
     if (!shadowModalOverlay) return;
     shadowModalOverlay.classList.add('open');
     shadowModalOverlay.setAttribute('aria-hidden', 'false');
-    // Lock background scroll
     document.body.style.overflow = 'hidden';
     playSound('blip');
   }
@@ -1907,7 +2388,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!shadowModalOverlay) return;
     shadowModalOverlay.classList.remove('open');
     shadowModalOverlay.setAttribute('aria-hidden', 'true');
-    // Restore background scroll
     document.body.style.overflow = '';
     playSound('click');
   }
@@ -1950,33 +2430,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const selectedType = shadowClassSelect ? shadowClassSelect.value : 'type-pumpkin';
       const typeInfo = mascotTypeMap[selectedType] || { label: '🎃 Labu Ceria', icon: '🎃', role: 'Pumpkin Sprite' };
+      const regionIndex = shadowRegionSelect ? parseInt(shadowRegionSelect.value, 10) : 2;
+      const targetRegion = R[regionIndex] || R[0];
 
-      const newCompanion = {
-        id: Date.now(),
+      const newMascot = {
         name: name,
         role: typeInfo.role,
-        mascotType: selectedType,
         icon: typeInfo.icon,
-        time: 'Sanctum Guestbook',
+        mascotType: selectedType,
+        region: regionIndex,
         text: text,
-        skills: ["Sanctum Visitor", "Community Friend", "Appreciator"]
+        time: Date.now(),
+        x: targetRegion.s[0] + (Math.random() * 0.08 - 0.04),
+        y: targetRegion.s[1] + (Math.random() * 0.08 - 0.04)
       };
 
-      companionsList.unshift(newCompanion);
+      visitorMascots.push(newMascot);
       try {
-        localStorage.setItem('kaka_companions_guestbook_v2', JSON.stringify(companionsList));
+        localStorage.setItem('kaka_land_of_dusk_mascots_v2', JSON.stringify(visitorMascots));
       } catch (err) {}
 
+      M.push({
+        n: newMascot.name,
+        i: newMascot.icon,
+        r: newMascot.role,
+        b: '"' + newMascot.text + '"',
+        g: newMascot.region,
+        x: newMascot.x,
+        y: newMascot.y,
+        isGuest: true
+      });
+
+      MX[newMascot.name] = {
+        o: targetRegion.p[0] ? targetRegion.p[0][0] + ", " + targetRegion.n : targetRegion.n,
+        d: 'Pengunjung Sanctum berwujud ' + newMascot.role + ' dari ' + targetRegion.n + '.',
+        m: 'Bergabung di Land of Dusk melalui Sanctum Guestbook. Pesan: "' + newMascot.text + '"',
+        h: [[defaultMascots[regionIndex % defaultMascots.length].n, "Teman Sekawasan"]]
+      };
+
+      updateHUDCount();
+
+      if (lodRgs) {
+        lodRgs.innerHTML = R.map((r, i) => {
+          const count = M.filter((m) => m.g === i).length;
+          return '<button class="rg" data-i="' + i + '" style="left:' + (r.s[0] * 100) + '%;top:' + (r.s[1] * 100) + '%"><b>' + r.e + '</b><span>' + r.n + ' (' + count + ')</span></button>';
+        }).join('');
+      }
+
+      renderMascots();
       playSound('blip');
 
-      // Spawn festive magic wisps
       const btn = document.getElementById('btnSubmitArise');
       if (btn) {
         const rect = btn.getBoundingClientRect();
         for (let i = 0; i < 6; i++) {
           const wisp = document.createElement('span');
           wisp.className = 'ghost-spirit';
-          wisp.textContent = i % 2 === 0 ? '✨' : '🎃';
+          wisp.textContent = i % 2 === 0 ? '✨' : typeInfo.icon;
           wisp.style.left = (rect.left + rect.width / 2 + (Math.random() * 60 - 30)) + 'px';
           wisp.style.top = (rect.top + (Math.random() * 30 - 15)) + 'px';
           wisp.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
@@ -1994,8 +2504,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (shadowAuthorFieldWrap) shadowAuthorFieldWrap.style.opacity = '1';
 
       closeShadowModal();
-      initShadowPenArena();
-      showToast(`✨ Terima kasih! "${name}" (${typeInfo.icon}) kini bergabung di arena.`);
+      sel(regionIndex);
+      showToast('✨ Terima kasih! "' + name + '" (' + typeInfo.icon + ') kini bergabung di wilayah ' + targetRegion.n + '!');
     });
   }
 
@@ -2140,6 +2650,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "Skully siap membantumu membangkitkan proyek!",
     "Ngopi dulu, Tuan, biar mantranya manjur...",
     "Wah, desain kripta ini memikat sekali!",
+    "Kuburanku sejuk dan empuk sekali! 🪦",
     "Tulang-tulangku bergetar kagum!"
   ];
 
@@ -2147,27 +2658,55 @@ document.addEventListener('DOMContentLoaded', () => {
     "Trick or Treat! 🎃",
     "Labu manis penuh sihir JavaScript!",
     "Hehe, kode tanpa bug itu cuma mitos!",
-    "Mau coba ritual nisan di atas?",
-    "Selamat datang di pemakaman keramat!",
+    "Pondok nenek sihir hangat banget lho!",
     "Mencium aroma pull request baru!",
     "Malam yang seru untuk coding!",
+    "Pumpling kenyang pie labu! 🥧",
     "Pumpling selalu siap berjaga!"
   ];
 
+  const zombieQuotes = [
+    "Braaaaains... eh maksudku, Codeeee! 🧟",
+    "Baru bangkit dari kubur, siap tempur lagi!",
+    "Jangan ajak aku ke rumah, aku suka di liang lahat! 🪦",
+    "Tanah beracun ini rumah terbaikku!",
+    "Merge conflict lebih seram daripada zombie!",
+    "Raaargh! Kopi mana kopi? ☕",
+    "Jalan pelan tapi commit pasti jalan terus!",
+    "Ada bug yang bisa kudaur ulang nggak? 🧪"
+  ];
+
+  const witchQuotes = [
+    "Hihihi! Butuh ramuan anti-bug? 🧙‍♀️",
+    "Kuali di dalam pondok lagi mendidih lho! 🧪",
+    "Sihir CSS-ku bisa bikin antarmuka memukau!",
+    "Pumpling dan aku penghuni resmi pondok ini~ 🚪",
+    "Abracadabra! Kode langsung berjalan mulus!",
+    "Jangan biarkan zombie masuk, nanti lantainya kotor!",
+    "Malam purnama yang sempurna untuk coding!",
+    "Aroma ramuan manis semerbak dari cerobong! ✨"
+  ];
+
   class SpookyMascot {
-    constructor(el, quotes, defaultGreeting) {
+    constructor(el, quotes, defaultGreeting, options = {}) {
       this.el = el;
       this.quotes = quotes;
       this.hello = defaultGreeting;
+      this.homeType = options.homeType || 'house'; // 'house' or 'grave'
+      this.homeId = options.homeId || null;
+      this.canEnterHouse = (this.homeType === 'house');
+      this.canEnterGrave = (this.homeType === 'grave');
+      this.minLeftBound = (this.homeType === 'grave') ? 185 : 110;
       this.bubble = el ? el.querySelector('.bubble') : null;
       this.sleeping = false;
       this.fleeing = false;
       this.busy = false;
       this.insideCottage = false;
+      this.isUnderground = false;
 
       if (this.el) {
         this.el.addEventListener('click', () => {
-          playSound('click');
+          playMascotSound('click');
           this.poke();
         });
       }
@@ -2175,7 +2714,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async say(text, ms = 2600, wave = true) {
-      if (!this.bubble || !this.el || this.busy) return;
+      if (!this.bubble || !this.el || this.busy || this.isUnderground) return;
       this.busy = true;
       this.bubble.textContent = text;
       this.bubble.classList.add('show');
@@ -2187,14 +2726,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async blink() {
-      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) return;
       this.el.classList.add('blink');
       await waitMs(180);
       this.el.classList.remove('blink');
     }
 
     async look() {
-      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) return;
       const dir = Math.random() < 0.5 ? 'look-l' : 'look-r';
       this.el.classList.add(dir);
       await waitMs(randNum(700, 1500));
@@ -2202,22 +2741,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async walk() {
-      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) return;
       const stageEl = this.el.parentElement || document.getElementById('stage');
-      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 80;
+      const W = (stageEl ? stageEl.clientWidth : window.innerWidth) - 50;
       const from = this.el.offsetLeft;
       
-      // Freely roam across stage, staying outside the witch cottage (left >= 110px) and clear of music HUD
-      const minLeftBound = 110;
-      const maxRightBound = Math.max(160, W - 250);
-      let to = randNum(minLeftBound, maxRightBound);
+      const maxRightBound = Math.max(160, W - 30);
+      let to = randNum(this.minLeftBound, maxRightBound);
       
-      // Limit distance per walk for smooth natural steps
       const maxDist = randNum(140, 280);
       if (Math.abs(to - from) > maxDist) {
         to = to > from ? from + maxDist : from - maxDist;
       }
-      to = Math.min(maxRightBound, Math.max(minLeftBound, to));
+      to = Math.min(maxRightBound, Math.max(this.minLeftBound, to));
 
       const dur = Math.max(0.7, Math.abs(to - from) / 95);
       const isLeft = to < from;
@@ -2231,26 +2767,144 @@ document.addEventListener('DOMContentLoaded', () => {
       this.el.classList.remove('walk');
     }
 
-    async enterCottage() {
-      if (!this.el || this.sleeping || this.fleeing || this.busy || this.insideCottage) return;
-      this.busy = true;
-      const cottage = document.getElementById('witchCottage');
-      const cottageBubble = document.getElementById('cottageBubble');
+    // Grave Dwellers (Skeleton & Zombie): Burrow Underground into ANY chosen grave
+    async enterGrave() {
+      if (!this.canEnterGrave || !this.el || this.isUnderground || this.sleeping || this.fleeing || this.busy) return;
+      const allGraves = [].slice.call(document.querySelectorAll('.gravesite.grave-item'));
+      if (!allGraves.length) return;
 
-      // 1. Walk toward cottage door (left: 54px)
+      const grave = allGraves[Math.floor(Math.random() * allGraves.length)];
+      this.currentGrave = grave;
+      this.busy = true;
+
+      // 1. Walk toward chosen grave
       const from = this.el.offsetLeft;
-      const to = 54;
+      const to = Math.max(this.minLeftBound, grave.offsetLeft - 8);
       const dur = Math.max(0.6, Math.abs(to - from) / 110);
       this.el.style.transitionDuration = dur + 's';
       this.el.classList.remove('look-l', 'look-r');
-      this.el.classList.add('walk', 'look-l');
+      this.el.classList.add('walk', to < from ? 'look-l' : 'look-r');
       this.el.style.left = to + 'px';
       await waitMs(dur * 1000);
       this.el.classList.remove('walk');
 
-      // 2. Open cottage door
-      if (cottage) cottage.classList.add('door-open');
-      playSound('stone');
+      // 2. Shake grave and burrow underground
+      grave.classList.add('shaking');
+      playMascotSound('stone');
+      playMascotSound('ghost');
+      this.el.classList.add('underground');
+      this.isUnderground = true;
+
+      const graveBubble = grave.querySelector('.grave-bubble');
+      if (graveBubble) {
+        graveBubble.textContent = this.el.id === 'a' 
+          ? 'Skully lagi istirahat di liang kubur... 🪦' 
+          : 'Zombo lagi bertapa di tanah beracun... 🧟';
+        graveBubble.classList.add('show');
+        setTimeout(() => graveBubble.classList.remove('show'), 2800);
+      }
+
+      await waitMs(450);
+      grave.classList.remove('shaking');
+      this.busy = false;
+
+      // Rest underground for 5 to 8.5 seconds
+      await waitMs(randNum(5000, 8500));
+
+      // Rise back up autonomously
+      if (this.isUnderground) {
+        await this.riseFromGrave();
+      }
+    }
+
+    // Grave Dwellers (Skeleton & Zombie): Resurrect and Rise from Grave
+    async riseFromGrave(targetGrave) {
+      if (!this.isUnderground || !this.el) return;
+      this.busy = true;
+      const allGraves = [].slice.call(document.querySelectorAll('.gravesite.grave-item'));
+      const grave = targetGrave || this.currentGrave || allGraves[Math.floor(Math.random() * allGraves.length)];
+
+      playMascotSound('stone');
+      playMascotSound('arise');
+      if (grave) grave.classList.add('shaking');
+      if (earthquakeContainer) {
+        earthquakeContainer.classList.add('tremor');
+        setTimeout(() => earthquakeContainer.classList.remove('tremor'), 600);
+      }
+
+      if (grave) {
+        const rect = grave.getBoundingClientRect();
+        const isZombie = this.el.id === 'c';
+        const glyphs = isZombie 
+          ? ['🧪', '🍄', '🦠', '🌱', '💚', '✨'] 
+          : ['🪨', '🌿', '🦴', '💀', '💜', '✨'];
+        for (let i = 0; i < 8; i++) {
+          const p = document.createElement('span');
+          p.className = 'dirt-eruption-particle';
+          p.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+          p.style.fontSize = randNum(14, 22) + 'px';
+          p.style.left = (rect.left + rect.width / 2 + randNum(-20, 20)) + 'px';
+          p.style.top = (rect.top + rect.height * 0.7 + randNum(-10, 10)) + 'px';
+          p.style.setProperty('--dx', randNum(-75, 75) + 'px');
+          p.style.setProperty('--dy', randNum(-95, -45) + 'px');
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 850);
+        }
+      }
+
+      this.el.classList.remove('underground');
+      this.el.classList.add('rising');
+      this.isUnderground = false;
+
+      if (grave) {
+        this.el.style.left = (grave.offsetLeft + 8) + 'px';
+      }
+
+      await waitMs(900);
+      this.el.classList.remove('rising');
+      if (grave) grave.classList.remove('shaking');
+      this.busy = false;
+
+      const quote = this.el.id === 'a' 
+        ? 'Aku bangkit dari liang kubur! 💀✨' 
+        : 'BRAAAINS! Zombo kembali dari kubur! 🧟⚡';
+      await this.say(quote, 2400);
+
+      await waitMs(400);
+      await this.walk();
+    }
+
+    // House Dwellers (Pumpkin & Witch): Enter ONE of the two witch houses (Left Cottage or Right Manor Spire)
+    async enterCottage() {
+      if (!this.canEnterHouse || !this.el || this.sleeping || this.fleeing || this.busy || this.insideCottage) return;
+      this.busy = true;
+
+      const stageEl = this.el.parentElement || document.getElementById('stage');
+      const manorX = stageEl ? Math.max(200, stageEl.clientWidth - 110) : (window.innerWidth - 140);
+      const houses = [
+        { id: 'witchCottage', doorId: 'cottageDoor', bubbleId: 'cottageBubble', targetX: 54, name: 'Pondok Nenek Sihir' },
+        { id: 'witchManor', doorId: 'manorDoor', bubbleId: 'manorBubble', targetX: manorX, name: 'Menara Alkimia' }
+      ];
+
+      const chosenHouse = houses[Math.floor(Math.random() * houses.length)];
+      this.currentOccupiedHouse = chosenHouse;
+      const houseEl = document.getElementById(chosenHouse.id);
+      const bubbleEl = document.getElementById(chosenHouse.bubbleId);
+
+      // 1. Walk toward chosen house door
+      const from = this.el.offsetLeft;
+      const to = chosenHouse.targetX;
+      const dur = Math.max(0.6, Math.abs(to - from) / 110);
+      this.el.style.transitionDuration = dur + 's';
+      this.el.classList.remove('look-l', 'look-r');
+      this.el.classList.add('walk', to < from ? 'look-l' : 'look-r');
+      this.el.style.left = to + 'px';
+      await waitMs(dur * 1000);
+      this.el.classList.remove('walk');
+
+      // 2. Open door
+      if (houseEl) houseEl.classList.add('door-open');
+      playMascotSound('stone');
       await waitMs(350);
 
       // 3. Step inside
@@ -2259,66 +2913,87 @@ document.addEventListener('DOMContentLoaded', () => {
       await waitMs(450);
 
       // 4. Close door
-      if (cottage) cottage.classList.remove('door-open');
+      if (houseEl) houseEl.classList.remove('door-open');
 
-      // 5. Cottage activity bubble
-      if (cottageBubble) {
-        cottageBubble.textContent = this.el.id === 'a' 
-          ? 'Skully lagi ngopi tulang... ☕' 
-          : 'Pumpling meramu mantra... 🧪';
-        cottageBubble.classList.add('show');
-        setTimeout(() => cottageBubble.classList.remove('show'), 2600);
+      // 5. House activity bubble
+      if (bubbleEl) {
+        bubbleEl.textContent = this.el.id === 'd' 
+          ? 'Witch Hazel lagi meracik ramuan rahasia! 🔮' 
+          : 'Pumpling lagi ngemil pie labu hangat! 🥧';
+        bubbleEl.classList.add('show');
+        setTimeout(() => bubbleEl.classList.remove('show'), 2600);
       }
 
       this.busy = false;
 
-      // Rest inside cottage for 4.5 to 7.5 seconds
-      await waitMs(randNum(4500, 7500));
+      // Rest inside house for 5 to 8.5 seconds
+      await waitMs(randNum(5000, 8500));
 
-      // Exit cottage
-      await this.exitCottage();
+      // Exit house
+      if (this.insideCottage) {
+        await this.exitCottage();
+      }
     }
 
+    // House Dwellers: Exit the currently occupied house
     async exitCottage() {
-      if (!this.el || !this.insideCottage) return;
+      if (!this.insideCottage || !this.el) return;
       this.busy = true;
-      const cottage = document.getElementById('witchCottage');
+
+      const stageEl = this.el.parentElement || document.getElementById('stage');
+      const houses = [
+        { id: 'witchCottage', targetX: 64, name: 'Pondok Nenek Sihir' },
+        { id: 'witchManor', targetX: (stageEl ? stageEl.clientWidth - 130 : 600), name: 'Menara Alkimia' }
+      ];
+
+      // Dual House Exit Choice: Either exit original house OR emerge from the other witch house!
+      let exitHouse = this.currentOccupiedHouse || houses[0];
+      if (Math.random() < 0.45) {
+        exitHouse = (exitHouse.id === 'witchCottage') ? houses[1] : houses[0];
+      }
+
+      const houseEl = document.getElementById(exitHouse.id);
 
       // 1. Open door
-      if (cottage) cottage.classList.add('door-open');
-      playSound('stone');
+      if (houseEl) houseEl.classList.add('door-open');
+      playMascotSound('stone');
       await waitMs(350);
 
       // 2. Step outside
       this.insideCottage = false;
       this.el.classList.remove('entering');
-      this.el.style.left = '64px';
-      this.el.classList.remove('look-l');
-      this.el.classList.add('look-r');
+      const startX = (exitHouse.id === 'witchManor') 
+        ? (stageEl ? stageEl.clientWidth - 130 : 600) 
+        : 64;
+      this.el.style.left = startX + 'px';
       await waitMs(300);
 
-      // 3. Walk out onto the stage floor
-      const to = randNum(130, 240);
-      const dur = Math.max(0.6, Math.abs(to - 64) / 100);
+      // 3. Walk out onto the stage road
+      const isRightHouse = (exitHouse.id === 'witchManor');
+      const to = isRightHouse 
+        ? Math.max(120, (stageEl ? stageEl.clientWidth - randNum(180, 300) : 500)) 
+        : randNum(140, 260);
+      const from = this.el.offsetLeft;
+      const dur = Math.max(0.6, Math.abs(to - from) / 100);
       this.el.style.transitionDuration = dur + 's';
-      this.el.classList.add('walk', 'look-r');
+      this.el.classList.add('walk', to < from ? 'look-l' : 'look-r');
       this.el.style.left = to + 'px';
       await waitMs(dur * 1000);
       this.el.classList.remove('walk');
 
       // 4. Close door
-      if (cottage) cottage.classList.remove('door-open');
+      if (houseEl) houseEl.classList.remove('door-open');
       this.busy = false;
 
       // 5. Speak after exiting
-      const quote = this.el.id === 'a' 
-        ? 'Ah, segarnya ramuan nenek sihir! ✨' 
-        : 'Pumpling kenyang pie labu! 🥧';
+      const quote = this.el.id === 'd' 
+        ? 'Ramuan baru dari ' + chosenHouse.name + ' sudah siap! ✨' 
+        : 'Pumpling kenyang! Ayo lanjut bertualang! 🎃';
       await this.say(quote, 2200);
     }
 
     async sleep() {
-      if (!this.el || this.sleeping || this.fleeing || this.insideCottage) return;
+      if (!this.el || this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) return;
       this.sleeping = true;
       this.el.classList.add('sleep');
       await waitMs(randNum(2500, 4500));
@@ -2336,6 +3011,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async poke() {
       if (!this.el) return;
+      if (this.isUnderground) {
+        await this.riseFromGrave();
+        return;
+      }
       if (this.insideCottage) {
         await this.exitCottage();
         return;
@@ -2348,14 +3027,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomQuote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
         await this.say(randomQuote, 2400);
         this.el.classList.remove('jump');
-        // Walk right after being poked!
         await waitMs(400);
         await this.walk();
       }
     }
 
     async greetAutonomously() {
-      if (this.sleeping || this.fleeing || this.busy || this.insideCottage) return;
+      if (this.sleeping || this.fleeing || this.busy || this.insideCottage || this.isUnderground) return;
       this.el.classList.add('jump');
       const randomQuote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
       await this.say(randomQuote, 2600, true);
@@ -2363,7 +3041,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async flee(mx) {
-      if (!this.el || this.fleeing || this.insideCottage) return;
+      if (!this.el || this.fleeing || this.insideCottage || this.isUnderground) return;
       this.fleeing = true;
       if (this.sleeping) {
         this.sleeping = false;
@@ -2374,12 +3052,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const from = this.el.offsetLeft;
       const dir = (from + 38 < mx) ? -1 : 1;
       let to = from + dir * randNum(160, 280);
-      const minLeftBound = 110;
       const maxRightBound = Math.max(160, W - 250);
-      if (to < minLeftBound || to > maxRightBound) {
-        to = dir < 0 ? maxRightBound - randNum(0, 40) : minLeftBound + randNum(0, 40);
+      if (to < this.minLeftBound || to > maxRightBound) {
+        to = dir < 0 ? maxRightBound - randNum(0, 40) : this.minLeftBound + randNum(0, 40);
       }
-      to = Math.min(maxRightBound, Math.max(minLeftBound, to));
+      to = Math.min(maxRightBound, Math.max(this.minLeftBound, to));
 
       const dur = Math.max(0.35, Math.abs(to - from) / 320);
       const isLeft = to < from;
@@ -2388,46 +3065,75 @@ document.addEventListener('DOMContentLoaded', () => {
       this.el.classList.remove('look-l', 'look-r');
       this.el.classList.add('scared', 'walk', isLeft ? 'look-l' : 'look-r');
 
-      if (Math.random() < 0.6) {
-        this.say(this.el.id === 'a' ? 'Waa, ada arwah datang!' : 'Ampun, Tuan Reaper!', 1000, false);
+      if (this.el.id === 'a') {
+        const scaredQuotes = [
+          'WAA! Jangan kejar aku, kopi santuy-ku belum abis! 💀☕',
+          'Ampuun Tuan! Santuy dulu napa, jangan kagetin tengkorak! 😱💀',
+          'Copoooot rusukku! Kabur duluuu! 🏃‍♂️💨',
+          'Waduh waduh! Santuy bro, kirain reaper mau nagih utang! 💀⚡'
+        ];
+        this.say(scaredQuotes[Math.floor(Math.random() * scaredQuotes.length)], 1400, false);
+      } else if (Math.random() < 0.6) {
+        const scaredText = this.el.id === 'c' 
+          ? 'Raaagh! Ampun Tuan Reaper!' 
+          : (this.el.id === 'd' ? 'Kyaaa, sapu terbangku mana?!' : 'Ampun, Tuan Reaper!');
+        this.say(scaredText, 1000, false);
       }
 
       this.el.style.left = to + 'px';
       await waitMs(dur * 1000);
       this.el.classList.remove('scared', 'walk');
+      if (this.el.id === 'a') {
+        await waitMs(150);
+        this.say('Hadehh... kaget banget, lanjut santuy lagi dehh... ☕💀', 1600, false);
+      }
       await waitMs(200);
       this.fleeing = false;
     }
 
     async loop() {
-      // Immediate initial wander so the user sees them walk right away!
+      // Immediate initial wander
       await waitMs(randNum(500, 1200));
-      await this.walk();
+      try {
+        await this.walk();
+      } catch (err) {
+        console.warn('Initial walk recovered:', err);
+      }
 
       while (true) {
-        await waitMs(randNum(800, 2200));
-        if (this.sleeping || this.fleeing || this.insideCottage) continue;
-        const r = Math.random();
+        try {
+          await waitMs(randNum(800, 2200));
+          if (this.sleeping || this.fleeing || this.insideCottage || this.isUnderground) continue;
+          const r = Math.random();
 
-        // 18% chance to enter the witch cottage and rest inside!
-        if (r < 0.18) {
-          await this.enterCottage();
-        }
-        // 47% chance to wander and walk freely across the stage
-        else if (r < 0.65) {
-          await this.walk();
-        } 
-        // 15% chance to speak a greeting autonomously
-        else if (r < 0.80) {
-          await this.greetAutonomously();
-        } 
-        // 10% look around
-        else if (r < 0.90) {
-          await this.look();
-        } 
-        // 10% blink
-        else {
-          await this.blink();
+          // Separate residency behaviors:
+          // Grave Dwellers (Skeleton & Zombie) can enter grave!
+          if (this.homeType === 'grave' && r < 0.20) {
+            await this.enterGrave();
+          }
+          // House Dwellers (Pumpkin & Witch) can enter witch cottage/manor!
+          else if (this.homeType === 'house' && r < 0.20) {
+            await this.enterCottage();
+          }
+          // Wander freely along the road
+          else if (r < 0.65) {
+            await this.walk();
+          } 
+          // Speak greeting
+          else if (r < 0.80) {
+            await this.greetAutonomously();
+          } 
+          // Look around
+          else if (r < 0.90) {
+            await this.look();
+          } 
+          // Blink
+          else {
+            await this.blink();
+          }
+        } catch (err) {
+          console.warn('Mascot loop iteration recovered:', err);
+          this.busy = false;
         }
       }
     }
@@ -2436,13 +3142,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   // 11. Settings Menu (Toggle Kursor Arwah Reaper & Makhluk Kuburan)
   // -------------------------------------------------------------------------
-  const settingsWrapper = document.getElementById('settingsWrapper');
-  const settingsToggle = document.getElementById('settingsToggle');
-  const settingsDropdown = document.getElementById('settingsDropdown');
-  const btnToggleDragon = document.getElementById('btnToggleDragon');
-  const btnToggleMascots = document.getElementById('btnToggleMascots');
+  // Settings elements declared at top in Elements Selection
 
   let isDragonEnabled = localStorage.getItem('kaka_pumpkin_active') !== 'false';
+  if (dr && isDragonEnabled) dr.style.display = 'block';
   let isMascotsEnabled = localStorage.getItem('kaka_mascots_active') !== 'false';
 
   function updateDragonSwitchUI() {
@@ -2475,7 +3178,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function applyDragonState() {
     updateDragonSwitchUI();
-    const dr = document.getElementById('dragon');
     if (dr) {
       if (!isDragonEnabled) {
         dr.style.display = 'none';
@@ -2493,19 +3195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (floor) floor.style.display = isMascotsEnabled ? '' : 'none';
   }
 
-  if (settingsToggle && settingsDropdown) {
-    settingsToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      playSound('click');
-      settingsDropdown.classList.toggle('show');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (settingsWrapper && !settingsWrapper.contains(e.target)) {
-        settingsDropdown.classList.remove('show');
-      }
-    });
-  }
+// settingsToggle listener already wired in Halloween navbar
 
   if (btnToggleDragon) {
     btnToggleDragon.addEventListener('click', (e) => {
@@ -2533,53 +3223,113 @@ document.addEventListener('DOMContentLoaded', () => {
   applyMascotsState();
 
   // -------------------------------------------------------------------------
-  // 11. Autonomous Mascot Characters (Skully & Pumpling)
+  // 11. Autonomous Mascot Characters (Skeleton, Pumpkin, Zombie, Witch)
   // -------------------------------------------------------------------------
 
-  // Instantiate Mascots with their quote sets
+  // Instantiate Mascots with their residency settings & quote sets
   const charA = document.getElementById('a');
   const charB = document.getElementById('b');
-  let mascotA = null;
-  let mascotB = null;
+  const charC = document.getElementById('c');
+  const charD = document.getElementById('d');
 
-  if (charA && charB) {
-    mascotA = new SpookyMascot(charA, skullyQuotes, 'Yo, Necromancer!');
-    mascotB = new SpookyMascot(charB, pumplingQuotes, 'Trick or Treat!');
+  let mascotA = null; // Skully (Grave Dweller)
+  let mascotB = null; // Pumpling (House Dweller)
+  let mascotC = null; // Zombo (Grave Dweller)
+  let mascotD = null; // Witch Hazel (House Dweller)
 
-    function checkMascotFlee(cx, cy) {
-      // Only flee if reaper cursor spirit is actively enabled!
-      if (!isMascotsEnabled || !isDragonEnabled) return;
-      for (const m of [mascotA, mascotB]) {
-        if (!m || !m.el || m.insideCottage) continue;
-        const r = m.el.getBoundingClientRect();
-        const d = Math.hypot(cx - (r.left + r.width / 2), cy - (r.top + r.height / 2));
-        if (d < 170) m.flee(cx);
-      }
-    }
-
-    window.addEventListener('pointermove', e => {
-      if (e.pointerType === 'touch') return;
-      checkMascotFlee(e.clientX, e.clientY);
-    }, { passive: true });
-
-    window.addEventListener('mousemove', e => {
-      checkMascotFlee(e.clientX, e.clientY);
-    }, { passive: true });
-
-    setTimeout(() => mascotA && isMascotsEnabled && mascotA.greetAutonomously(), 1400);
-    setTimeout(() => mascotB && isMascotsEnabled && mascotB.greetAutonomously(), 3800);
+  if (charA) {
+    mascotA = new SpookyMascot(charA, skullyQuotes, 'Yo, Necromancer!', {
+      homeType: 'grave',
+      homeId: 'graveSkully'
+    });
+  }
+  if (charB) {
+    mascotB = new SpookyMascot(charB, pumplingQuotes, 'Trick or Treat!', {
+      homeType: 'house',
+      homeId: 'witchCottage'
+    });
+  }
+  if (charC) {
+    mascotC = new SpookyMascot(charC, zombieQuotes, 'Braaaains... Code!', {
+      homeType: 'grave',
+      homeId: 'graveZombie'
+    });
+  }
+  if (charD) {
+    mascotD = new SpookyMascot(charD, witchQuotes, 'Hihihi, Butuh Ramuan?', {
+      homeType: 'house',
+      homeId: 'witchCottage'
+    });
   }
 
-  // Interactive Witch Cottage (Pondok Nenek Sihir)
-  const witchCottage = document.getElementById('witchCottage');
+  const allMascots = [mascotA, mascotB, mascotC, mascotD].filter(Boolean);
+
+  function checkMascotFlee(cx, cy) {
+    if (!isMascotsEnabled || !isDragonEnabled) return;
+    const now = Date.now();
+    for (const m of allMascots) {
+      if (!m || !m.el || m.insideCottage || m.isUnderground || m.fleeing) continue;
+      if (m.lastFleeTime && now - m.lastFleeTime < 3800) continue;
+      const r = m.el.getBoundingClientRect();
+      const d = Math.hypot(cx - (r.left + r.width / 2), cy - (r.top + r.height / 2));
+      if (d < 110) {
+        m.lastFleeTime = now;
+        m.flee(cx);
+      }
+    }
+  }
+
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    checkMascotFlee(e.clientX, e.clientY);
+  }, { passive: true });
+
+  window.addEventListener('mousemove', e => {
+    checkMascotFlee(e.clientX, e.clientY);
+  }, { passive: true });
+
+  setTimeout(() => mascotA && isMascotsEnabled && mascotA.greetAutonomously(), 1200);
+  setTimeout(() => mascotD && isMascotsEnabled && mascotD.greetAutonomously(), 2400);
+  setTimeout(() => mascotB && isMascotsEnabled && mascotB.greetAutonomously(), 3600);
+  setTimeout(() => mascotC && isMascotsEnabled && mascotC.greetAutonomously(), 4800);
+
+  // Interactive Second Witch House: Menara Alkimia Nenek Sihir (Right Side)
+  if (witchManor) {
+    witchManor.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playMascotSound('click');
+      playMascotSound('stone');
+
+      const manorBubble = document.getElementById('manorBubble');
+      const insideMascot = [mascotB, mascotD].find(m => m && m.insideCottage && m.currentOccupiedHouse?.id === 'witchManor');
+
+      if (insideMascot) {
+        insideMascot.exitCottage();
+        if (manorBubble) {
+          manorBubble.textContent = "Tok tok! Ada yang mengetuk pintu menara! 🚪";
+          manorBubble.classList.add('show');
+          setTimeout(() => manorBubble.classList.remove('show'), 2200);
+        }
+      } else {
+        const targetMascot = Math.random() < 0.5 ? mascotB : mascotD;
+        if (targetMascot && !targetMascot.fleeing) {
+          targetMascot.say("Mau mampir ke Menara Alkimia dulu ah! 🔮", 1800);
+          targetMascot.currentOccupiedHouse = { id: 'witchManor', doorId: 'manorDoor', bubbleId: 'manorBubble', name: 'Menara Alkimia' };
+          setTimeout(() => targetMascot.enterCottage(), 600);
+        }
+      }
+    });
+  }
+
+  // Interactive Witch Cottage Door & Enclosure (House Dwellers: Pumpkin & Witch)
   if (witchCottage) {
     witchCottage.addEventListener('click', (e) => {
       e.stopPropagation();
-      playSound('click');
-      playSound('stone');
+      playMascotSound('click');
+      playMascotSound('stone');
       
       const cottageBubble = document.getElementById('cottageBubble');
-      const insideMascot = [mascotA, mascotB].find(m => m && m.insideCottage);
+      const insideMascot = [mascotB, mascotD].find(m => m && m.insideCottage);
       
       if (insideMascot) {
         insideMascot.exitCottage();
@@ -2589,7 +3339,7 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => cottageBubble.classList.remove('show'), 2200);
         }
       } else {
-        const targetMascot = Math.random() < 0.5 ? mascotA : mascotB;
+        const targetMascot = Math.random() < 0.5 ? mascotB : mascotD;
         if (targetMascot && !targetMascot.fleeing) {
           targetMascot.say("Mau bertamu ke pondok nenek sihir dulu ah!", 1800);
           setTimeout(() => targetMascot.enterCottage(), 700);
@@ -2598,14 +3348,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // -------------------------------------------------------------------------
+  // Interactive Cemetery: 7 Diverse Gravesites along the road
+  const allGraveElements = document.querySelectorAll('.gravesite.grave-item');
+  allGraveElements.forEach((grave, idx) => {
+    grave.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playMascotSound('click');
+      playMascotSound('stone');
+
+      // Check if an undead mascot is underground and awaken it from this grave
+      const buriedUndead = [mascotA, mascotC].find(m => m && m.isUnderground);
+      if (buriedUndead) {
+        buriedUndead.riseFromGrave(grave);
+      } else {
+        grave.classList.add('shaking');
+        const bubble = grave.querySelector('.grave-bubble');
+        if (bubble) {
+          const msgs = [
+            "Tok tok! Makam keramat bergetar! 🪦",
+            "Hii! Arwah kuburan berbisik lembut... 👻",
+            "Batu nisan purba berderak misterius! ⚡",
+            "Makam sejuk tempat istirahat para undead! 💀"
+          ];
+          bubble.textContent = msgs[idx % msgs.length];
+          bubble.classList.add('show');
+          setTimeout(() => bubble.classList.remove('show'), 2200);
+        }
+        setTimeout(() => grave.classList.remove('shaking'), 450);
+
+        // One wandering mascot comments
+        const randomUndead = Math.random() < 0.5 ? mascotA : mascotC;
+        if (randomUndead && !randomUndead.busy && !randomUndead.sleeping) {
+          const quotes = [
+            "Makam di situ nyaman banget lho! 🪦",
+            "Tanah kuburan ini sejuk dan penuh kenangan!",
+            "Ranjang batu terbaik bagi seorang undead! 💀"
+          ];
+          randomUndead.say(quotes[Math.floor(Math.random() * quotes.length)], 2000);
+        }
+      }
+    });
+  });
+
+    // -------------------------------------------------------------------------
   // 12. Floating Phantom Reaper Flying Cursor & Click Particles
   // -------------------------------------------------------------------------
-  const dr = document.getElementById('dragon');
   if (dr) {
     const di = dr.querySelector('i');
-    let tx = 0, ty = 0, x = 0, y = 0, shown = false, face = 1;
-    window.reaperCursorShown = false;
+    let tx = window.innerWidth / 2, ty = window.innerHeight * 0.45, x = tx, y = ty;
+    let shown = true, face = 1;
+    window.reaperCursorShown = true;
+    if (isDragonEnabled) {
+      dr.style.display = 'block';
+      dr.style.transform = `translate(${x - 60}px, ${y - 60}px)`;
+    }
 
     function handleReaperMove(clientX, clientY) {
       if (!isDragonEnabled) return;
@@ -2636,8 +3432,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scythe swing & spirits on click
     function handleReaperClick(clientX, clientY) {
       if (!isDragonEnabled) return;
-      playSound('ghost');
-      if (Math.random() < 0.6) playSound('bat');
+      if (!isBGMPlaying) {
+        playSound('ghost');
+        if (Math.random() < 0.6) playSound('bat');
+      }
 
       if (di) {
         di.style.transform = `scaleX(${face}) rotate(${face * 20}deg) scale(1.15)`;
@@ -2708,6 +3506,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // 17. FLOATING RETRO PIXEL MUSIC PLAYER (Halloween-bg.mp3)
   // -------------------------------------------------------------------------
 
+  // Synchronize audio state directly
+  if (bgMusicAudio) {
+    bgMusicAudio.addEventListener('play', () => updateMusicHUD(true));
+    bgMusicAudio.addEventListener('playing', () => updateMusicHUD(true));
+    bgMusicAudio.addEventListener('pause', () => updateMusicHUD(false));
+    bgMusicAudio.addEventListener('ended', () => updateMusicHUD(false));
+  }
+
   function updateMusicHUD(playing) {
     isBGMPlaying = playing;
     if (pixelMusicHud) pixelMusicHud.classList.toggle('playing', playing);
@@ -2720,6 +3526,11 @@ document.addEventListener('DOMContentLoaded', () => {
       : (lang === 'en' ? 'PEACEFUL SILENCE' : 'NIKMATI KETENANGAN');
     if (musicSpeakerOn) musicSpeakerOn.classList.toggle('hidden', !playing);
     if (musicSpeakerOff) musicSpeakerOff.classList.toggle('hidden', playing);
+    if (playing && !isSoundEnabled) {
+      isSoundEnabled = true;
+      try { localStorage.setItem('kaka_sound_enabled', 'true'); } catch (_) {}
+      updateSoundToggleUI(true);
+    }
   }
 
   function playBGM() {
@@ -2754,10 +3565,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Minimize / Expand Music HUD (Bisa diminimalis jadi sisa logo musik)
+  let isMusicHudMinimized = false;
+  try {
+    isMusicHudMinimized = localStorage.getItem('kaka_music_hud_minimized') === 'true';
+  } catch (_) {}
+
+  function setMusicHudMinimized(minimized) {
+    isMusicHudMinimized = minimized;
+    try {
+      localStorage.setItem('kaka_music_hud_minimized', minimized ? 'true' : 'false');
+    } catch (_) {}
+    if (pixelMusicHud) {
+      pixelMusicHud.classList.toggle('minimized', minimized);
+    }
+    if (musicHudCard) {
+      musicHudCard.setAttribute('title', minimized ? 'Pemutar Musik (Klik untuk memperluas)' : 'Pemutar Musik Retro Sanctum');
+    }
+  }
+
+  if (isMusicHudMinimized) {
+    setMusicHudMinimized(true);
+  }
+
+  if (musicHudCollapseBtn) {
+    musicHudCollapseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setMusicHudMinimized(true);
+    });
+  }
+
   if (musicHudIconBox) {
     musicHudIconBox.addEventListener('click', (e) => {
       e.stopPropagation();
-      toggleBGM();
+      if (pixelMusicHud && pixelMusicHud.classList.contains('minimized')) {
+        setMusicHudMinimized(false);
+      } else {
+        toggleBGM();
+      }
     });
   }
 
@@ -2778,7 +3623,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (musicHudCard) {
     musicHudCard.addEventListener('click', (e) => {
-      if (e.target && (e.target.id === 'bgMusicVolSlider' || e.target.classList.contains('music-vol-slider'))) {
+      if (e.target && (
+        e.target.id === 'bgMusicVolSlider' || 
+        e.target.classList.contains('music-vol-slider') ||
+        e.target.closest('#bgMusicVolSlider') ||
+        e.target.closest('.music-hud-vol-wrap')
+      )) {
+        return;
+      }
+      if (e.target && (e.target.id === 'musicHudCollapseBtn' || e.target.closest('#musicHudCollapseBtn'))) {
+        return;
+      }
+      if (pixelMusicHud && pixelMusicHud.classList.contains('minimized')) {
+        e.stopPropagation();
+        setMusicHudMinimized(false);
         return;
       }
       toggleBGM();
@@ -2833,20 +3691,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = lang === 'en' ? 'The Necromancer Resurrected!' : 'Kebangkitan Sang Necromancer!';
     showToast(desc, title, '⚡');
 
-    // Subterranean Screen Tremor
+    // Subterranean Screen Tremor (Cukup Gempa Saja, Jangan Hilang Fokus)
     if (earthquakeContainer) {
       earthquakeContainer.classList.add('tremor');
       setTimeout(() => earthquakeContainer.classList.remove('tremor'), 1200);
     }
 
-    // Avatar pulse glow
-    const heroCard = document.querySelector('.hero-avatar-card');
-    if (heroCard) {
-      heroCard.classList.add('resurrect-pulse');
-      setTimeout(() => heroCard.classList.remove('resurrect-pulse'), 3000);
-    }
+    // Awaken any buried undead mascots immediately!
+    [mascotA, mascotC].forEach(m => {
+      if (m && m.isUnderground) {
+        m.riseFromGrave();
+      }
+    });
 
-    // Burst of resurrection soul particles
+    // Burst of resurrection soul particles around center
     for (let i = 0; i < 22; i++) {
       const spark = document.createElement('span');
       spark.className = 'resurrect-soul-burst';
@@ -2859,10 +3717,15 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => spark.remove(), 1100);
     }
 
+    // Automatically smooth scroll back up to the sanctum!
+    const homeSection = document.getElementById('home');
+    if (homeSection) {
+      homeSection.scrollIntoView({ behavior: 'smooth' });
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  if (btnResurrectTrigger) {
+    if (btnResurrectTrigger) {
     btnResurrectTrigger.addEventListener('click', triggerResurrection);
   }
 

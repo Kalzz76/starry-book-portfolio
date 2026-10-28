@@ -29,112 +29,115 @@
   <!-- Screen Tremor Wrapper for Earthquakes -->
   <div id="earthquakeContainer" class="earthquake-wrapper">
 
-    <!-- Floating Navigation Bar -->
-    <header class="header-container">
-      <nav class="navbar" id="navbar">
-        <!-- Left Logo: Spooky Jack-o'-Lantern Emblem -->
-        <a href="#home" class="nav-logo" aria-label="Home">
-          <svg class="pumpkin-logo-icon" viewBox="0 0 32 32" width="28" height="28">
-            <path d="M15 2 C16 4 17 6 18 7 C15 7 14 6 14 3 Z" fill="#2d7f36" />
-            <ellipse cx="16" cy="18" rx="13" ry="11" fill="#FF7518" stroke="#4a1500" stroke-width="1.5"/>
-            <path d="M9 13 L12 17 L7 17 Z" fill="#2b0000" />
-            <path d="M23 13 L25 17 L20 17 Z" fill="#2b0000" />
-            <polygon points="16,16 14,19 18,19" fill="#2b0000" />
-            <path d="M9 22 L11 20 L13 22 L15 20 L17 22 L19 20 L21 22 L23 20 L22 24 L19 25 L16 26 L13 25 L10 24 Z" fill="#2b0000" />
-            <circle cx="10" cy="15" r="1" fill="#FFD700" opacity="0.8"/>
-            <circle cx="22" cy="15" r="1" fill="#FFD700" opacity="0.8"/>
+    <!-- Floating Navigation Bar: Halloween Edition (from Navbar Halloween.html) -->
+    <nav class="nav" id="nav" aria-label="Navigasi Halloween">
+      <div class="sky" aria-hidden="true">
+        <svg class="web" viewBox="0 0 54 54" fill="none" stroke="#fff" stroke-width="1"><path d="M0 0L54 54M0 0L54 20M0 0L20 54M0 0L54 0M0 0L0 54M10 0Q10 10 0 10M22 0Q22 22 0 22M36 0Q36 36 0 36"/></svg>
+        <svg class="bat" viewBox="0 0 20 9"><path d="M0 4Q4 0 7 3L8 1L10 4L12 1L13 3Q16 0 20 4Q16 4 14 8L10 5L6 8Q4 4 0 4Z"/></svg>
+      </div>
+
+      <!-- Left Pumpkin Logo & Current Active Section Title -->
+      <div class="head" id="head" role="button" tabindex="0" title="Klik untuk membuka / menutup menu navigasi">
+        <span class="pk" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <rect x="14" y="2" width="4" height="7" fill="#5cc26a"/>
+            <path d="M16 7C7 7 2 12 2 18s5 10 14 10 14-4 14-10S25 7 16 7z" fill="#ff8a1f"/>
+            <path d="M16 7c-4 2-6 6-6 11s2 8 6 10c4-2 6-5 6-10S20 9 16 7z" fill="#ff6a00"/>
+            <path d="M8 14l5 3-5 3zM24 14l-5 3 5 3z" fill="#2a0f3a"/>
+            <path d="M10 23l2 2 2-2 2 2 2-2 2 2" stroke="#2a0f3a" stroke-width="2" fill="none"/>
           </svg>
-          <span class="logo-text">KAKA.NECRO</span>
-        </a>
+        </span>
+        <b class="cur" id="cur">Sanctum</b>
+      </div>
 
-        <!-- Navigation Links -->
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#home" class="nav-link active" data-i18n="nav_sanctum">Sanctum</a></li>
-          <li><a href="#about" class="nav-link" data-i18n="nav_grimoire">Grimoire</a></li>
-          <li><a href="#projects" class="nav-link" data-i18n="nav_spells">Spells</a></li>
-          <li><a href="#sertificat" class="nav-link" data-i18n="nav_relics">Relics</a></li>
-          <li><a href="#shadows" class="nav-link" data-i18n="nav_companions">Companions</a></li>
-          <li><a href="#contact" class="nav-link" data-i18n="nav_altar">Altar</a></li>
-        </ul>
+      <!-- Navigation Links -->
+      <div class="links" id="links">
+        <a href="#home" data-t="home" class="on">Sanctum</a>
+        <a href="#about" data-t="about">Grimoire</a>
+        <a href="#projects" data-t="projects">Spells</a>
+        <a href="#sertificat" data-t="sertificat">Relics</a>
+        <a href="#shadows" data-t="shadows">Companions</a>
+        <a href="#contact" data-t="contact">Altar</a>
+      </div>
 
-        <!-- Right Controls: Sound, Theme, & Mascot Settings -->
-        <div class="nav-actions">
-          <!-- 8-Bit Web Audio Toggle -->
-          <button class="nav-btn sound-btn" id="soundToggle" title="Nyalakan/Matikan Suara 8-Bit" aria-label="Toggle Sound">
-            <svg class="sound-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      <!-- Right Action Tools: Sound, Day/Night Theme, Settings Modal -->
+      <div class="tools">
+        <i class="sep" aria-hidden="true"></i>
+        <button type="button" id="soundToggle" class="tool-btn sound-toggle" title="Suara 8-Bit &amp; Musik: NYALA (Klik untuk Mematikan)" aria-label="Toggle Sound" aria-pressed="true">
+          <svg class="sound-icon-on" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            <path d="M18.5 9.5c.8 1.1 1.2 2.2 1.2 3.5s-.4 2.4-1.2 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"/>
+          </svg>
+          <svg class="sound-icon-off" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" opacity="0.3"/>
+            <line x1="3" y1="21" x2="21" y2="3" stroke="#ff4757" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button type="button" id="themeToggle" class="tool-btn theme-toggle" title="Ganti Mode Waktu (Siang / Sore / Malam)" aria-label="Toggle Theme">
+          <span class="theme-icon sun-icon" title="Mode Siang" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <circle cx="12" cy="12" r="4.5"/>
+              <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
-          </button>
-
-          <!-- Day / Sunset / Night Mode Toggle -->
-          <button class="nav-btn theme-toggle" id="themeToggle" title="Ganti Mode Waktu (Siang / Sore / Malam)" aria-label="Toggle Theme">
-            <!-- Moon Icon (Night) -->
-            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M12.3 2a10 10 0 0 0-1.9 20 10 10 0 0 0 9.6-7.3 1 1 0 0 0-1.2-1.2 8 8 0 1 1-7.7-10.3 1 1 0 0 0-1.2-1.2z"/>
+          </span>
+          <span class="theme-icon sunset-icon" title="Mode Sore" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 17a5 5 0 0 0-10 0" fill="currentColor"/>
+              <line x1="12" y1="3" x2="12" y2="7"/>
+              <line x1="4.5" y1="10.5" x2="6.8" y2="12.8"/>
+              <line x1="19.5" y1="10.5" x2="17.2" y2="12.8"/>
+              <line x1="2" y1="17" x2="22" y2="17"/>
+              <line x1="4" y1="20" x2="20" y2="20"/>
             </svg>
-            <!-- Sun Icon (Day) -->
-            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <circle cx="12" cy="12" r="5" />
-              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </span>
+          <span class="theme-icon moon-icon" title="Mode Malam" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              <polygon points="18.5 3.5 19.2 5.2 21 5.8 19.2 6.5 18.5 8.2 17.8 6.5 16 5.8 17.8 5.2" fill="#ffd166"/>
             </svg>
-            <!-- Sunset Icon (Sore) -->
-            <svg class="theme-icon sunset-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 10v2M5.6 11.6l.7.7M18.4 11.6l-.7.7M8 17a4 4 0 0 1 8 0M3 17h18M2 21h20M12 4v2M4 9l1.5.5M20 9l-1.5.5"/>
-            </svg>
-          </button>
+          </span>
+        </button>
+        <button type="button" id="settingsToggle" class="tool-btn settings-toggle" title="Pengaturan Efek (Kursor &amp; Makhluk Kuburan)" aria-label="Pengaturan">⚙</button>
+      </div>
 
-          <!-- Settings Dropdown (Toggle Pumpkin Cursor & Mascots) -->
-          <div class="settings-wrapper" id="settingsWrapper">
-            <button class="nav-btn settings-btn" id="settingsToggle" title="Pengaturan Efek (Kursor Labu &amp; Makhluk Kuburan)" aria-label="Pengaturan">
-              <svg class="settings-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-              </svg>
-            </button>
+      <!-- Hanging Animated Spider on Thread -->
+      <span class="spider" aria-hidden="true"></span>
 
-            <!-- Spooky Tombstone Settings Modal -->
-            <div class="settings-dropdown spooky-modal" id="settingsDropdown" aria-hidden="true">
-              <div class="spooky-modal-inner">
-                <div class="settings-dropdown-header">
-                  <span class="settings-title" data-i18n="settings_title">RITUAL SETTINGS</span>
-                  <span class="settings-divider">✦ 🎃 ✦</span>
-                </div>
-                <div class="settings-dropdown-body">
-                  <!-- Switch 1: Kursor Arwah Reaper Melayang -->
-                  <div class="settings-row" id="rowToggleDragon">
-                    <div class="settings-info">
-                      <span class="settings-label" data-i18n="reaper_label">Arwah Reaper</span>
-                      <span class="settings-sub" data-i18n="reaper_sub">Sabit gaib &amp; roh ungu</span>
-                    </div>
-                    <button type="button" class="spooky-switch active" id="btnToggleDragon" aria-label="Toggle Kursor Arwah Reaper" role="switch" aria-checked="true">
-                      <span class="switch-track"><span class="switch-knob"></span></span>
-                      <span class="switch-label">ON</span>
-                    </button>
-                  </div>
-
-                  <!-- Switch 2: Makhluk Kuburan (Tengkorak & Monster Labu) -->
-                  <div class="settings-row" id="rowToggleMascots">
-                    <div class="settings-info">
-                      <span class="settings-label" data-i18n="mascot_label">Makhluk Kubur</span>
-                      <span class="settings-sub" data-i18n="mascot_sub">Skully &amp; Pumpling</span>
-                    </div>
-                    <button type="button" class="spooky-switch active" id="btnToggleMascots" aria-label="Toggle Makhluk Kuburan" role="switch" aria-checked="true">
-                      <span class="switch-track"><span class="switch-knob"></span></span>
-                      <span class="switch-label">ON</span>
-                    </button>
-                  </div>
-
-                </div>
+      <!-- Settings Dropdown Modal (connected to #settingsToggle) -->
+      <div class="settings-dropdown spooky-modal" id="settingsDropdown" aria-hidden="true">
+        <div class="spooky-modal-inner">
+          <div class="settings-dropdown-header">
+            <span class="settings-title" data-i18n="settings_title">RITUAL SETTINGS</span>
+            <span class="settings-divider">✦ 🎃 ✦</span>
+          </div>
+          <div class="settings-dropdown-body">
+            <!-- Switch 1: Kursor Arwah Reaper Melayang -->
+            <div class="settings-row" id="rowToggleDragon">
+              <div class="settings-info">
+                <span class="settings-label" data-i18n="reaper_label">Arwah Reaper</span>
+                <span class="settings-sub" data-i18n="reaper_sub">Sabit gaib &amp; roh ungu</span>
               </div>
+              <button type="button" class="spooky-switch active" id="btnToggleDragon" aria-label="Toggle Kursor Arwah Reaper" role="switch" aria-checked="true">
+                <span class="switch-track"><span class="switch-knob"></span></span>
+                <span class="switch-label">ON</span>
+              </button>
+            </div>
+
+            <!-- Switch 2: Makhluk Kuburan (Tengkorak, Zombie, Pumpkin, Witch) -->
+            <div class="settings-row" id="rowToggleMascots">
+              <div class="settings-info">
+                <span class="settings-label" data-i18n="mascot_label">Makhluk Kubur</span>
+                <span class="settings-sub" data-i18n="mascot_sub">Skully, Zombo, Pumpling, Witch</span>
+              </div>
+              <button type="button" class="spooky-switch active" id="btnToggleMascots" aria-label="Toggle Makhluk Kuburan" role="switch" aria-checked="true">
+                <span class="switch-track"><span class="switch-knob"></span></span>
+                <span class="switch-label">ON</span>
+              </button>
             </div>
           </div>
-
-          <!-- Mobile Hamburger Toggle -->
-          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
-            <span></span><span></span><span></span>
-          </button>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
 
     <!-- Main Content Area -->
     <main>
@@ -592,222 +595,77 @@
             <p class="section-subtitle">Koleksi Proyek Unggulan yang Telah Dibangkitkan</p>
           </div>
 
-          <!-- ASTA'S 5-LEAF CLOVER GRIMOIRE (OPEN / CLOSE INTERACTIVE TOME) -->
-          <div class="clover-grimoire-master closed" id="cloverGrimoireMaster">
-            
-            <!-- 1. CLOSED STATE: ASTA'S 5-LEAF CLOVER GRIMOIRE COVER -->
-            <div class="clover-cover-view" id="cloverCoverView">
-              <div class="clover-tome-book" id="cloverTomeBook" role="button" tabindex="0" title="Klik untuk membuka Kitab Semanggi 5 Asta!">
-                <!-- Tattered Antique Iron Corners -->
-                <span class="clover-tome-corner corner-tl" aria-hidden="true"></span>
-                <span class="clover-tome-corner corner-tr" aria-hidden="true"></span>
-                <span class="clover-tome-corner corner-bl" aria-hidden="true"></span>
-                <span class="clover-tome-corner corner-br" aria-hidden="true"></span>
+          <!-- 5-LEAF CLOVER GRIMOIRE (3D REALISTIC INTERACTIVE FLIP BOOK) -->
+          <svg width="0" height="0" style="position:absolute"><defs>
+            <radialGradient id="cloverDemonGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ff2a5f" />
+              <stop offset="45%" stop-color="#dc2626" />
+              <stop offset="85%" stop-color="#7f1d1d" />
+              <stop offset="100%" stop-color="#1c040d" />
+            </radialGradient>
+            <radialGradient id="cloverSunsetGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fb923c" />
+              <stop offset="45%" stop-color="#f97316" />
+              <stop offset="85%" stop-color="#c2410c" />
+              <stop offset="100%" stop-color="#431407" />
+            </radialGradient>
+            <radialGradient id="cloverDayGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fef08a" />
+              <stop offset="45%" stop-color="#eab308" />
+              <stop offset="85%" stop-color="#a16207" />
+              <stop offset="100%" stop-color="#422006" />
+            </radialGradient>
+            <g id="clv"><g id="lf"><path d="M0,0 C-16,-12 -26,-34 -12,-46 C-5,-52 0,-45 0,-38 C0,-45 5,-52 12,-46 C26,-34 16,-12 0,0Z"/></g>
+            <use href="#lf" transform="rotate(72)"/><use href="#lf" transform="rotate(144)"/><use href="#lf" transform="rotate(216)"/><use href="#lf" transform="rotate(288)"/>
+            <path d="M0,0 L6,62" stroke-width="4" fill="none" stroke="currentColor" stroke-linecap="round"/></g>
+          </defs></svg>
 
-                <!-- Weathered Stitched Leather Border -->
-                <div class="clover-leather-rim"></div>
+                    <div class="stage-grimoire" id="stageGrimoire">
+            <!-- Front Cover -->
+            <div class="cover-grimoire" id="cover" role="button" tabindex="0" title="Klik untuk membuka Kitab Semanggi 5!">
+              <svg viewBox="-70 -70 140 140"><use href="#clv"/></svg>
+              <h1>GRIMOIRE OF SPELLS<br>&amp; PROJECTS</h1>
+              <small>✦ THE 5-LEAF ANTI-MAGIC CODEX • BUKA ✦</small>
+            </div>
 
-                <!-- Heavy Runic Binding Straps & Ancient Clasp -->
-                <div class="clover-clasp-strap">
-                  <div class="clasp-metal-buckle">
-                    <span class="buckle-skull">⛧</span>
-                  </div>
+            <!-- 3D Open Grimoire Book -->
+            <div class="book-grimoire" id="book">
+              <div class="pg-grimoire l" id="pl">
+                <div class="pg-illustration-frame" id="pgIllustrationFrame">
+                  <img src="./Assets/Projects/project-clinic.jpg" alt="Sistem Mapping Klinik Pratama" id="projectIllustrationImg" class="pg-illustration-img" />
                 </div>
-
-                <!-- Cover Header Inscription -->
-                <div class="clover-cover-header">
-                  <div class="clover-runic-banner">᚛ ᚚ ᚠ ᛟ ᚜ GRIMOIRE OF DESPAIR ᚛ ᚚ ᚠ ᛟ ᚜</div>
-                  <h3 class="clover-cover-title">THE 5-LEAF CLOVER</h3>
-                  <span class="clover-cover-subtitle">ARCHIVES OF THE CODE NECROMANCER</span>
+                <div class="pg-quote" id="quote"></div>
+                <div class="pg-meta-badge" id="metaBadge"></div>
+              </div>
+              <div class="pg-grimoire r" id="pr">
+                <button class="pg-close" id="close" aria-label="Tutup Kitab">✕</button>
+                <span class="pg-yr" id="yr"></span>
+                <h2 class="pg-title" id="nm"></h2>
+                <h3 class="pg-subtitle" id="lv"></h3>
+                <p class="pg-desc" id="ds"></p>
+                <ul class="pg-list" id="ul"></ul>
+                <div class="pg-actions" id="projectActions">
+                  <a href="#" target="_blank" rel="noopener noreferrer" class="pg-action-btn" id="projectDemoBtn">
+                    <span>🔮 Demo Langsung</span>
+                  </a>
+                  <a href="#" target="_blank" rel="noopener noreferrer" class="pg-action-btn" id="projectGithubBtn">
+                    <span>📜 Source Code</span>
+                  </a>
                 </div>
-
-                <!-- The Legendary Five-Leaf Clover Insignia (Embossed & Glowing Crimson Aura) -->
-                <div class="clover-insignia-center" id="cloverInsigniaCenter">
-                  <div class="clover-anti-magic-aura" aria-hidden="true"></div>
-                  <svg class="five-leaf-clover-svg" viewBox="0 0 100 100" width="140" height="140">
-                    <defs>
-                      <filter id="antiMagicGlow" x="-30%" y="-30%" width="160%" height="160%">
-                        <feGaussianBlur stdDeviation="3.5" result="blur" />
-                        <feMerge>
-                          <feMergeNode in="blur" />
-                          <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                      </filter>
-                      <radialGradient id="cloverGrad" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#ff2a5f" />
-                        <stop offset="55%" stop-color="#b91c1c" />
-                        <stop offset="100%" stop-color="#1c040d" />
-                      </radialGradient>
-                    </defs>
-                    
-                    <!-- Runic Magic Circles -->
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="6 3" opacity="0.7"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#9333ea" stroke-width="1.2" opacity="0.5"/>
-
-                    <!-- Outer Arcane Glyphs -->
-                    <text x="50" y="9" font-size="7" fill="#f43f5e" text-anchor="middle" font-family="monospace">⛧</text>
-                    <text x="91" y="52" font-size="7" fill="#f43f5e" text-anchor="middle" font-family="monospace">𖤍</text>
-                    <text x="50" y="96" font-size="7" fill="#f43f5e" text-anchor="middle" font-family="monospace">ᛉ</text>
-                    <text x="9" y="52" font-size="7" fill="#f43f5e" text-anchor="middle" font-family="monospace">ᚚ</text>
-
-                    <!-- Leaf 1: Top (Faith) -->
-                    <path d="M50 50 C41 33 34 20 44 11 C49 6 51 6 56 11 C66 20 59 33 50 50 Z" fill="url(#cloverGrad)" stroke="#ff4d6d" stroke-width="1.8" filter="url(#antiMagicGlow)" />
-                    <!-- Leaf 2: Top-Right (Hope) -->
-                    <path d="M50 50 C65 39 77 34 83 44 C87 50 85 53 79 57 C68 64 58 55 50 50 Z" fill="url(#cloverGrad)" stroke="#ff4d6d" stroke-width="1.8" filter="url(#antiMagicGlow)" />
-                    <!-- Leaf 3: Bottom-Right (Love) -->
-                    <path d="M50 50 C67 59 74 71 68 81 C63 86 59 85 54 79 C48 70 51 58 50 50 Z" fill="url(#cloverGrad)" stroke="#ff4d6d" stroke-width="1.8" filter="url(#antiMagicGlow)" />
-                    <!-- Leaf 4: Bottom-Left (Good Fortune) -->
-                    <path d="M50 50 C49 58 52 70 46 79 C41 85 37 86 32 81 C26 71 33 59 50 50 Z" fill="url(#cloverGrad)" stroke="#ff4d6d" stroke-width="1.8" filter="url(#antiMagicGlow)" />
-                    <!-- Leaf 5: Top-Left (The Demon / Anti-Magic) -->
-                    <path d="M50 50 C42 55 32 64 21 57 C15 53 13 50 17 44 C23 34 35 39 50 50 Z" fill="url(#cloverGrad)" stroke="#ff4d6d" stroke-width="1.8" filter="url(#antiMagicGlow)" />
-
-                    <!-- Center Demonic Anti-Magic Spike Star -->
-                    <polygon points="50,37 53,47 63,50 53,53 50,63 47,53 37,50 47,47" fill="#ffe4e6" filter="drop-shadow(0 0 7px #ff1744)" />
-                    <circle cx="50" cy="50" r="4.5" fill="#ff1744" />
-                  </svg>
-                  <div class="clover-demon-pulse">✦ ✦ ✦</div>
+                <div class="pg-nav">
+                  <button id="prev">◂ Kembali</button>
+                  <span class="pg-dots" id="dots"></span>
+                  <button id="next">Next ▸</button>
                 </div>
-
-                <!-- Lore Quote from Black Clover -->
-                <div class="clover-lore-whisper">
-                  <span class="clover-quote">"The 3 leaves represent Faith, Hope, and Love. In the 4th resides Good Luck."</span>
-                  <span class="clover-demon-quote">"Within the 5th leaf... dwells the Demon of Code!"</span>
-                </div>
-
-                <!-- Call to Action Open Button -->
-                <div class="clover-cover-action">
-                  <button type="button" class="btn-open-clover-book" id="btnOpenCloverBook">
-                    <span class="btn-spark">⚔️</span>
-                    <span>BUKA KITAB SEMANGGI 5 ✦</span>
-                    <span class="btn-spark">📖</span>
-                  </button>
-                  <span class="open-hint-text">(Klik sampul atau tombol untuk membuka 2 halaman mantra)</span>
-                </div>
-
-                <!-- Book Edge Pages Thickness Simulation -->
-                <div class="clover-edge-pages"></div>
               </div>
             </div>
 
-            <!-- 2. OPEN STATE: THE SPREAD 2-PAGE ANCIENT SPELLBOOK -->
-            <div class="open-grimoire-book" id="openGrimoireBook">
-              
-              <!-- Top Close Bar on Open Book -->
-              <div class="open-book-control-bar">
-                <div class="book-crest-badge">
-                  <span class="crest-leaf">🍀</span>
-                  <span>THE 5-LEAF CLOVER CODEX • OPEN SPREAD</span>
-                </div>
-                <button type="button" class="btn-close-clover-book" id="btnCloseCloverBook" title="Tutup kembali menjadi sampul Semanggi 5">
-                  <span>✖ Tutup Kitab Semanggi 5</span>
-                </button>
-              </div>
-
-              <!-- Book Corner Ornaments -->
-              <span class="grimoire-corner corner-tl" aria-hidden="true"></span>
-              <span class="grimoire-corner corner-tr" aria-hidden="true"></span>
-              <span class="grimoire-corner corner-bl" aria-hidden="true"></span>
-              <span class="grimoire-corner corner-br" aria-hidden="true"></span>
-              
-              <!-- Center Leather Spine & Silk Ribbon Bookmark -->
-              <div class="grimoire-spine" aria-hidden="true">
-                <span class="spine-runes">᚛ ᚚ ᚠ ᛟ ᚜</span>
-                <span class="grimoire-ribbon"></span>
-              </div>
-
-              <!-- Halaman Kiri: The Spell Codex (Daftar Gulungan Mantra) -->
-              <div class="grimoire-page page-left">
-                <div class="page-ornament-header">
-                  <div class="page-tag-line">
-                    <span class="page-chapter-badge">LIBER I • 5-LEAF CODEX</span>
-                    <span class="page-number-folio">FOLIO 01</span>
-                  </div>
-                  <h3 class="grimoire-page-title">DAFTAR MANTRA KUNO</h3>
-                  <div class="parchment-divider"><span>✦ ❖ ✦</span></div>
-                  <p class="page-instruction">Pilih gulungan mantra untuk membuka lembaran detail proyek di sebelah kanan:</p>
-                </div>
-
-                <!-- Spell Category Filter Pills -->
-                <div class="spell-filter-pills" id="spellFilterPills">
-                  <button type="button" class="spell-filter-btn active" data-filter="all">Semua</button>
-                  <button type="button" class="spell-filter-btn" data-filter="web">Web Artifact</button>
-                  <button type="button" class="spell-filter-btn" data-filter="mobile">Mobile App</button>
-                  <button type="button" class="spell-filter-btn" data-filter="system">Sistem</button>
-                  <button type="button" class="spell-filter-btn" data-filter="interactive">Interactive</button>
-                </div>
-
-                <!-- Scrollable Spell Index List -->
-                <div class="spell-codex-list" id="spellCodexList" role="tablist" aria-label="Daftar Mantra Proyek">
-                  <!-- Injected via JavaScript -->
-                </div>
-
-                <div class="page-footer-note">
-                  <span class="candle-icon">📜</span>
-                  <span>Sentuh atau klik gulungan mantra untuk membacakan lembaran kitab</span>
-                </div>
-              </div>
-
-              <!-- Halaman Kanan: Active Spell Inscription (Detail & Preview Lembaran Terpilih) -->
-              <div class="grimoire-page page-right" id="grimoirePageRight">
-                <div class="page-ornament-header">
-                  <div class="page-tag-line">
-                    <span class="page-chapter-badge active-tag" id="activeSpellStatus">✨ MANTRA AKTIF</span>
-                    <span class="page-number-folio" id="activeSpellFolio">FOLIO 02</span>
-                  </div>
-                  <h3 class="grimoire-page-title active-spell-heading" id="activeSpellTitle">Memuat Lembaran Mantra...</h3>
-                  <div class="parchment-divider"><span>✦ 🔮 ✦</span></div>
-                </div>
-
-                <!-- Crystal Scrying Frame (Project Mockup & Visual Frame) -->
-                <div class="spell-crystal-frame" id="spellCrystalFrame">
-                  <div class="crystal-lens-glow" aria-hidden="true"></div>
-                  <div class="crystal-top-bar">
-                    <span class="crystal-dot"></span>
-                    <span class="crystal-dot"></span>
-                    <span class="crystal-dot"></span>
-                    <span class="crystal-path" id="activeSpellCategoryBadge">WEB ARTIFACT</span>
-                  </div>
-                  <div class="crystal-preview-box" id="activeSpellPreviewBox">
-                    <!-- Dynamic Graphic Mockup injected by JS -->
-                  </div>
-                </div>
-
-                <!-- Spell Ingredients & Tech Stack -->
-                <div class="spell-ingredients-section">
-                  <span class="ingredients-label">✦ BAHAN RAMUAN &amp; MATRIKS KODE:</span>
-                  <div class="spell-tags-container" id="activeSpellTags">
-                    <!-- Tags injected by JS -->
-                  </div>
-                </div>
-
-                <!-- Spell Lore & Problem-Solution Inscription -->
-                <div class="spell-lore-scroll">
-                  <h4 class="lore-heading">✦ CATATAN KITAB KUNO:</h4>
-                  <p class="lore-text" id="activeSpellDesc">
-                    <!-- Description injected by JS -->
-                  </p>
-                </div>
-
-                <!-- Action Runes (Live Demo & GitHub Buttons) -->
-                <div class="spell-action-runes" id="activeSpellActions">
-                  <a href="#home" id="activeSpellDemoBtn" target="_blank" rel="noopener noreferrer" class="grimoire-btn btn-demo">
-                    <span class="btn-glyph">👁️</span>
-                    <span>Coba Mantra (Live Demo)</span>
-                  </a>
-                  <a href="https://github.com/Kalzz76" id="activeSpellGithubBtn" target="_blank" rel="noopener noreferrer" class="grimoire-btn btn-github">
-                    <span class="btn-glyph">📜</span>
-                    <span>Gulungan Kode (GitHub)</span>
-                  </a>
-                </div>
-
-                <!-- Bottom Quick Close Button on Right Page -->
-                <div class="page-right-bottom-close">
-                  <button type="button" class="btn-seal-bottom" id="btnCloseCloverBottom">
-                    <span>📖 Tutup Kembali Kitab Semanggi 5</span>
-                  </button>
-                </div>
-              </div>
-
+            <!-- Back Cover -->
+            <div class="cover-grimoire back" id="back" style="display:none" role="button" tabindex="0" title="Klik untuk membaca kembali!">
+              <svg viewBox="-70 -70 140 140" fill="url(#cloverDemonGrad)" stroke="#f43f5e" stroke-width="1.8" style="color:#f43f5e"><use href="#clv"/></svg>
+              <h1>AKHIR LEMBARAN<br>PROJECTS</h1>
+              <small>terima kasih telah membaca</small>
+              <small>✦ klik untuk membaca lagi ✦</small>
             </div>
           </div>
         </div>
@@ -930,50 +788,77 @@
             </div>
           </div>
 
-          <!-- COMPANIONS DOMAIN (BOUNDED MASCOT PATROL PEN) -->
           <div class="shadow-domain-container">
-
-            <!-- Bounded Box / Arena for Roaming Mascots -->
-            <div class="shadow-pen-box" id="shadowPenBox">
+            <div class="lod-wrapper" id="lodWrapper">
               
-              <!-- Pen Header Ribbon -->
-              <div class="pen-header-ribbon">
-                <div class="pen-ribbon-title">
-                  <span class="pen-gem">❖</span>
-                  <span>SANCTUM COURTYARD • ARENA MASKOT PENGUNJUNG</span>
-                  <span class="pen-gem">❖</span>
+              <div class="lod-top">
+                <div class="lod-title-group">
+                  <span class="lod-realm-badge">REALM OF SANCTUM</span>
+                  <h3 class="lod-title" id="lodTtl">Land of Dusk</h3>
                 </div>
-                <div class="pen-telemetry-badge">
-                  <span class="telemetry-pulse-dot"></span>
-                  <span id="penTelemetryCount">6 Maskot Sahabat Berpatroli</span>
-                </div>
+                <span class="lod-hint" id="lodHint">Klik salah satu wilayah kerajaan untuk menjelajah asal-usul tempat &amp; maskot penghuninya</span>
               </div>
 
-              <!-- Interactive Walking Ground Stage (2D Roaming Sandbox) -->
-              <div class="shadow-pen-stage" id="shadowPenStage">
-                <!-- Atmospheric Background Grid & Mist -->
-                <div class="pen-dungeon-grid" aria-hidden="true"></div>
-                <div class="pen-shadow-smoke" aria-hidden="true"></div>
+              <div class="lod-stage" id="lodStage">
+                <div class="lod-frame">
+                  <button type="button" id="lodBk" class="lod-bk-btn in-map-bk-btn" hidden>↩ Kembali ke Peta Utama</button>
+                  <div class="lod-world" id="lodWorld">
+                    <canvas id="lodCv" width="256" height="144"></canvas>
+                    <svg id="lodRoute" viewBox="0 0 1600 900" preserveAspectRatio="none"></svg>
+                    <div id="lodRgs"></div>
+                    <div id="lodLayer"></div>
+                  </div>
+                  <div class="lod-fog" aria-hidden="true"></div>
+                </div>
 
-                <!-- Dynamically Spawned Wandering Mascots Roam Here -->
+                <aside class="lod-panel" id="lodPanel">
+                  <div id="lodPh" class="lod-panel-head"></div>
+                  <div class="lod-tabs">
+                    <button type="button" id="lodT0" class="on">Informasi Wilayah</button>
+                    <button type="button" id="lodT1">Maskot Penghuni</button>
+                  </div>
+                  <div id="lodPb" class="lod-panel-body"></div>
+                </aside>
+
+                <div class="lod-dt" id="lodDt" hidden>
+                  <div class="lod-band">
+                    <div class="lod-pt">
+                      <div class="lod-ring"></div>
+                      <div class="lod-dcard" id="lodDtC">
+                        <span id="lodDtE"></span>
+                      </div>
+                    </div>
+                    <div class="lod-tx">
+                      <h3>
+                        <span id="lodDtN"></span>
+                        <button type="button" id="lodSnd" title="Suara Maskot">♪</button>
+                      </h3>
+                      <p id="lodDtD"></p>
+                      <p id="lodDtM" hidden></p>
+                      <a id="lodMore" href="#">Lebih Banyak Cerita</a>
+                      <hr>
+                      <div class="lod-lb">Hubungan &amp; Koneksi Sahabat:</div>
+                      <div class="lod-hb" id="lodDtH"></div>
+                    </div>
+                    <button type="button" class="lod-x" id="lodDtX" aria-label="Tutup Detail">✕</button>
+                  </div>
+                </div>
+
               </div>
 
-              <!-- Interactive Hint Bar -->
-              <div class="pen-status-footer">
-                <div class="pen-hint">
-                  <span class="hint-spark">👁️</span>
-                  <span data-i18n="pen_hint">Klik pada maskot mana saja untuk membuka <strong>Kartu Biodata &amp; Pesan Tamu</strong>! Maskot dapat berjalan bebas ke segala arah.</span>
+              <div class="lod-status-footer">
+                <div class="lod-footer-hint">
+                  <span class="hint-spark">🗺️</span>
+                  <span>Jelajahi setiap sudut <strong>Land of Dusk</strong> untuk menemukan kisah asal-usul 8 maskot sahabat!</span>
                 </div>
-                
                 <button type="button" class="btn-arise-trigger compact-arise-btn" id="openAriseModalBtn">
                   <span class="arise-spark">✨</span>
-                  <span class="arise-label" data-i18n="btn_arise">TITIP PESAN &amp; TAMBAH MASKOT</span>
+                  <span class="arise-label" data-i18n="btn_arise">TITIP PESAN &amp; BERGABUNG KE WILAYAH</span>
                   <span class="arise-spark">✨</span>
                 </button>
               </div>
 
             </div>
-
           </div>
 
         </div>
@@ -1130,8 +1015,22 @@
                       <option value="type-cat">🐱 Kucing Hitam (Midnight Cat)</option>
                       <option value="type-skeleton">💀 Tengkorak Santuy (Chibi Skeleton)</option>
                       <option value="type-wizard">🧙‍♂️ Penyihir Cilik (Little Wizard)</option>
+                      <option value="type-frog">🐸 Katak Rawa (Swamp Guardian Toad)</option>
+                      <option value="type-voyager">🎭 Tamu Bertopeng (Mysterious Voyager)</option>
                     </select>
                   </div>
+                </div>
+
+                <div class="shadow-field-group">
+                  <label for="shadowRegionSelect" class="shadow-field-label">PILIH WILAYAH ASAL DI LAND OF DUSK</label>
+                  <select id="shadowRegionSelect" class="shadow-input-field shadow-select">
+                    <option value="0">🏚️ Moonlit Manor (Pusat Segala Cerita)</option>
+                    <option value="1">💀 Whispering Graveyard (Makam Tua Berkabut)</option>
+                    <option value="2" selected>🎃 Pumpkin Hollow (Ladang Labu Raksasa)</option>
+                    <option value="3">🦇 Batwing Caverns (Gua Kelelawar Kristal)</option>
+                    <option value="4">🧪 Bubbling Bog (Rawa Ramuan Magis)</option>
+                    <option value="5">⚓ Ghost Ship Bay (Teluk Kapal Hantu)</option>
+                  </select>
                 </div>
 
                 <!-- Message Field -->
@@ -1528,7 +1427,7 @@
     <!-- Bottom Stage Ground Bar -->
     <div class="floor" aria-hidden="true"></div>
 
-    <!-- Stage Mascots: Tengkorak (Skully) & Monster Labu (Pumpling) -->
+    <!-- Stage Mascots & Graveyard Road: Cottage, Fence, Graves, Skeleton, Pumpkin, Zombie, Witch -->
     <div class="stage" id="stage" aria-hidden="true">
       
       <!-- Witch Cottage / Pondok Penyihir Kecil (Pojok Kiri) -->
@@ -1557,12 +1456,148 @@
         <div class="cottage-bubble" id="cottageBubble">Krieeet... 🚪</div>
       </div>
 
-      <!-- Mascot A: Tengkorak (Skully) -->
-      <div class="char char-skeleton" id="a" style="left:16%">
+      <!-- Spooky Cottage Fence & Gate (Pagar Pekarangan di Depan Rumah) -->
+      <div class="cottage-fence" id="cottageFence" title="Pagar Pekarangan Pondok Nenek Sihir">
+        <div class="fence-posts">
+          <div class="fence-picket"><span class="fence-spear">▲</span></div>
+          <div class="fence-picket"><span class="fence-spear">▲</span></div>
+          <div class="fence-gate" id="fenceGate" title="Pintu Pagar Pekarangan">
+            <span class="fence-spear">▲</span>
+            <span class="gate-lantern" title="Lentera Pekarangan">🏮</span>
+          </div>
+          <div class="fence-picket"><span class="fence-spear">▲</span></div>
+        </div>
+        <div class="fence-rails">
+          <span class="rail rail-top"></span>
+          <span class="rail rail-bot"></span>
+        </div>
+      </div>
+
+      <!-- Gravesites & Witch Houses along the Road:
+           Left: Witch Cottage (Pondok 1)
+           Middle: 5 Gothic Gravesites (Sunken & Standing)
+           Right: Witch Manor Spire (Pondok 2 / Menara Sihir Kanan) -->
+
+      <!-- Grave 1: Makam Kuno Salib Keltik (Celtic Cross) -->
+      <div class="gravesite grave-item" id="grave-1" style="left: 22%" title="Makam Salib Keltik Kuno (Klik untuk berinteraksi!)">
+        <div class="tombstone ancient-cross">
+          <div class="tomb-top"></div>
+          <div class="tomb-body">
+            <span class="tomb-cross">✞</span>
+            <span class="tomb-rip">R.I.P</span>
+          </div>
+          <span class="tomb-moss">🌿</span>
+        </div>
+        <div class="dirt-mound">
+          <span class="dirt-pebble p-1"></span>
+        </div>
+        <div class="spectral-wisp wisp-purple"></div>
+        <div class="grave-bubble" id="graveBubble-1">Makam Salib Kuno 🪦</div>
+      </div>
+
+      <!-- Grave 3: Makam Batu Miring Tenggelam Separuh (Half-Sunken Slab) -->
+      <div class="gravesite grave-item sunken-half" id="grave-3" style="left: 36%" title="Makam Tua Tenggelam Separuh (Klik untuk berinteraksi!)">
+        <div class="tombstone slanted-left">
+          <div class="tomb-top"></div>
+          <div class="tomb-body">
+            <span class="tomb-cross">†</span>
+            <span class="tomb-rip">R.I.P</span>
+          </div>
+          <span class="tomb-crack"></span>
+          <span class="tomb-moss">🌱</span>
+        </div>
+        <div class="dirt-mound sunken-pile">
+          <span class="dirt-pebble p-1"></span>
+          <span class="dirt-bone">🦴</span>
+        </div>
+        <div class="spectral-wisp wisp-blue"></div>
+        <div class="grave-bubble" id="graveBubble-3">Makam Tenggelam Separuh 🪦</div>
+      </div>
+
+      <!-- Grave 4: Makam Tanah Beracun (Toxic Ooze Mound) -->
+      <div class="gravesite grave-item" id="grave-4" style="left: 50%" title="Makam Tanah Beracun (Klik untuk berinteraksi!)">
+        <div class="tombstone crooked">
+          <div class="tomb-top"></div>
+          <div class="tomb-body">
+            <span class="tomb-symbol">☣️</span>
+            <span class="tomb-rip">R.I.P</span>
+          </div>
+          <span class="tomb-slime"></span>
+          <span class="tomb-shroom">🍄</span>
+        </div>
+        <div class="dirt-mound toxic-dirt">
+          <span class="toxic-ooze">🧪</span>
+          <span class="dirt-pebble p-1"></span>
+        </div>
+        <div class="spectral-wisp wisp-green"></div>
+        <div class="grave-bubble" id="graveBubble-4">Tanah Beracun 🧪</div>
+      </div>
+
+      <!-- Grave 5: Makam Zombo sang Zombie (Zombie Grave Mound) -->
+      <div class="gravesite grave-item grave-zombie" id="grave-5" style="left: 64%" title="Makam Zombo sang Zombie (Klik untuk membangkitkan Zombie!)">
+        <div class="tombstone crooked">
+          <div class="tomb-top"></div>
+          <div class="tomb-body">
+            <span class="tomb-symbol">☣️</span>
+            <span class="tomb-rip">R.I.P</span>
+            <span class="tomb-name">ZOMBO</span>
+          </div>
+          <span class="tomb-slime"></span>
+          <span class="tomb-shroom">🍄</span>
+        </div>
+        <div class="dirt-mound toxic-dirt">
+          <span class="toxic-ooze">🧪</span>
+          <span class="dirt-bone">🦴</span>
+          <span class="dirt-pebble p-2"></span>
+        </div>
+        <div class="spectral-wisp wisp-green"></div>
+        <div class="grave-bubble" id="graveBubble-5">Sarang Zombo 🧟</div>
+      </div>
+
+      <!-- Grave 6: Obelisk Runic Tertimbun Tanah (Deeply Sunken Obelisk) -->
+      <div class="gravesite grave-item sunken-deep" id="grave-6" style="left: 77%" title="Obelisk Runic Nyaris Tenggelam (Klik untuk membaca mantra!)">
+        <div class="tombstone obelisk">
+          <div class="tomb-top"></div>
+          <div class="tomb-body">
+            <span class="tomb-symbol">ᛟ</span>
+            <span class="tomb-rip">RUNIC</span>
+          </div>
+          <span class="tomb-runes">✦ ᚚ ✦</span>
+        </div>
+        <div class="dirt-mound sunken-pile">
+          <span class="dirt-pebble p-1"></span>
+        </div>
+        <div class="spectral-wisp wisp-purple"></div>
+        <div class="grave-bubble" id="graveBubble-6">Obelisk Tertimbun Tanah 🔮</div>
+      </div>
+
+      <!-- Rumah Penyihir Kedua: Menara Alkimia Kuno (Witch Manor Spire - Sisi Kanan) -->
+      <div class="witch-manor" id="witchManor" style="right: 14px; left: auto;" title="Menara Alkimia Nenek Sihir (Pilihan Rumah Kedua - Klik untuk mengetuk pintu!)">
+        <div class="manor-spire-roof">
+          <span class="manor-weather-vane">🌙</span>
+        </div>
+        <div class="manor-body">
+          <div class="manor-window-circle" title="Jendela Alkimia Berkilau">
+            <div class="window-alchemical-rune">✧</div>
+          </div>
+          <div class="manor-door-frame">
+            <div class="manor-door" id="manorDoor">
+              <span class="door-knocker">🧿</span>
+            </div>
+          </div>
+          <div class="manor-porch">
+            <span class="cauldron-flask" title="Kuali Ramuan Mendidih">🔮</span>
+            <span class="manor-bat-charm">🦇</span>
+          </div>
+        </div>
+        <div class="manor-bubble" id="manorBubble">Krieeek... 🚪</div>
+      </div>
+
+      <!-- Mascot A: Tengkorak (Skully - Grave Dweller) -->
+      <div class="char char-skeleton" id="a" style="left:26%" title="Skully sang Tengkorak (Penghuni Makam Keramat)">
         <div class="bubble">Yo, Necromancer!</div>
         <div class="hand">👋</div>
         <div class="body">
-          <!-- Ribs & Glowing Eye Sockets -->
           <div class="skeleton-head">
             <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
             <div class="skeleton-teeth"><i></i><i></i><i></i><i></i></div>
@@ -1575,8 +1610,8 @@
         <i class="leg l"></i><i class="leg r"></i>
       </div>
 
-      <!-- Mascot B: Monster Labu Kecil (Pumpling) -->
-      <div class="char char-pumpkin" id="b" style="left:68%">
+      <!-- Mascot B: Monster Labu Kecil (Pumpling - House Dweller) -->
+      <div class="char char-pumpkin" id="b" style="left:48%" title="Pumpling sang Monster Labu (Penghuni Pondok Nenek Sihir)">
         <div class="bubble">Trick or Treat!</div>
         <div class="hand">👋</div>
         <div class="body">
@@ -1584,6 +1619,56 @@
           <div class="pumpkin-carve">
             <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
             <div class="pumpkin-mouth"></div>
+          </div>
+        </div>
+        <b class="z">z</b><b class="z">z</b>
+        <i class="leg l"></i><i class="leg r"></i>
+      </div>
+
+      <!-- Mascot C: Zombie Imut (Zombo - Grave Dweller) -->
+      <div class="char char-zombie" id="c" style="left:72%" title="Zombo sang Zombie (Penghuni Makam Beracun)">
+        <div class="bubble">Braaaains... Code!</div>
+        <div class="hand">🧟</div>
+        <div class="body">
+          <div class="zombie-head">
+            <div class="zombie-hair"></div>
+            <div class="zombie-stitch"></div>
+            <div class="eyes">
+              <i class="eye eye-normal"></i>
+              <i class="eye eye-glow"></i>
+            </div>
+            <div class="zombie-mouth"><i></i></div>
+          </div>
+          <div class="zombie-torso">
+            <div class="zombie-rag"></div>
+            <div class="zombie-arm arm-l"></div>
+            <div class="zombie-arm arm-r"></div>
+          </div>
+        </div>
+        <b class="z">z</b><b class="z">z</b>
+        <i class="leg l"></i><i class="leg r"></i>
+      </div>
+
+      <!-- Mascot D: Penyihir Cilik (Witch Hazel - House Dweller) -->
+      <div class="char char-witch" id="d" style="left:15%" title="Witch Hazel sang Penyihir Cilik (Penghuni Pondok Nenek Sihir)">
+        <div class="bubble">Hihihi, Butuh Ramuan?</div>
+        <div class="hand">✨</div>
+        <div class="body">
+          <div class="witch-hat">
+            <div class="hat-cone"></div>
+            <div class="hat-brim"></div>
+            <div class="hat-buckle"></div>
+          </div>
+          <div class="witch-face">
+            <div class="witch-hair-left"></div>
+            <div class="witch-hair-right"></div>
+            <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
+            <div class="witch-blush blush-l"></div>
+            <div class="witch-blush blush-r"></div>
+            <div class="witch-smile"></div>
+          </div>
+          <div class="witch-cloak">
+            <div class="potion-flask" title="Ramuan Mana Ajaib">🧪</div>
           </div>
         </div>
         <b class="z">z</b><b class="z">z</b>
@@ -1634,40 +1719,53 @@
       <div class="music-hud-glow" aria-hidden="true"></div>
       
       <div class="music-hud-card" id="musicHudCard" role="region" aria-label="Pemutar Musik Retro Sanctum">
-        <!-- Music Note Icon / Vinyl Disk -->
-        <div class="music-hud-icon-box" id="musicHudIconBox" role="button" tabindex="0" title="Klik untuk memutar / menjeda musik">
+        <!-- Mini Indicator Dot when Minimized -->
+        <span class="music-hud-mini-dot" aria-hidden="true"></span>
+
+        <!-- Music Note Icon / Vinyl Disk (Persistent Logo) -->
+        <div class="music-hud-icon-box" id="musicHudIconBox" role="button" tabindex="0" title="Klik untuk memutar / perbesar musik">
           <span class="music-hud-note">🎵</span>
         </div>
 
-        <!-- Music Info Text -->
-        <div class="music-hud-info" role="button" tabindex="0" title="Klik untuk memutar / menjeda musik">
-          <span class="music-hud-title" id="musicHudTitle">MUSIK MATI</span>
-          <span class="music-hud-subtitle" id="musicHudSub">NIKMATI KETENANGAN</span>
-        </div>
+        <!-- Smooth Collapsible Body (Rolls in/out smoothly like the navbar) -->
+        <div class="music-hud-collapsible-body" id="musicHudCollapsibleBody">
+          <!-- Music Info Text -->
+          <div class="music-hud-info" role="button" tabindex="0" title="Klik untuk memutar / menjeda musik">
+            <span class="music-hud-title" id="musicHudTitle">MUSIK MATI</span>
+            <span class="music-hud-subtitle" id="musicHudSub">NIKMATI KETENANGAN</span>
+          </div>
 
-        <!-- Equalizer Bars (animated when playing) -->
-        <div class="music-hud-eq" id="musicHudEq" aria-hidden="true">
-          <span class="eq-bar eq-1"></span>
-          <span class="eq-bar eq-2"></span>
-          <span class="eq-bar eq-3"></span>
-          <span class="eq-bar eq-4"></span>
-        </div>
+          <!-- Equalizer Bars (animated when playing) -->
+          <div class="music-hud-eq" id="musicHudEq" aria-hidden="true">
+            <span class="eq-bar eq-1"></span>
+            <span class="eq-bar eq-2"></span>
+            <span class="eq-bar eq-3"></span>
+            <span class="eq-bar eq-4"></span>
+          </div>
 
-        <!-- Mini Gentle Volume Slider -->
-        <div class="music-hud-vol-wrap" id="musicHudVolWrap" title="Atur Kekuatan Suara Musik (Latar Halus)">
-          <span class="vol-glyph">🔈</span>
-          <input type="range" id="bgMusicVolSlider" min="0.0" max="0.4" step="0.02" value="0.15" class="music-vol-slider" aria-label="Volume Musik Latar">
-        </div>
+          <!-- Mini Gentle Volume Slider -->
+          <div class="music-hud-vol-wrap" id="musicHudVolWrap" title="Atur Kekuatan Suara Musik (Latar Halus)">
+            <span class="vol-glyph">🔈</span>
+            <input type="range" id="bgMusicVolSlider" min="0.0" max="0.4" step="0.02" value="0.15" class="music-vol-slider" aria-label="Volume Musik Latar">
+          </div>
 
-        <!-- Speaker Button -->
-        <button type="button" class="music-hud-btn" id="musicHudBtn" aria-label="Toggle Background Music">
-          <svg class="music-speaker-icon icon-sound-on hidden" id="musicSpeakerOn" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-          </svg>
-          <svg class="music-speaker-icon icon-sound-off" id="musicSpeakerOff" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-          </svg>
-        </button>
+          <!-- Speaker Button -->
+          <button type="button" class="music-hud-btn" id="musicHudBtn" aria-label="Toggle Background Music" title="Mute / Unmute Musik">
+            <svg class="music-speaker-icon icon-sound-on hidden" id="musicSpeakerOn" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <svg class="music-speaker-icon icon-sound-off" id="musicSpeakerOff" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+          </button>
+
+          <!-- Minimize / Collapse Button (Sisa Logo Musik) -->
+          <button type="button" class="music-hud-collapse-btn" id="musicHudCollapseBtn" aria-label="Minimalkan Pemutar Musik" title="Minimalkan (hanya tampilkan logo musik)">
+            <svg class="collapse-icon icon-collapse" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
