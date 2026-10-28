@@ -902,89 +902,86 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // -------------------------------------------------------------------------
-  // 6. ASTA'S 5-LEAF CLOVER GRIMOIRE: 3D Realistic Turn-Page Projects Book
-  // -------------------------------------------------------------------------
   const PROJECTS_DATA = [
     {
-      y: "2025 • WEB & GIS MAPPING",
-      n: "SISTEM MAPPING KLINIK PRATAMA",
-      l: "Fullstack Developer • Laravel 10 & Leaflet.js",
+      y: "2025 • GEOSPATIAL & FULL-STACK",
+      n: "SIMULASI & PEMANTAUAN KEBAKARAN HUTAN",
+      l: "Lead Full-Stack Developer • Laravel 11/12 & Leaflet.js",
       img: "./Assets/Projects/project-clinic.jpg",
-      d: "Sistem web terintegrasi pemetaan sebaran dan manajemen operasional Klinik Pratama Bumi Sehat Bahagia dengan visualisasi GIS real-time.",
+      d: "Sistem informasi geospasial level enterprise untuk pemantauan titik api kehutanan, pelacakan GPS riil, dan simulator perambatan api dinamis multi-insiden berbasis arah angin.",
       b: [
-        "Visualisasi spasial interaktif dengan Leaflet.js & marker clustering",
-        "Pencatatan rekam medis & data poli pasien terenkripsi aman",
-        "Dashboard analitik kunjungan pasien & reporting PDF otomatis"
+        "Simulator perambatan kebakaran dinamis dengan variabel arah & kecepatan angin",
+        "Pemetaan spasial GIS interaktif dengan Leaflet.draw & koordinat GPS riil",
+        "Arsitektur reaktif modern berbasis Laravel 11/12, Livewire 3, dan Tailwind CSS"
       ],
-      q: "“Pendidikan dan latihan tanpa henti adalah mantra terkuat untuk melampaui batas diri.”",
-      tags: ["Laravel 10", "Leaflet.js", "MySQL", "Bootstrap 5", "GIS API"],
-      demo: "#projects",
-      github: "https://github.com/Kalzz76"
+      q: "“Teknologi hadir untuk melindungi alam dan menjaga kelestarian kehidupan.”",
+      tags: ["Laravel 11", "Livewire 3", "Leaflet.js", "GPS Geolocation", "Tailwind CSS"],
+      demo: "https://github.com/Kalzz76/Web-Pemerintahan-Kehutanan",
+      github: "https://github.com/Kalzz76/Web-Pemerintahan-Kehutanan.git"
     },
     {
-      y: "2024 - 2025 • ENTERPRISE SYSTEM",
-      n: "CLASSIO SCHOOL MANAGEMENT",
-      l: "Enterprise Developer • C# ASP.NET & MySQL",
+      y: "2025 • MULTIPLATFORM & DESKTOP APP",
+      n: "CLASSIO SCHOOL CBT & ADMINISTRATION",
+      l: "Multiplatform Engineer • Flutter, Dart & Windows C++",
       img: "./Assets/Projects/project-school.jpg",
-      d: "Platform manajemen sekolah terpusat untuk siswa, guru, dan staf administrasi dengan modul presensi cerdas dan input nilai akademik.",
+      d: "Platform Penilaian Berbasis Komputer (CBT) dan tata kelola administrasi sekolah multiplatform lengkap dengan berkas distribusi desktop Windows (.exe installer) dan mobile Android.",
       b: [
-        "Modul presensi cerdas & rekapitulasi nilai sesuai kurikulum",
-        "Arsitektur REST API cepat dengan otentikasi JWT terstandar",
-        "Menghemat hingga 80% waktu rekapitulasi data sekolah tahunan"
+        "Aplikasi multiplatform sejati (Windows Desktop Executable & Mobile Android)",
+        "Sistem ujian CBT aman, modul presensi cerdas, dan rekapitulasi nilai otomatis",
+        "Arsitektur SQLite offline-first yang terintegrasi dengan RESTful API terpusat"
       ],
-      q: "“Disiplin dan dedikasi menghasilkan sistem yang kokoh tak tergoyahkan.”",
-      tags: ["C# ASP.NET", "MySQL", "REST API", "Tailwind CSS", "JWT Auth"],
-      demo: "#projects",
-      github: "https://github.com/Kalzz76"
+      q: "“Disiplin dalam rancangan menghasilkan sistem yang kokoh dan siap didistribusikan.”",
+      tags: ["Flutter", "Dart", "Windows .exe", "SQLite", "REST API"],
+      demo: "https://github.com/Kalzz76/Project-Aplikasi-PBT-Sekolah",
+      github: "https://github.com/Kalzz76/Project-Aplikasi-PBT-Sekolah.git"
     },
     {
-      y: "2024 • INTERACTIVE PORTFOLIO",
-      n: "CODE NECROMANCER SANCTUM",
-      l: "Frontend Sorcerer • Pure Vanilla JS & Web Audio",
+      y: "2025 • ALGORITHMIC & CREATIVE TECH",
+      n: "INDOOR HOSPITAL PATHFINDING VISUALIZER",
+      l: "Algorithm Engineer • JavaScript ES6+ & PathFinding.js",
       img: "./Assets/Projects/project-sanctum.jpg",
-      d: "Portofolio developer interaktif bertema retro gothic Halloween dengan Pixel Dynamic Island dan maskot otonom berkeliaran bebas.",
+      d: "Visualizer navigasi denah rumah sakit multi-lantai interaktif yang mengimplementasikan Algoritma Graf A* (Shortest Path) untuk panduan rute tercepat pasien dan tenaga medis.",
       b: [
-        "Pixel Dynamic Island dengan transisi minimalis otomatis saat scroll",
-        "Stage maskot otonom (Skeleton, Zombie, Witch, Pumpkin) dengan 7 makam",
-        "Grimoire Semanggi 5 interaktif dengan animasi pembalikan halaman 3D"
+        "Implementasi algoritma pencarian rute terpendek A* (A-Star Graph Search)",
+        "Visualisasi interaktif denah multi-lantai dengan render grafis Canvas & DOM",
+        "Rancang bangun fondasi Computer Science murni tanpa ketergantungan library berat"
       ],
-      q: "“Dalam lembar ke-5, bersemayam iblis sang penakluk bug dan kode masa depan!”",
-      tags: ["Pure Vanilla JS", "HTML5 Canvas", "Web Audio API", "CSS 3D"],
-      demo: "#home",
-      github: "https://github.com/Kalzz76"
+      q: "“Algoritma yang presisi menuntun kita melalui labirin terumit sekalipun.”",
+      tags: ["JavaScript ES6+", "Vite", "A* Algorithm", "PathFinding.js", "HTML5 Canvas"],
+      demo: "https://github.com/Kalzz76/rsm2",
+      github: "https://github.com/Kalzz76/rsm2.git"
     },
     {
-      y: "2024 • WEB APPLICATION",
-      n: "PERPUSTAKAAN DIGITAL JURUSAN RPL",
-      l: "Web Developer • PHP Native & MySQL",
+      y: "2025 • HEALTHTECH & ARTIFICIAL INTELLIGENCE",
+      n: "RHEA AI HEALTHCARE & INTELLIGENT ASSISTANCE",
+      l: "AI Full-Stack Developer • Laravel, Blade & AI Integration",
       img: "./Assets/Projects/project-library.jpg",
-      d: "Sistem informasi perpustakaan digital untuk otomasi peminjaman, katalog buku berkode QR, serta laporan sirkulasi inventaris buku.",
+      d: "Platform asisten kesehatan cerdas berbasis kecerdasan buatan (AI) yang dirancang untuk pameran Gelar Karya RPL guna memberikan konsultasi gejala awal dan triase kesehatan.",
       b: [
-        "Sistem sirkulasi peminjaman & pengembalian buku berbasis barcode",
-        "Statistik peminjaman visual interaktif dengan Chart.js",
-        "Otentikasi multi-level untuk pustakawan, guru, dan siswa"
+        "Integrasi model AI diagnostik awal untuk analisa gejala kesehatan pengguna",
+        "Antarmuka responsif ramah pengguna dengan alur konsultasi yang intuitif",
+        "Penyimpanan data riwayat konsultasi terenkripsi dengan basis data MySQL"
       ],
-      q: "“Buku adalah jendela ilmu, dan kode adalah arsitek pembangunnya.”",
-      tags: ["PHP Native", "MySQL", "Bootstrap 5", "Chart.js", "QR Code"],
-      demo: "#projects",
-      github: "https://github.com/Kalzz76"
+      q: "“Menggabungkan empati medis dengan presisi kecerdasan buatan masa depan.”",
+      tags: ["Laravel", "Blade", "MySQL", "AI Integration", "HealthTech"],
+      demo: "https://github.com/Kalzz76/rhea",
+      github: "https://github.com/Kalzz76/rhea.git"
     },
     {
-      y: "2024 • RETRO APPLICATION",
-      n: "PIXELPOS: RUNIC CASHIER PORTAL",
-      l: "Fullstack Developer • JavaScript & Web Bluetooth",
+      y: "2025 • MODERN DECOUPLED FULL-STACK",
+      n: "KELOMPOKKU COLLABORATION PLATFORM",
+      l: "Full-Stack Specialist • React 19 SPA & Laravel REST API",
       img: "./Assets/Projects/project-cashier.jpg",
-      d: "Aplikasi kasir web modern berkecepatan tinggi dengan integrasi cetak struk thermal via Web Bluetooth dan offline caching IndexedDB.",
+      d: "Platform manajemen kolaborasi tim dan tugas kelompok dengan arsitektur industri decoupled: frontend SPA berbasis React 19 mutakhir dan backend RESTful API Laravel.",
       b: [
-        "Dukungan cetak struk kasir via Web Bluetooth Thermal printer",
-        "Offline-first state storage menggunakan browser IndexedDB",
-        "Perhitungan transaksi kilat dengan barcode scanner support"
+        "Frontend Single Page Application (SPA) reaktif dan super cepat dengan React 19 & Vite",
+        "Backend RESTful API kokoh berbasis Laravel dengan otentikasi token aman",
+        "Desain antarmuka modern, modular, dan terstruktur sesuai standar industri"
       ],
-      q: "“Kecepatan dan keandalan adalah kunci utama setiap transaksi sukses.”",
-      tags: ["JavaScript", "IndexedDB", "Web Bluetooth", "Tailwind CSS"],
-      demo: "#projects",
-      github: "https://github.com/Kalzz76"
+      q: "“Kolaborasi yang terstruktur melipatgandakan potensi sebuah tim.”",
+      tags: ["React 19", "Vite", "Tailwind CSS", "Laravel REST API", "Decoupled Architecture"],
+      demo: "https://github.com/Kalzz76/kelompokku-fullstack",
+      github: "https://github.com/Kalzz76/kelompokku-fullstack.git"
     }
   ];
 
@@ -1292,238 +1289,343 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    // -------------------------------------------------------------------------
-  // 7. Sacred Relics & Certificates: Opsi A (Spotlight Showcase & Filmstrip)
-  // -------------------------------------------------------------------------
   const certificates = [
     {
-      issuer: "DICODING ACADEMY",
-      tag: "DICODING ACADEMY • WEB DEVELOPMENT",
-      title: "Belajar Dasar Pemrograman Web",
-      img: "./Assets/Certificates/cert-web-dicoding.jpg",
-      desc: "Sertifikasi resmi penguasaan fondasi HTML5, CSS3, teknik tata letak responsif modern (Flexbox & CSS Grid), serta kode semantik berstandar industri.",
-      tech: ["HTML5", "CSS3", "Semantic Web", "Responsive Design", "Flexbox & Grid"],
-      verifyUrl: "https://www.dicoding.com/certificates/DCA-WPB-20231115-00789"
+      issuer: "INNOVENTURE • HMIF",
+      rarity: "Legendary",
+      color: "#ff8a1f",
+      title: "Juara 3 Lomba Web Development",
+      shortTitle: "Juara 3 Web Dev",
+      pxImg: "./Assets/Certificates/cert-innoventure-juara3-px.png",
+      img: "./Assets/Certificates/cert-innoventure-juara3.jpg",
+      desc: "Penghargaan Juara Ketiga kompetisi Web Development tingkat regional Bandung yang diselenggarakan oleh Himpunan Mahasiswa Teknik Informatika (NoeronLabs). Diraih bersama Tim TIMBER.",
+      tech: ["Web Development", "Frontend & Backend", "System Architecture", "Team Competition"],
+      verifyUrl: "#"
     },
     {
       issuer: "DICODING ACADEMY",
-      tag: "DICODING ACADEMY • JAVASCRIPT SPECIALIZATION",
-      title: "Belajar Dasar Pemrograman JavaScript",
-      img: "./Assets/Certificates/cert-js-dicoding.jpg",
-      desc: "Sertifikasi kompetensi logika JavaScript modern (ES6+), OOP, penanganan Asynchronous (Promise & Async/Await), serta manipulasi DOM interaktif.",
-      tech: ["JavaScript ES6+", "OOP", "Async / Await", "DOM Manipulation", "Clean Code"],
-      verifyUrl: "https://www.dicoding.com/certificates/DCA-JS-2024101188"
+      rarity: "Legendary",
+      color: "#a566e0",
+      title: "Memulai Pemrograman dengan Dart",
+      shortTitle: "Pemrograman Dart",
+      pxImg: "./Assets/Certificates/cert-dicoding-dart-px.png",
+      img: "./Assets/Certificates/cert-dicoding-dart.jpg",
+      desc: "Sertifikasi kompetensi resmi pemrograman Dart berstandar industri: OOP, Functional Programming, Collections, Asynchronous (Futures), dan Effective Dart Guidelines.",
+      tech: ["Dart", "OOP", "Async Futures", "Clean Code", "Google Training Partner"],
+      verifyUrl: "https://www.dicoding.com/certificates/N9ZOYKN0YPG5"
     },
     {
-      issuer: "FREECODECAMP",
-      tag: "FREECODECAMP • DEVELOPER CERTIFICATION",
-      title: "Responsive Web Design Certification",
-      img: "./Assets/Certificates/cert-fcc-responsive.jpg",
-      desc: "Penyelesaian kurikulum intensif 300 jam meliputi pembuatan berbagai proyek website responsif, media queries, dan standar aksesibilitas web (WCAG).",
-      tech: ["Responsive Design", "CSS Grid", "Mobile First", "WCAG A11y", "UI/UX Layout"],
-      verifyUrl: "https://www.freecodecamp.org/certification/refky-favian/responsive-web-design"
+      issuer: "ASEAN FOUNDATION",
+      rarity: "Epic",
+      color: "#4fd0ff",
+      title: "AI Ready ASEAN - Youth Empowerment",
+      shortTitle: "AI Ready ASEAN",
+      pxImg: "./Assets/Certificates/cert-ai-asean-px.png",
+      img: "./Assets/Certificates/cert-ai-asean.jpg",
+      desc: "Penyelesaian 15 modul pembelajaran komprehensif Artificial Intelligence: Generative AI, AI Prompting, Etika AI, dan Pengembangan Tools Berbasis AI untuk dampak sosial.",
+      tech: ["Generative AI", "AI Ethics", "Prompt Engineering", "Google.org Support", "AI Tools"],
+      verifyUrl: "https://www.AIclassASEAN.org"
+    },
+    {
+      issuer: "PLAN INTERNATIONAL & KEMENPORA",
+      rarity: "Epic",
+      color: "#8cff6e",
+      title: "Berinovasi dengan AI",
+      shortTitle: "Inovasi AI",
+      pxImg: "./Assets/Certificates/cert-kemenpora-ai-px.png",
+      img: "./Assets/Certificates/cert-kemenpora-ai.jpg",
+      desc: "Pelatihan intensif 15 jam pembelajaran seputar Artificial Intelligence, Generative AI, dan Pemanfaatan Bertanggung Jawab AI bersama Kemenpora RI & ADB.",
+      tech: ["Artificial Intelligence", "Generative AI", "Responsible AI", "ADB & Google.org"],
+      verifyUrl: "https://plan-international.or.id"
+    },
+    {
+      issuer: "DBS FOUNDATION & PLAN",
+      rarity: "Epic",
+      color: "#f6c445",
+      title: "Financial Literacy & Soft Skill",
+      shortTitle: "Financial Literacy",
+      pxImg: "./Assets/Certificates/cert-dbs-literacy-px.png",
+      img: "./Assets/Certificates/cert-dbs-literacy.jpg",
+      desc: "Kelulusan modul kesiapan kerja, literasi finansial, dan pengembangan soft skill kepemimpinan muda dalam program You RISE powered by DBS Foundation.",
+      tech: ["Financial Literacy", "Workplace Readiness", "Soft Skills", "Leadership"],
+      verifyUrl: "https://www.dbs.com"
     }
   ];
 
-  let certActive = 0;
-  const spotlightImg = document.getElementById('spotlightImg');
-  const spotlightBadge = document.getElementById('spotlightBadge');
-  const spotlightIndex = document.getElementById('spotlightIndex');
-  const spotlightTitle = document.getElementById('spotlightTitle');
-  const spotlightDesc = document.getElementById('spotlightDesc');
-  const spotlightTags = document.getElementById('spotlightTags');
-  const btnZoomSpotlight = document.getElementById('btnZoomSpotlight');
-  const btnZoomSpotlightQuick = document.getElementById('btnZoomSpotlightQuick');
-  const spotlightVerifyLink = document.getElementById('spotlightVerifyLink');
-  const spotlightFrame = document.getElementById('spotlightFrame');
-  const certFilmstripTrack = document.getElementById('certFilmstripTrack');
-  const certStripPrev = document.getElementById('certStripPrev');
-  const certStripNext = document.getElementById('certStripNext');
-
-  // Lightbox Modal
-  const certModal = document.getElementById('certModal');
-  const certModalClose = document.getElementById('certModalClose');
-  const modalCertImg = document.getElementById('modalCertImg');
-
-  function openCertLightbox(src) {
-    if (!certModal || !modalCertImg) return;
-    modalCertImg.src = src;
-    certModal.classList.add('show');
-    certModal.setAttribute('aria-hidden', 'false');
-    playSound('blip');
+  function cvRelic(w, h, f) {
+    const c = document.createElement("canvas");
+    c.width = w;
+    c.height = h;
+    const x = c.getContext("2d");
+    f(x, w, h);
+    return c.toDataURL();
   }
 
-  function closeCertLightbox() {
-    if (!certModal) return;
-    certModal.classList.remove('show');
-    certModal.setAttribute('aria-hidden', 'true');
-    playSound('click');
+  function relicRows(R, P) {
+    return function(x) {
+      R.forEach(function(r, j) {
+        for (let i = 0; i < r.length; i++) {
+          if (P[r[i]]) {
+            x.fillStyle = P[r[i]];
+            x.fillRect(i, j, 1, 1);
+          }
+        }
+      });
+    };
   }
 
-  if (certModalClose) certModalClose.addEventListener('click', closeCertLightbox);
-  if (certModal) {
-    certModal.addEventListener('click', (e) => {
-      if (e.target === certModal) closeCertLightbox();
+  const relicCP = { o: "#ff7a1a", y: "#ffe27a", k: "#2a2230", w: "#e8dcc0", W: "#fff5da", s: "#b8a888" };
+  const relicCandleBody = [];
+  for (let q = 0; q < 10; q++) relicCandleBody.push("Wwwwwws");
+  relicCandleBody.push("WwwSwws", "kkkkkkk");
+
+  const relicCandleA = cvRelic(7, 19, relicRows(["...o...", "..oyo..", "..oyo..", ".oyyyo.", ".oyyyo.", "..ooo..", "...k..."].concat(relicCandleBody), relicCP));
+  const relicCandleB = cvRelic(7, 19, relicRows(["..o....", "..oyo..", ".oyyo..", ".oyyyo.", ".oyyyo.", "..ooo..", "...k..."].concat(relicCandleBody), relicCP));
+  document.querySelectorAll("[data-relic-candle]").forEach((e) => {
+    e.src = e.dataset.relicCandle === "a" ? relicCandleA : relicCandleB;
+  });
+
+  const relicSeal = cvRelic(16, 16, function(x) {
+    for (let j = 0; j < 16; j++) {
+      for (let i = 0; i < 16; i++) {
+        const d = Math.hypot(i - 7.5, j - 7.5);
+        if (d < 7.6) {
+          x.fillStyle = d < 6 ? "#b3263d" : "#8e1b2c";
+          if (d > 6.6 && (i * 7 + j * 3) % 5 === 0) x.fillStyle = "#5e0f1c";
+          x.fillRect(i, j, 1, 1);
+        }
+      }
+    }
+    relicRows(["...g...", ".ooooo.", "ooXoXoo", "ooooooo", "oXXXXXo", ".ooooo."], { g: "#7fe08a", o: "#f6c445", X: "#8e1b2c" })({
+      fillRect: function(a, b, c, d) { x.fillRect(a + 4, b + 5, c, d); },
+      set fillStyle(v) { x.fillStyle = v; }
+    });
+  });
+  const relicSealEl = document.getElementById("relicSealImg");
+  if (relicSealEl) relicSealEl.src = relicSeal;
+
+  const relicWeb = cvRelic(20, 20, function(x) {
+    x.fillStyle = "#ffffffaa";
+    for (let j = 0; j < 20; j++) {
+      for (let i = 0; i < 20; i++) {
+        const d = Math.hypot(i, j);
+        if (i === 0 || j === 0 || i === j || i === 2 * j || j === 2 * i || Math.abs(d - 6) < 0.55 || Math.abs(d - 11) < 0.55 || Math.abs(d - 16) < 0.55) {
+          x.fillRect(i, j, 1, 1);
+        }
+      }
+    }
+  });
+  const relicWebLEl = document.getElementById("relicWebL");
+  const relicWebREl = document.getElementById("relicWebR");
+  if (relicWebLEl) relicWebLEl.src = relicWeb;
+  if (relicWebREl) relicWebREl.src = relicWeb;
+
+  const relicBat = cvRelic(9, 5, relicRows(["b.......b", "bb.b.b.bb", "bbbbbbbbb", ".bb.b.bb.", "..b...b.."], { b: "#b78cff" }));
+  document.querySelectorAll(".relic-bat-icon").forEach((e) => { e.src = relicBat; });
+
+  let relicActive = 0;
+  const relicCertImg = document.getElementById("relicCertImg");
+  const relicHang = document.getElementById("relicHang");
+  const relicRight = document.getElementById("relicRight");
+  const relicCnt = document.getElementById("relicCnt");
+  const relicRar = document.getElementById("relicRar");
+  const relicOrg = document.getElementById("relicOrg");
+  const relicTtl = document.getElementById("relicTtl");
+  const relicDsc = document.getElementById("relicDsc");
+  const relicRns = document.getElementById("relicRns");
+  const relicVerifyLink = document.getElementById("relicVerifyLink");
+  const relicTrack = document.getElementById("relicTrack");
+  const relicPrev = document.getElementById("relicPrev");
+  const relicNext = document.getElementById("relicNext");
+
+  function showRelic(n, anim) {
+    if (!certificates.length) return;
+    relicActive = (n + certificates.length) % certificates.length;
+    const r = certificates[relicActive];
+
+    if (relicCertImg) {
+      relicCertImg.src = r.pxImg || r.img;
+      relicCertImg.className = "relic-cert-img px";
+    }
+    if (relicCnt) relicCnt.textContent = `RELIK ${String(relicActive + 1).padStart(2, "0")} / ${String(certificates.length).padStart(2, "0")}`;
+    if (relicRar) {
+      relicRar.textContent = `★ ${r.rarity.toUpperCase()}`;
+      relicRar.style.color = r.color;
+    }
+    if (relicOrg) relicOrg.textContent = r.issuer;
+    if (relicTtl) relicTtl.textContent = r.title;
+    if (relicDsc) relicDsc.textContent = r.desc;
+    if (relicVerifyLink) relicVerifyLink.href = r.verifyUrl;
+
+    if (relicRns) {
+      relicRns.innerHTML = r.tech.map(t => `<span class="relic-rn">${t}</span>`).join("");
+    }
+
+    if (relicTrack) {
+      relicTrack.innerHTML = certificates.map((x, i) => `
+        <button type="button" class="relic-tb ${i === relicActive ? "on" : ""}" data-idx="${i}">
+          <img src="${x.pxImg || x.img}" alt="${x.title}">
+          <div>
+            <b>${x.shortTitle || x.title}</b>
+            <small>${x.issuer}</small>
+          </div>
+        </button>
+      `).join("");
+      const activeBtn = relicTrack.querySelector('.relic-tb.on');
+      if (activeBtn) {
+        const offset = activeBtn.offsetLeft - (relicTrack.clientWidth / 2) + (activeBtn.clientWidth / 2);
+        relicTrack.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
+      }
+    }
+
+    if (anim) {
+      [relicHang, relicRight].forEach(el => {
+        if (!el) return;
+        el.classList.remove("relic-chg");
+        void el.offsetWidth;
+        el.classList.add("relic-chg");
+      });
+    }
+  }
+
+  let relicAutoTimer = null;
+  let isRelicSectionVisible = false;
+
+  function nextRelicAutoSlide() {
+    showRelic(relicActive + 1, true);
+  }
+
+  function startRelicAutoSlide() {
+    stopRelicAutoSlide();
+    if (!isRelicSectionVisible) return;
+    relicAutoTimer = setInterval(nextRelicAutoSlide, 4500);
+  }
+
+  function stopRelicAutoSlide() {
+    if (relicAutoTimer) {
+      clearInterval(relicAutoTimer);
+      relicAutoTimer = null;
+    }
+  }
+
+  const relicSectionEl = document.getElementById('sertificat');
+  if (relicSectionEl) {
+    relicSectionEl.addEventListener('mouseenter', stopRelicAutoSlide);
+    relicSectionEl.addEventListener('mouseleave', () => {
+      if (isRelicSectionVisible) startRelicAutoSlide();
+    });
+
+    if ('IntersectionObserver' in window) {
+      const relicObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          isRelicSectionVisible = entry.isIntersecting;
+          if (isRelicSectionVisible) {
+            startRelicAutoSlide();
+          } else {
+            stopRelicAutoSlide();
+          }
+        });
+      }, { threshold: 0.15 });
+      relicObs.observe(relicSectionEl);
+    } else {
+      isRelicSectionVisible = true;
+      startRelicAutoSlide();
+    }
+  }
+
+  if (relicTrack) {
+    relicTrack.addEventListener("click", (e) => {
+      const b = e.target.closest(".relic-tb");
+      if (b && Number(b.dataset.idx) !== relicActive) {
+        showRelic(Number(b.dataset.idx), true);
+        if (isRelicSectionVisible) startRelicAutoSlide();
+        playSound('click');
+      }
     });
   }
 
-  if (spotlightImg && certificates.length > 0) {
-    // Render Filmstrip Items
-    if (certFilmstripTrack) {
-      certFilmstripTrack.innerHTML = '';
-      certificates.forEach((c, idx) => {
-        const item = document.createElement('div');
-        item.className = 'filmstrip-item' + (idx === 0 ? ' active' : '');
-        item.innerHTML = `
-          <img src="${c.img}" alt="${c.title}" class="filmstrip-thumb-img" onerror="this.src='./Assets/Images/background-malam.jpg'" />
-          <div class="filmstrip-meta">
-            <span class="filmstrip-meta-title">${c.title}</span>
-            <span class="filmstrip-meta-issuer">${c.issuer}</span>
-          </div>
-        `;
-        item.addEventListener('click', () => {
-          if (certActive !== idx) {
-            certActive = idx;
-            updateSpotlightUI();
-            playSound('click');
-          }
-        });
-        certFilmstripTrack.appendChild(item);
-      });
-    }
-
-    function updateSpotlightUI() {
-      const current = certificates[certActive];
-      if (!current) return;
-
-      // Soft transition animation for spotlight image
-      if (spotlightImg) {
-        spotlightImg.style.opacity = '0.35';
-        spotlightImg.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-          spotlightImg.src = current.img;
-          spotlightImg.style.opacity = '1';
-          spotlightImg.style.transform = 'scale(1)';
-        }, 120);
-      }
-
-      if (spotlightBadge) spotlightBadge.textContent = current.issuer;
-      if (spotlightIndex) spotlightIndex.textContent = `RELIC 0${certActive + 1} / 0${certificates.length}`;
-      if (spotlightTitle) spotlightTitle.textContent = current.title;
-      if (spotlightDesc) spotlightDesc.textContent = current.desc;
-      if (spotlightVerifyLink) spotlightVerifyLink.href = current.verifyUrl;
-
-      if (spotlightTags) {
-        spotlightTags.innerHTML = '';
-        current.tech.forEach(t => {
-          const pill = document.createElement('span');
-          pill.textContent = t;
-          spotlightTags.appendChild(pill);
-        });
-      }
-
-      // Update filmstrip active states
-      if (certFilmstripTrack) {
-        const items = certFilmstripTrack.querySelectorAll('.filmstrip-item');
-        items.forEach((it, idx) => {
-          it.classList.toggle('active', idx === certActive);
-          if (idx === certActive) {
-            // Scroll ONLY the filmstrip container horizontally, NEVER the main page window!
-            const offset = it.offsetLeft - (certFilmstripTrack.clientWidth / 2) + (it.clientWidth / 2);
-            certFilmstripTrack.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
-          }
-        });
-      }
-    }
-
-    // Initial populate
-    updateSpotlightUI();
-
-    // Auto-slide rotation for certificates (snappier 3.5s interval, only runs when visible, pauses on hover)
-    let certAutoSlideTimer = null;
-    let isCertSectionVisible = false;
-
-    function nextCertAutoSlide() {
-      certActive = (certActive + 1) % certificates.length;
-      updateSpotlightUI();
-    }
-
-    function startCertAutoSlide() {
-      stopCertAutoSlide();
-      if (!isCertSectionVisible) return;
-      certAutoSlideTimer = setInterval(nextCertAutoSlide, 3500);
-    }
-
-    function stopCertAutoSlide() {
-      if (certAutoSlideTimer) {
-        clearInterval(certAutoSlideTimer);
-        certAutoSlideTimer = null;
-      }
-    }
-
-    const certSectionEl = document.getElementById('sertificat');
-    if (certSectionEl) {
-      certSectionEl.addEventListener('mouseenter', stopCertAutoSlide);
-      certSectionEl.addEventListener('mouseleave', () => {
-        if (isCertSectionVisible) startCertAutoSlide();
-      });
-
-      // IntersectionObserver: only auto-slide when the user has scrolled to the certificate section
-      if ('IntersectionObserver' in window) {
-        const certObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            isCertSectionVisible = entry.isIntersecting;
-            if (isCertSectionVisible) {
-              startCertAutoSlide();
-            } else {
-              stopCertAutoSlide();
-            }
-          });
-        }, { threshold: 0.15 });
-        certObserver.observe(certSectionEl);
-      } else {
-        isCertSectionVisible = true;
-        startCertAutoSlide();
-      }
-    }
-
-    if (certStripPrev) {
-      certStripPrev.addEventListener('click', () => {
-        certActive = (certActive - 1 + certificates.length) % certificates.length;
-        updateSpotlightUI();
-        if (isCertSectionVisible) startCertAutoSlide();
-        playSound('click');
-      });
-    }
-
-    if (certStripNext) {
-      certStripNext.addEventListener('click', () => {
-        certActive = (certActive + 1) % certificates.length;
-        updateSpotlightUI();
-        if (isCertSectionVisible) startCertAutoSlide();
-        playSound('click');
-      });
-    }
-
-    if (spotlightFrame) {
-      spotlightFrame.addEventListener('click', () => {
-        openCertLightbox(certificates[certActive].img);
-      });
-    }
-
-    if (btnZoomSpotlight) {
-      btnZoomSpotlight.addEventListener('click', () => {
-        openCertLightbox(certificates[certActive].img);
-      });
-    }
-
-    if (btnZoomSpotlightQuick) {
-      btnZoomSpotlightQuick.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openCertLightbox(certificates[certActive].img);
-      });
-    }
+  if (relicPrev) {
+    relicPrev.addEventListener("click", () => {
+      showRelic(relicActive - 1, true);
+      if (isRelicSectionVisible) startRelicAutoSlide();
+      playSound('click');
+    });
   }
+  if (relicNext) {
+    relicNext.addEventListener("click", () => {
+      showRelic(relicActive + 1, true);
+      if (isRelicSectionVisible) startRelicAutoSlide();
+      playSound('click');
+    });
+  }
+
+  const relicZoomModal = document.getElementById("relicZoomModal");
+  const relicZoomImg = document.getElementById("relicZoomImg");
+  const relicDarkOverlay = document.getElementById("relicDarkOverlay");
+  const btnToggleZoomTorch = document.getElementById("btnToggleZoomTorch");
+  const btnCloseZoomModal = document.getElementById("btnCloseZoomModal");
+  const btnZoomRelicQuick = document.getElementById("btnZoomRelicQuick");
+  const btnZoomRelicDoc = document.getElementById("btnZoomRelicDoc");
+
+  function openRelicZoom() {
+    if (!relicZoomModal || !relicZoomImg) return;
+    const r = certificates[relicActive];
+    relicZoomImg.src = r.img;
+    relicZoomImg.className = "relic-zm-img";
+    relicZoomModal.classList.remove("lit");
+    if (btnToggleZoomTorch) btnToggleZoomTorch.textContent = "💡 Terangi semua";
+    relicZoomModal.hidden = false;
+    playSound('blip');
+  }
+
+  function closeRelicZoom() {
+    if (!relicZoomModal) return;
+    relicZoomModal.hidden = true;
+    playSound('click');
+  }
+
+  if (btnZoomRelicQuick) btnZoomRelicQuick.addEventListener("click", (e) => { e.stopPropagation(); openRelicZoom(); });
+  if (btnZoomRelicDoc) btnZoomRelicDoc.addEventListener("click", openRelicZoom);
+  if (btnCloseZoomModal) btnCloseZoomModal.addEventListener("click", closeRelicZoom);
+
+  if (btnToggleZoomTorch) {
+    btnToggleZoomTorch.addEventListener("click", function() {
+      const isLit = relicZoomModal.classList.toggle("lit");
+      this.textContent = isLit ? "🌑 Redupkan" : "💡 Terangi semua";
+      playSound('toggle');
+    });
+  }
+
+  function moveZoomTorch(e) {
+    if (!relicDarkOverlay) return;
+    const t = e.touches ? e.touches[0] : e;
+    relicDarkOverlay.style.setProperty("--mx", t.clientX + "px");
+    relicDarkOverlay.style.setProperty("--my", t.clientY + "px");
+  }
+
+  if (relicDarkOverlay) {
+    relicDarkOverlay.addEventListener("pointermove", moveZoomTorch, { passive: true });
+    relicDarkOverlay.addEventListener("pointerdown", moveZoomTorch, { passive: true });
+    relicDarkOverlay.addEventListener("touchmove", moveZoomTorch, { passive: true });
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && relicZoomModal && !relicZoomModal.hidden) {
+      closeRelicZoom();
+    }
+    if (relicZoomModal && relicZoomModal.hidden) {
+      if (e.key === "ArrowLeft") {
+        showRelic(relicActive - 1, true);
+        if (isRelicSectionVisible) startRelicAutoSlide();
+      }
+      if (e.key === "ArrowRight") {
+        showRelic(relicActive + 1, true);
+        if (isRelicSectionVisible) startRelicAutoSlide();
+      }
+    }
+  });
+
+  showRelic(0, false);
 
   const mascotTypeMap = {
     'type-pumpkin': { label: '🎃 Labu Ceria (Pumpkin Sprite)', icon: '🎃', role: 'Pumpkin Sprite' },
@@ -1768,8 +1870,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const lodBk = document.getElementById('lodBk');
   const lodMascotToggle = document.getElementById('lodMascotToggle');
   const lodMascotToggleStatus = document.getElementById('lodMascotToggleStatus');
-  const lodTopMascotToggle = document.getElementById('lodTopMascotToggle');
-  const lodTopToggleStatus = document.getElementById('lodTopToggleStatus');
   const lodTtl = document.getElementById('lodTtl');
   const lodPanel = document.getElementById('lodPanel');
   const lodPh = document.getElementById('lodPh');
@@ -1977,12 +2077,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateMascotToggleUI() {
     const statusText = isOverviewMascotsEnabled ? 'ON' : 'OFF';
-    [lodMascotToggle, lodTopMascotToggle].forEach((btn) => {
-      if (!btn) return;
-      btn.classList.toggle('active', isOverviewMascotsEnabled);
-    });
+    if (lodMascotToggle) {
+      lodMascotToggle.classList.toggle('active', isOverviewMascotsEnabled);
+    }
     if (lodMascotToggleStatus) lodMascotToggleStatus.textContent = statusText;
-    if (lodTopToggleStatus) lodTopToggleStatus.textContent = statusText;
   }
   updateMascotToggleUI();
 
@@ -2314,10 +2412,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     lodWorld.addEventListener('mouseover', (e) => {
       const mc = e.target.closest('.mc');
-      if (mc && mc.dataset.m) {
-        sayMascotGreeting(mc.dataset.m);
-        playSound('blip');
-      }
+      if (!mc || !mc.dataset.m) return;
+      if (e.relatedTarget && mc.contains(e.relatedTarget)) return;
+      const now = Date.now();
+      if (mc._lastGreet && now - mc._lastGreet < 3500) return;
+      mc._lastGreet = now;
+      sayMascotGreeting(mc.dataset.m);
+      playSound('blip');
     });
 
     lodWorld.addEventListener('mouseleave', () => {
@@ -2344,7 +2445,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (lodT1) lodT1.addEventListener('click', () => { tab = 1; fill(); playSound('click'); });
   if (lodBk) lodBk.addEventListener('click', back);
   if (lodMascotToggle) lodMascotToggle.addEventListener('click', toggleMascotMode);
-  if (lodTopMascotToggle) lodTopMascotToggle.addEventListener('click', toggleMascotMode);
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -2741,6 +2841,279 @@ document.addEventListener('DOMContentLoaded', () => {
     "Aroma ramuan manis semerbak dari cerobong! ✨"
   ];
 
+  // -------------------------------------------------------------------------
+  // Mascot Social Dialogues & Multi-Turn Conversations
+  // -------------------------------------------------------------------------
+  const mascotSocialDialogues = {
+    // A (Skully) & B (Pumpling)
+    'a-b': [
+      {
+        speaker1: "Hai Skully! Mau coba pie labu hangat buatanku? 🥧✨",
+        speaker2: "Wah makasih Pumpling! Pas banget dicelup ke kopi hitamku! ☕💀",
+        reaction1: "🥧", reaction2: "☕", heart: true
+      },
+      {
+        speaker1: "Yo Pumpling! Kenapa malam ini auramu cerah banget? 🎃",
+        speaker2: "Karena baru panen bug dan dibikin jadi permen manis! 🍬😋",
+        reaction1: "✨", reaction2: "🎉", heart: true
+      },
+      {
+        speaker1: "Pumpling, jangan kebanyakan ngemil nanti labumu bulet banget! 😂🎃",
+        speaker2: "Hehe, biar menggelindingnya makin kenceng di panggung! 🥧✨",
+        reaction1: "🤣", reaction2: "🥧", heart: true
+      },
+      {
+        speaker1: "Santuy dulu Pumpling, temani aku ngopi di bawah rembulan! ☕💀",
+        speaker2: "Siap Skully! Pemandangan kripta malam ini syahdu banget ya! 🌟🎃",
+        reaction1: "☕", reaction2: "⭐", heart: true
+      }
+    ],
+    // B (Pumpling) & D (Witch Hazel) - Cottage Roommates!
+    'b-d': [
+      {
+        speaker1: "Hazel! Kuali di pondok udah mendidih, aroma rempahnya sedap! 🍲✨",
+        speaker2: "Hihihi! Itu ramuan pie labu kayu manis spesial buatmu, Pumpling! 🪄🥧",
+        reaction1: "🎃", reaction2: "🪄", heart: true
+      },
+      {
+        speaker1: "Pumpling, topi sihirku tadi nggak sengaja kamu dudukin ya? 🧙‍♀️",
+        speaker2: "Ups... pantesan rasanya empuk banget kayak kasur bulu! 😂🎃",
+        reaction1: "🎩", reaction2: "🤣", heart: true
+      },
+      {
+        speaker1: "Malam ini kita patroli keliling halaman pondok bareng yuk, Hazel! 🎃",
+        speaker2: "Ayo! Biar nggak ada serangga bug yang mendekati sanctum! 🪄✨",
+        reaction1: "🛡️", reaction2: "🔮", heart: true
+      },
+      {
+        speaker1: "Hazel, tongkat bintangmu kerlap-kerlip terang banget! 🪄✨",
+        speaker2: "Baru kuisi energi kristal ungu! Cantik kan, Pumpling? 💜🌟",
+        reaction1: "✨", reaction2: "🪄", heart: true
+      }
+    ],
+    // A (Skully) & C (Zombo) - Cemetery Roommates!
+    'a-c': [
+      {
+        speaker1: "Braaaains... eh, Skully, liang kubur sebelahmu kosong nggak? 🪦🧟",
+        speaker2: "Kosong bro! Tapi tanahnya dingin, bawa selimut lumut ya! 💀☕",
+        reaction1: "🪦", reaction2: "☕", heart: true
+      },
+      {
+        speaker1: "Yo Zombo! Serum hijau di tabungmu itu rasa apa sih? 🧪💀",
+        speaker2: "Rasa matcha campur energi sintaks TypeScript murni! 🧪🧟",
+        reaction1: "💀", reaction2: "🧪", heart: true
+      },
+      {
+        speaker1: "Zombo, jangan lupa merge branch sebelum jam 12 malam! ⏰💀",
+        speaker2: "Tenang bro, serum kodenya udah lolos unit test semua! 🧪🧟",
+        reaction1: "⚡", reaction2: "💻", heart: true
+      },
+      {
+        speaker1: "Skully... kopi hitammu tumpah ke tulang leher tuh! ☕😂",
+        speaker2: "Waduh! Pantesan kerongkonganku anget tapi perut kosong melompong! 💀☕",
+        reaction1: "🤣", reaction2: "☕", heart: true
+      }
+    ],
+    // C (Zombo) & D (Witch Hazel)
+    'c-d': [
+      {
+        speaker1: "Hazel... tolong jahit lagi lenganku pakai sihir benangmu dong! 🧵🧟",
+        speaker2: "Abracadabra! Nah, sekarang lenganmu bisa ngetik 200 WPM! 🪄⚡",
+        reaction1: "🧟", reaction2: "✨", heart: true
+      },
+      {
+        speaker1: "Zombo! Jangan deket-deket ramuan kualiku, baumu kayak Lumut 404! 🧪🧙‍♀️",
+        speaker2: "Raaagh... tapi ramuanmu warnanya persis minuman energiku! 🧪🧟",
+        reaction1: "🧪", reaction2: "🌸", heart: true
+      },
+      {
+        speaker1: "Zombo, mau ramuan pemulih kulit zombie beraroma melati? 🧪✨",
+        speaker2: "Nggak usah Hazel, kulit hijau lumut ini udah style terkerenku! 😎🧟",
+        reaction1: "😎", reaction2: "🪄", heart: true
+      }
+    ],
+    // B (Pumpling) & C (Zombo)
+    'b-c': [
+      {
+        speaker1: "Hai Zombo! Mau sepotong pie labu biar tenagamu pulih? 🥧🎃",
+        speaker2: "Mauuu! Makasih Pumpling, kamu labu paling baik sedunia! 🧟‍♂️🥧",
+        reaction1: "🥧", reaction2: "💖", heart: true
+      },
+      {
+        speaker1: "Labu oranye... kamu keliatan kayak lentera pemandu malam! 🏮",
+        speaker2: "Hehe, biar kita nggak tersesat di rimba repository! 🎃✨",
+        reaction1: "🏮", reaction2: "✨", heart: true
+      },
+      {
+        speaker1: "Zombo, jangan makan tanah kuburan terus, nih permen labu manis! 🍬🎃",
+        speaker2: "Nyam nyam! Manis banget, energiku langsung 100%! ⚡🧟",
+        reaction1: "🍬", reaction2: "⚡", heart: true
+      }
+    ],
+    // A (Skully) & D (Witch Hazel)
+    'a-d': [
+      {
+        speaker1: "Sore Hazel! Ada mantra instan buat beresin merge conflict? 💀☕",
+        speaker2: "Tentu ada! Cukup taburkan debu bintang `git reset --hard`! 🪄✨",
+        reaction1: "☕", reaction2: "🪄", heart: true
+      },
+      {
+        speaker1: "Hazel, mau kubuatkan cangkir kopi sihir yang nggak pernah habis? ☕🔮",
+        speaker2: "Wah idaman semua programmer! Langsung kubayar pakai permata kripta! 💀✨",
+        reaction1: "☕", reaction2: "💎", heart: true
+      },
+      {
+        speaker1: "Witch Hazel, tongkat bintangmu kinclong banget malam ini! ⭐💀",
+        speaker2: "Baru kupoles pakai cairan pembersih kristal kripta! Indah kan? 🪄✨",
+        reaction1: "✨", reaction2: "🌟", heart: true
+      }
+    ]
+  };
+
+  let isAnyMascotSocializing = false;
+
+  function spawnMascotParticle(charEl, emoji) {
+    if (!charEl) return;
+    const p = document.createElement('div');
+    p.className = 'mascot-social-particle';
+    p.textContent = emoji;
+    const rect = charEl.getBoundingClientRect();
+    p.style.left = (rect.left + rect.width / 2 - 14) + 'px';
+    p.style.top = (rect.top - 24) + 'px';
+    p.style.setProperty('--pdx', (Math.random() * 28 - 14) + 'px');
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1650);
+  }
+
+  function findNearbyAvailableMascot(mascot, maxDistance = 200) {
+    if (!allMascots || !mascot || !mascot.el) return null;
+    const p1 = mascot.el.offsetLeft;
+    let closest = null;
+    let minDist = maxDistance;
+
+    for (const m of allMascots) {
+      if (!m || m === mascot || !m.el) continue;
+      if (m.busy || m.sleeping || m.fleeing || m.insideCottage || m.isUnderground) continue;
+      const dist = Math.abs(p1 - m.el.offsetLeft);
+      if (dist <= minDist) {
+        minDist = dist;
+        closest = m;
+      }
+    }
+    return closest;
+  }
+
+  async function triggerMascotSocialEncounter(m1, m2, customDialogue = null) {
+    if (!m1 || !m2 || !m1.el || !m2.el || isAnyMascotSocializing) return false;
+    if (m1.busy || m2.busy || m1.isUnderground || m2.isUnderground || m1.insideCottage || m2.insideCottage || m1.sleeping || m2.sleeping || m1.fleeing || m2.fleeing) {
+      return false;
+    }
+
+    isAnyMascotSocializing = true;
+    m1.busy = true;
+    m2.busy = true;
+    m1.el.classList.remove('walk');
+    m2.el.classList.remove('walk');
+
+    // Turn both mascots to face each other
+    const p1 = m1.el.offsetLeft;
+    const p2 = m2.el.offsetLeft;
+    if (p1 < p2) {
+      m1.el.classList.remove('look-l');
+      m1.el.classList.add('look-r');
+      m2.el.classList.remove('look-r');
+      m2.el.classList.add('look-l');
+    } else {
+      m1.el.classList.remove('look-r');
+      m1.el.classList.add('look-l');
+      m2.el.classList.remove('look-l');
+      m2.el.classList.add('look-r');
+    }
+
+    // Pick dialogue based on character pair
+    const id1 = m1.el.id; // 'a', 'b', 'c', 'd'
+    const id2 = m2.el.id;
+    const key = `${id1}-${id2}`;
+    const altKey = `${id2}-${id1}`;
+    let list = mascotSocialDialogues[key] || mascotSocialDialogues[altKey];
+    let isReversed = false;
+    if (!mascotSocialDialogues[key] && mascotSocialDialogues[altKey]) {
+      isReversed = true;
+    }
+    if (!list || !list.length) {
+      list = [{
+        speaker1: 'Yo kawan! Senang melihatmu malam ini! 👋✨',
+        speaker2: 'Yo kawan! Malam yang indah untuk bertualang! 🎃💀',
+        reaction1: '✨', reaction2: '💖', heart: true
+      }];
+    }
+
+    const chosen = customDialogue || list[Math.floor(Math.random() * list.length)];
+    const line1 = isReversed ? chosen.speaker2 : chosen.speaker1;
+    const line2 = isReversed ? chosen.speaker1 : chosen.speaker2;
+    const em1 = isReversed ? chosen.reaction2 : chosen.reaction1;
+    const em2 = isReversed ? chosen.reaction1 : chosen.reaction2;
+
+    try {
+      // 1. Mascot 1 waves with raised glowing hand and speaks
+      playMascotSound('click');
+      m1.el.classList.add('hi', 'jump');
+      spawnMascotParticle(m1.el, em1 || '💬');
+      if (m1.bubble) {
+        m1.bubble.textContent = line1;
+        m1.bubble.classList.add('show');
+      }
+      await waitMs(350);
+      m1.el.classList.remove('jump');
+
+      await waitMs(2300);
+
+      // 2. Mascot 2 responds, waves with glowing hand and speaks
+      m1.el.classList.remove('hi');
+      if (m1.bubble) m1.bubble.classList.remove('show');
+
+      playMascotSound('click');
+      m2.el.classList.add('hi', 'jump');
+      spawnMascotParticle(m2.el, em2 || '💬');
+      if (m2.bubble) {
+        m2.bubble.textContent = line2;
+        m2.bubble.classList.add('show');
+      }
+      await waitMs(350);
+      m2.el.classList.remove('jump');
+
+      await waitMs(2300);
+
+      // 3. Shared joyful reaction (both cheer, hearts float)
+      m2.el.classList.remove('hi');
+      if (m2.bubble) m2.bubble.classList.remove('show');
+
+      if (chosen.heart) {
+        spawnMascotParticle(m1.el, '💖');
+        spawnMascotParticle(m2.el, '💖');
+        m1.el.classList.add('jump');
+        m2.el.classList.add('jump');
+        await waitMs(400);
+        m1.el.classList.remove('jump');
+        m2.el.classList.remove('jump');
+      }
+
+      await waitMs(300);
+    } catch (err) {
+      console.warn('Mascot encounter error recovered:', err);
+    } finally {
+      if (m1.bubble) m1.bubble.classList.remove('show');
+      if (m2.bubble) m2.bubble.classList.remove('show');
+      m1.el.classList.remove('hi');
+      m2.el.classList.remove('hi');
+      m1.busy = false;
+      m2.busy = false;
+      isAnyMascotSocializing = false;
+    }
+
+    return true;
+  }
+
   class SpookyMascot {
     constructor(el, quotes, defaultGreeting, options = {}) {
       this.el = el;
@@ -2819,6 +3192,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       await waitMs(dur * 1000);
       this.el.classList.remove('walk');
+
+      // Check if a companion mascot is nearby to strike up a friendly chat!
+      if (!this.busy && !this.sleeping && !this.fleeing && !this.insideCottage && !this.isUnderground && !isAnyMascotSocializing) {
+        const friend = findNearbyAvailableMascot(this, 175);
+        if (friend && Math.random() < 0.65) {
+          triggerMascotSocialEncounter(this, friend);
+        }
+      }
     }
 
     // Grave Dwellers (Skeleton & Zombie): Burrow Underground into ANY chosen grave
@@ -2881,10 +3262,6 @@ document.addEventListener('DOMContentLoaded', () => {
       playMascotSound('stone');
       playMascotSound('arise');
       if (grave) grave.classList.add('shaking');
-      if (earthquakeContainer) {
-        earthquakeContainer.classList.add('tremor');
-        setTimeout(() => earthquakeContainer.classList.remove('tremor'), 600);
-      }
 
       if (grave) {
         const rect = grave.getBoundingClientRect();
@@ -3077,9 +3454,16 @@ document.addEventListener('DOMContentLoaded', () => {
         await this.wake();
         await this.say('Hah?! Siapa mengusik tidurku?!', 1800, false);
       } else {
+        // If a friend is nearby, initiate interactive companion greeting!
+        const friend = findNearbyAvailableMascot(this, 210);
+        if (friend && !friend.busy && !isAnyMascotSocializing) {
+          const started = await triggerMascotSocialEncounter(this, friend);
+          if (started) return;
+        }
+
         this.el.classList.add('jump');
         const randomQuote = this.quotes[Math.floor(Math.random() * this.quotes.length)];
-        await this.say(randomQuote, 2400);
+        await this.say(randomQuote, 2500, true);
         this.el.classList.remove('jump');
         await waitMs(400);
         await this.walk();
@@ -3201,6 +3585,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let isDragonEnabled = localStorage.getItem('kaka_pumpkin_active') !== 'false';
   if (dr && isDragonEnabled) dr.style.display = 'block';
   let isMascotsEnabled = localStorage.getItem('kaka_mascots_active') !== 'false';
+  let isMidnightEnabled = localStorage.getItem('kaka_midnight_mode') === 'true';
+
+  const btnToggleMidnight = document.getElementById('btnToggleMidnight');
 
   function updateDragonSwitchUI() {
     if (!btnToggleDragon) return;
@@ -3230,6 +3617,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function updateMidnightSwitchUI() {
+    if (!btnToggleMidnight) return;
+    const label = btnToggleMidnight.querySelector('.switch-label');
+    if (isMidnightEnabled) {
+      btnToggleMidnight.classList.add('active');
+      btnToggleMidnight.setAttribute('aria-checked', 'true');
+      if (label) label.textContent = 'ON';
+    } else {
+      btnToggleMidnight.classList.remove('active');
+      btnToggleMidnight.setAttribute('aria-checked', 'false');
+      if (label) label.textContent = 'OFF';
+    }
+  }
+
   function applyDragonState() {
     updateDragonSwitchUI();
     if (dr) {
@@ -3249,7 +3650,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (floor) floor.style.display = isMascotsEnabled ? '' : 'none';
   }
 
-// settingsToggle listener already wired in Halloween navbar
+  function applyMidnightState() {
+    updateMidnightSwitchUI();
+    if (isMidnightEnabled) {
+      document.body.classList.add('mode-tengah-malam');
+    } else {
+      document.body.classList.remove('mode-tengah-malam');
+    }
+  }
+
+  function updateGlobalTorch(e) {
+    const x = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : window.innerWidth / 2);
+    const y = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : window.innerHeight / 2);
+    document.documentElement.style.setProperty('--torch-x', x + 'px');
+    document.documentElement.style.setProperty('--torch-y', y + 'px');
+  }
+
+  window.addEventListener('pointermove', (e) => {
+    if (isMidnightEnabled) updateGlobalTorch(e);
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (isMidnightEnabled) updateGlobalTorch(e);
+  }, { passive: true });
 
   if (btnToggleDragon) {
     btnToggleDragon.addEventListener('click', (e) => {
@@ -3273,8 +3696,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (btnToggleMidnight) {
+    btnToggleMidnight.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playSound('toggle');
+      isMidnightEnabled = !isMidnightEnabled;
+      localStorage.setItem('kaka_midnight_mode', isMidnightEnabled);
+      applyMidnightState();
+      showToast(isMidnightEnabled ? '🌑 Mode Tengah Malam aktif: Senter kursor menyala!' : '☀️ Mode Normal diaktifkan');
+    });
+  }
+
   applyDragonState();
   applyMascotsState();
+  applyMidnightState();
 
   // -------------------------------------------------------------------------
   // 11. Autonomous Mascot Characters (Skeleton, Pumpkin, Zombie, Witch)
@@ -3346,6 +3781,81 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => mascotD && isMascotsEnabled && mascotD.greetAutonomously(), 2400);
   setTimeout(() => mascotB && isMascotsEnabled && mascotB.greetAutonomously(), 3600);
   setTimeout(() => mascotC && isMascotsEnabled && mascotC.greetAutonomously(), 4800);
+
+  // -------------------------------------------------------------------------
+  // Autonomous Mascot Social Director (Periodic Meetups & Conversations)
+  // -------------------------------------------------------------------------
+  let isSocialDirectorRunning = false;
+  function startAutonomousSocialDirector() {
+    if (isSocialDirectorRunning) return;
+    isSocialDirectorRunning = true;
+
+    setInterval(async () => {
+      if (!isMascotsEnabled || isAnyMascotSocializing) return;
+
+      // Mascots actively roaming on the stage
+      const activeStageMascots = allMascots.filter(m => 
+        m && m.el && 
+        !m.busy && 
+        !m.isUnderground && 
+        !m.insideCottage && 
+        !m.sleeping && 
+        !m.fleeing
+      );
+
+      if (activeStageMascots.length < 2) return;
+
+      // 1. If any 2 are already close (< 190px), trigger encounter!
+      for (let i = 0; i < activeStageMascots.length; i++) {
+        for (let j = i + 1; j < activeStageMascots.length; j++) {
+          const m1 = activeStageMascots[i];
+          const m2 = activeStageMascots[j];
+          const dist = Math.abs(m1.el.offsetLeft - m2.el.offsetLeft);
+          if (dist < 190) {
+            triggerMascotSocialEncounter(m1, m2);
+            return;
+          }
+        }
+      }
+
+      // 2. Otherwise pick 2 mascots to meet up and chat
+      if (Math.random() < 0.75) {
+        const idx1 = Math.floor(Math.random() * activeStageMascots.length);
+        let idx2 = (idx1 + 1 + Math.floor(Math.random() * (activeStageMascots.length - 1))) % activeStageMascots.length;
+        const walker = activeStageMascots[idx1];
+        const target = activeStageMascots[idx2];
+
+        if (walker && target && !walker.busy && !target.busy) {
+          const p1 = walker.el.offsetLeft;
+          const p2 = target.el.offsetLeft;
+          const offsetDir = p1 < p2 ? -100 : 100;
+          const destination = Math.max(walker.minLeftBound, p2 + offsetDir);
+          
+          walker.busy = true;
+          const dur = Math.max(0.7, Math.abs(destination - p1) / 95);
+          walker.el.style.transitionDuration = dur + 's';
+          walker.el.classList.remove('look-l', 'look-r');
+          walker.el.classList.add('walk', destination < p1 ? 'look-l' : 'look-r');
+          walker.el.style.left = destination + 'px';
+
+          await waitMs(dur * 1000);
+          walker.el.classList.remove('walk');
+          walker.busy = false;
+
+          if (!walker.sleeping && !target.sleeping && !walker.isUnderground && !target.isUnderground && !walker.insideCottage && !target.insideCottage) {
+            triggerMascotSocialEncounter(walker, target);
+          }
+        }
+      }
+    }, 13000);
+  }
+
+  // Launch Social Director after initial warmup
+  setTimeout(() => {
+    if (isMascotsEnabled) {
+      startAutonomousSocialDirector();
+    }
+  }, 6500);
 
   // Interactive Second Witch House: Menara Alkimia Nenek Sihir (Right Side)
   if (witchManor) {
@@ -3483,13 +3993,12 @@ document.addEventListener('DOMContentLoaded', () => {
       handleReaperMove(e.clientX, e.clientY);
     }, { passive: true });
 
-    // Scythe swing & spirits on click
     function handleReaperClick(clientX, clientY) {
       if (!isDragonEnabled) return;
-      if (!isBGMPlaying) {
-        playSound('ghost');
-        if (Math.random() < 0.6) playSound('bat');
-      }
+      initAudio();
+      playSound('click');
+      playSound('ghost');
+      if (Math.random() < 0.5) playSound('bat');
 
       if (di) {
         di.style.transform = `scaleX(${face}) rotate(${face * 20}deg) scale(1.15)`;

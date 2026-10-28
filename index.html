@@ -13,7 +13,8 @@
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="./style.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF7518'><path d='M12 2C8 2 4 5 4 10C4 16 8 22 12 22C16 22 20 16 20 10C20 5 16 2 12 2ZM8 9C8.8 9 9.5 9.7 9.5 10.5C9.5 11.3 8.8 12 8 12C7.2 12 6.5 11.3 6.5 10.5C6.5 9.7 7.2 9 8 9ZM16 9C16.8 9 17.5 9.7 17.5 10.5C17.5 11.3 16.8 12 16 12C15.2 12 14.5 11.3 14.5 10.5C14.5 9.7 15.2 9 16 9ZM12 18C9.5 18 8 16 8 16L9.5 15C9.5 15 10.5 16.2 12 16.2C13.5 16.2 14.5 15 14.5 15L16 16C16 16 14.5 18 12 18Z'/></svg>">
+  <link rel="icon" type="image/png" href="./Assets/logo.png">
+  <link rel="apple-touch-icon" href="./Assets/logo.png">
 </head>
 <body class="theme-night">
 
@@ -39,13 +40,7 @@
       <!-- Left Pumpkin Logo & Current Active Section Title -->
       <div class="head" id="head" role="button" tabindex="0" title="Klik untuk membuka / menutup menu navigasi">
         <span class="pk" aria-hidden="true">
-          <svg viewBox="0 0 32 32">
-            <rect x="14" y="2" width="4" height="7" fill="#5cc26a"/>
-            <path d="M16 7C7 7 2 12 2 18s5 10 14 10 14-4 14-10S25 7 16 7z" fill="#ff8a1f"/>
-            <path d="M16 7c-4 2-6 6-6 11s2 8 6 10c4-2 6-5 6-10S20 9 16 7z" fill="#ff6a00"/>
-            <path d="M8 14l5 3-5 3zM24 14l-5 3 5 3z" fill="#2a0f3a"/>
-            <path d="M10 23l2 2 2-2 2 2 2-2 2 2" stroke="#2a0f3a" stroke-width="2" fill="none"/>
-          </svg>
+          <img src="./Assets/logo.png" alt="Sinister Jack-o'-Lantern" class="pk-img">
         </span>
         <b class="cur" id="cur">Sanctum</b>
       </div>
@@ -134,14 +129,25 @@
                 <span class="switch-label">ON</span>
               </button>
             </div>
+
+            <div class="settings-row" id="rowToggleMidnight">
+              <div class="settings-info">
+                <span class="settings-label" data-i18n="midnight_label">Tengah Malam</span>
+                <span class="settings-sub" data-i18n="midnight_sub">Gelap gulita &amp; senter kursor</span>
+              </div>
+              <button type="button" class="spooky-switch" id="btnToggleMidnight" aria-label="Toggle Mode Tengah Malam" role="switch" aria-checked="false">
+                <span class="switch-track"><span class="switch-knob"></span></span>
+                <span class="switch-label">OFF</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <div class="midnight-flashlight-vignette" id="midnightOverlay" aria-hidden="true"></div>
+
     <main>
-      <!-- HERO SECTION -->
       <section class="hero-section" id="home">
         <div class="hero-container">
           
@@ -177,6 +183,9 @@
             <div class="hero-actions">
               <a href="#projects" class="pixel-btn primary-btn">
                 <span class="btn-icon">🔮</span> <span data-i18n="hero_btn_projects">Grimoire Proyek</span>
+              </a>
+              <a href="./Assets/CV_Kaka_Andrea_Yahya.pdf" download="CV_Kaka_Andrea_Yahya.pdf" class="pixel-btn outline-btn" title="Unduh Berkas CV Kaka Andrea Yahya">
+                <span class="btn-icon">📜</span> <span>Unduh CV</span>
               </a>
               <a href="#contact" class="pixel-btn summon-trigger-btn">
                 <span class="btn-icon">⚡</span> <span data-i18n="hero_btn_contact">Ritual Kontak</span>
@@ -311,7 +320,7 @@
                 </div>
 
                 <p class="collapsed-brief-lore" data-i18n="collapsed_lore">
-                  Pengembang web beraliran retro-pixel art &amp; rekayasa modern. Membangkitkan baris kode kosong menjadi pengalaman digital interaktif yang bernyawa.
+                  Pelajar RPL SMKN 13 Bandung (2024–2027) &amp; pengembang web/mobile beraliran retro-modern. Membangkitkan baris kode kosong menjadi sistem tangguh yang berdaya guna nyata.
                 </p>
 
                 <!-- Anime RPG Stat Gauges with Mini Progress Fill Bars -->
@@ -396,6 +405,13 @@
                         <div class="status-id-cell text-right">
                           <span class="id-tag">FATIGUE:</span>
                           <span class="id-val highlight-fatigue">0</span>
+                        </div>
+                      </div>
+
+                      <div class="status-id-row">
+                        <div class="status-id-cell full-width">
+                          <span class="id-tag">GUILD / ACADEMY:</span>
+                          <span class="id-val highlight-title">SMKN 13 BANDUNG (RPL • 2024–2027)</span>
                         </div>
                       </div>
 
@@ -498,10 +514,10 @@
                     <div class="bio-card-inner">
                       <h3 class="card-heading" data-i18n="expanded_log_title">THE NECROMANCER'S EXPANDED LOG</h3>
                       <p class="bio-paragraph" data-i18n="expanded_log_p1">
-                        Salam kegelapan! Saya <strong>Kaka Andrea Yahya</strong>, seorang pengembang perangkat lunak berjiwa <em>Code Necromancer</em> yang memadukan keindahan misterius retro-pixel art dengan sihir kode modern yang tangguh.
+                        Salam pengembara digital! Saya <strong>Kaka Andrea Yahya</strong>, pelajar Rekayasa Perangkat Lunak di <strong>SMKN 13 Bandung (2024–2027)</strong> yang berdedikasi tinggi dalam pengembangan web full-stack dan aplikasi mobile multiplatform.
                       </p>
                       <p class="bio-paragraph" data-i18n="expanded_log_p2">
-                        Dari baris kode kosong, saya membangkitkan antarmuka web interaktif yang bernyawa, beranimasi mulus, dan memberikan sensasi visual tak terlupakan bagi setiap pengembara digital yang singgah.
+                        Terbiasa membangun produk dari fondasi algoritma hingga sistem distribusi siap pakai (Laravel 11, Flutter &amp; Dart, React 19, C# .NET). Memadukan logika sistem yang kokoh dengan estetika retro-modern yang hidup dan berkarakter.
                       </p>
 
                       <div class="bio-highlights">
@@ -671,78 +687,61 @@
         </div>
       </section>
 
-      <!-- CERTIFICATES SECTION -->
       <section class="section cert-section" id="sertificat">
         <div class="section-container">
-          <div class="section-header">
-            <h2 class="section-title">SACRED RELICS &amp; CERTIFICATES</h2>
-            <div class="section-divider">
-              <span class="line"></span>
-              <span class="star">✦ 📜 ✦</span>
-              <span class="line"></span>
-            </div>
-            <p class="section-subtitle">Bukti Kompetensi &amp; Segel Pembelajaran Resmi</p>
-          </div>
-
-          <!-- Opsi A: Minimalist Spotlight Showcase & Thumbnail Filmstrip -->
-          <div class="cert-spotlight-wrapper">
-            <!-- Main Showcase Card -->
-            <div class="cert-spotlight-card" id="certSpotlightCard">
-              <div class="spotlight-visual-pane">
-                <div class="spotlight-frame" id="spotlightFrame">
-                  <img src="./Assets/Certificates/cert-web-dicoding.jpg" alt="Sertifikat" id="spotlightImg" class="spotlight-img" />
-                  <div class="spotlight-badge" id="spotlightBadge">DICODING ACADEMY</div>
-                  <button type="button" class="spotlight-quick-zoom" id="btnZoomSpotlightQuick" title="Lihat Ukuran Penuh" aria-label="Lihat Ukuran Penuh">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="spotlight-info-pane">
-                <div class="spotlight-header-meta">
-                  <span class="spotlight-index-pill" id="spotlightIndex">RELIC 01 / 03</span>
-                  <span class="spotlight-verified-badge">
-                    <span class="verified-dot"></span>
-                    <span>VERIFIED CREDENTIAL</span>
-                  </span>
-                </div>
-
-                <h3 class="spotlight-title" id="spotlightTitle">Belajar Dasar Pemrograman Web</h3>
-                
-                <p class="spotlight-desc" id="spotlightDesc">
-                  Sertifikasi resmi penguasaan fondasi HTML5, CSS3, teknik tata letak responsif modern (Flexbox &amp; CSS Grid), serta kode semantik berstandar industri.
-                </p>
-
-                <div class="spotlight-skills-group">
-                  <div class="skills-heading">KOMPETENSI TERUJI</div>
-                  <div class="spotlight-tags" id="spotlightTags">
-                    <!-- Dynamic skill tags -->
+          <div class="relic-sec">
+            <div class="relic-sign">🎃 Sacred Relics</div>
+            <div class="relic-stage">
+              <div class="relic-left">
+                <div class="relic-hang" id="relicHang">
+                  <i class="relic-chain relic-chain-l"></i>
+                  <i class="relic-chain relic-chain-r"></i>
+                  <div class="relic-frame">
+                    <div class="relic-mat">
+                      <img class="relic-cert-img px" id="relicCertImg" alt="Pratinjau Sertifikat" src="./Assets/Certificates/cert-innoventure-juara3-px.png">
+                      <button type="button" class="relic-ex-btn" id="btnZoomRelicQuick" title="Perbesar Dokumen" aria-label="Perbesar Dokumen">⤢</button>
+                    </div>
+                    <img class="relic-web relic-web-l" id="relicWebL" alt="">
+                    <img class="relic-web relic-web-r" id="relicWebR" alt="">
                   </div>
                 </div>
-
-                <div class="spotlight-actions">
-                  <button type="button" class="spotlight-action-btn primary" id="btnZoomSpotlight">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                    </svg>
-                    <span>Perbesar Dokumen</span>
-                  </button>
-                  <a href="#" target="_blank" rel="noopener noreferrer" class="spotlight-action-btn secondary" id="spotlightVerifyLink">
-                    <span>↗ Cek Kredensial Resmi</span>
-                  </a>
+                <div class="relic-cd relic-cd-l">
+                  <img class="relic-cd-a" data-relic-candle="a" alt="">
+                  <img class="relic-cd-b" data-relic-candle="b" alt="">
+                </div>
+                <div class="relic-cd relic-cd-r">
+                  <img class="relic-cd-a" data-relic-candle="a" alt="">
+                  <img class="relic-cd-b" data-relic-candle="b" alt="">
+                </div>
+              </div>
+              <div class="relic-right" id="relicRight">
+                <div class="relic-meta">
+                  <span class="relic-cnt" id="relicCnt">RELIK 01 / 05</span>
+                  <span class="relic-rar" id="relicRar">★ LEGENDARY</span>
+                </div>
+                <span class="relic-org" id="relicOrg">INNOVENTURE • HMIF</span>
+                <h3 class="relic-ttl" id="relicTtl">Juara 3 Lomba Web Development</h3>
+                <div class="relic-ver">
+                  <img id="relicSealImg" alt="Segel Kredensial">
+                  <span>SEGEL TERVERIFIKASI</span>
+                </div>
+                <p class="relic-dsc" id="relicDsc">Penghargaan Juara Ketiga kompetisi Web Development tingkat regional Bandung yang diselenggarakan oleh Himpunan Mahasiswa Teknik Informatika (NoeronLabs). Diraih bersama Tim TIMBER.</p>
+                <div class="relic-lb">RUNE TERUJI</div>
+                <div class="relic-runes" id="relicRns"></div>
+                <div class="relic-btns">
+                  <button type="button" class="relic-btn" id="btnZoomRelicDoc">🔍 Perbesar Dokumen</button>
+                  <a class="relic-btn relic-btn-ghost" href="#" target="_blank" rel="noopener noreferrer" id="relicVerifyLink">↗ Periksa Segel</a>
                 </div>
               </div>
             </div>
-
-            <!-- Thumbnail Filmstrip Strip -->
-            <div class="cert-filmstrip-bar">
-              <button type="button" class="filmstrip-arrow prev" id="certStripPrev" aria-label="Sertifikat Sebelumnya">❮</button>
-              <div class="cert-filmstrip-track" id="certFilmstripTrack">
-                <!-- Dynamically built thumbnail cards -->
-              </div>
-              <button type="button" class="filmstrip-arrow next" id="certStripNext" aria-label="Sertifikat Berikutnya">❯</button>
+            <div class="relic-rail">
+              <button type="button" class="relic-ar" id="relicPrev" aria-label="Sebelumnya">
+                <img class="relic-bat-icon" alt="">◂
+              </button>
+              <div class="relic-th" id="relicTrack"></div>
+              <button type="button" class="relic-ar" id="relicNext" aria-label="Berikutnya">
+                <img class="relic-bat-icon" alt="">▸
+              </button>
             </div>
           </div>
         </div>
@@ -796,11 +795,7 @@
                   <span class="lod-realm-badge">REALM OF SANCTUM</span>
                   <h3 class="lod-title" id="lodTtl">Land of Dusk</h3>
                 </div>
-                <button type="button" id="lodTopMascotToggle" class="lod-mascot-toggle-btn" title="Aktifkan / Sembunyikan Maskot di Peta Utama">
-                  <span class="toggle-icon">👻</span>
-                  <span class="toggle-label">Maskot Peta:</span>
-                  <span class="toggle-status" id="lodTopToggleStatus">OFF</span>
-                </button>
+
                 <span class="lod-hint" id="lodHint">Klik salah satu wilayah kerajaan untuk menjelajah asal-usul tempat &amp; maskot penghuninya</span>
               </div>
 
@@ -1293,6 +1288,10 @@
                       <div class="altar-wax-socials">
                         <span class="wax-title">TRANSMIT VIA RUNES:</span>
                         <div class="wax-pills-row">
+                          <a href="./Assets/CV_Kaka_Andrea_Yahya.pdf" download="CV_Kaka_Andrea_Yahya.pdf" class="wax-seal-pill" title="Unduh Berkas CV Resmi Kaka Andrea Yahya">
+                            <span class="seal-icon">📜</span>
+                            <span>Unduh CV</span>
+                          </a>
                           <a href="https://github.com/Kalzz76" target="_blank" rel="noopener noreferrer" class="wax-seal-pill">
                             <span class="seal-icon">🐱</span>
                             <span>GitHub</span>
@@ -1424,14 +1423,14 @@
       </div>
     </div>
 
-    <!-- Certificate Photo Lightbox Modal -->
-    <div class="cert-modal-backdrop" id="certModal" aria-hidden="true">
-      <div class="cert-modal-dialog" role="dialog" aria-modal="true">
-        <button class="cert-modal-close" id="certModalClose" aria-label="Tutup Pratinjau">&times;</button>
-        <div class="cert-modal-body">
-          <img src="" alt="Foto Sertifikat" id="modalCertImg" class="cert-modal-full-img">
-        </div>
+    <div class="relic-zm" id="relicZoomModal" hidden>
+      <img id="relicZoomImg" alt="Sertifikat Resolusi Penuh" class="relic-zm-img">
+      <div class="relic-dk" id="relicDarkOverlay"></div>
+      <div class="relic-zb">
+        <button type="button" class="relic-btn relic-btn-ghost" id="btnToggleZoomTorch">💡 Terangi semua</button>
+        <button type="button" class="relic-btn" id="btnCloseZoomModal" aria-label="Tutup Pratinjau">✕</button>
       </div>
+      <div class="relic-zt">Gerakkan kursor atau jari untuk menyorot sertifikat dengan senter</div>
     </div>
 
     <!-- Bottom Stage Ground Bar -->
@@ -1607,6 +1606,7 @@
       <div class="char char-skeleton" id="a" style="left:26%" title="Skully sang Tengkorak (Penghuni Makam Keramat)">
         <div class="bubble">Yo, Necromancer!</div>
         <div class="hand">👋</div>
+        <div class="acc acc-coffee" title="Kopi Hitam Santuy Skully">☕</div>
         <div class="body">
           <div class="skeleton-head">
             <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
@@ -1624,6 +1624,7 @@
       <div class="char char-pumpkin" id="b" style="left:48%" title="Pumpling sang Monster Labu (Penghuni Pondok Nenek Sihir)">
         <div class="bubble">Trick or Treat!</div>
         <div class="hand">👋</div>
+        <div class="acc acc-pie" title="Pie Labu Hangat & Permen Pumpling">🥧</div>
         <div class="body">
           <i class="pumpkin-stem"></i>
           <div class="pumpkin-carve">
@@ -1639,6 +1640,7 @@
       <div class="char char-zombie" id="c" style="left:72%" title="Zombo sang Zombie (Penghuni Makam Beracun)">
         <div class="bubble">Braaaains... Code!</div>
         <div class="hand">🧟</div>
+        <div class="acc acc-potion" title="Serum Kode Hijau Zombo">🧪</div>
         <div class="body">
           <div class="zombie-head">
             <div class="zombie-hair"></div>
@@ -1663,6 +1665,7 @@
       <div class="char char-witch" id="d" style="left:15%" title="Witch Hazel sang Penyihir Cilik (Penghuni Pondok Nenek Sihir)">
         <div class="bubble">Hihihi, Butuh Ramuan?</div>
         <div class="hand">✨</div>
+        <div class="acc acc-wand" title="Tongkat Sihir Bintang Hazel">🪄</div>
         <div class="body">
           <div class="witch-hat">
             <div class="hat-cone"></div>
