@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let toastTimer = null;
   function showToast(msg, title = null, icon = null) {
-    if (!pixelToast) return;
+    if (!pixelToast || window.innerWidth <= 860) return;
     const lang = localStorage.getItem('kaka_portfolio_lang') || 'id';
     
     // Default Minecraft achievement header

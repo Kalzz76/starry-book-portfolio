@@ -4094,6 +4094,11 @@ body.mode-tengah-malam #settingsDropdown {
   .stage .char.look-r {
     transform: scale(0.5) scaleX(1);
   }
+  .pixel-toast,
+  .mc-achievement-toast,
+  #pixelToast {
+    display: none !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
