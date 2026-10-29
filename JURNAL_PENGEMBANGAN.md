@@ -1,114 +1,33 @@
 # 📜 JURNAL PENGEMBANGAN: THE CODE NECROMANCER CHRONICLES
-**Portofolio Interaktif Kaka Andrea Yahya**  
-*Dokumentasi Lengkap Perjalanan Rancang Bangun, Arsitektur Teknis, dan Milestone Fitur*
+**Website Portofolio Interaktif Kaka Andrea Yahya (Jilid 2)**  
+*Catatan Harian Rekayasa Perangkat Lunak, Optimasi UI/UX, dan Perjalanan Rancang Bangun*
 
 ---
 
-## 📌 Ringkasan Eksekutif
-Portofolio ini bukan sekadar situs profil biasa, melainkan sebuah **pengalaman interaktif gamifikasi bergaya retro RPG 8-Bit (Tema Halloween Code Necromancer)** yang dirancang dengan dedikasi tinggi. Seluruh sistem dibangun menggunakan **Pure Vanilla Architecture (HTML5, CSS3, JavaScript Native ES6+)** tanpa ketergantungan framework berat, menjamin waktu muat instan (*blazing fast load*), estetika retro yang kental, dan integrasi atmosfer audio-visual yang imersif.
+## 📅 JURNAL 1: SELASA, 28 OKTOBER 2026
+**Fokus Kegiatan**: Peremajaan Tipografi Retro, Grid Kitab Mantra Semanggi 5, Animasi Music HUD, Guild Card Anime, dan Deployment Awal.
+
+Melanjutkan perancangan website portofolio interaktif Kaka Andrea Yahya (*Code Necromancer Jilid 2*), fokus kegiatan hari ini adalah optimasi antarmuka (UI/UX), peremajaan sistem tipografi retro, dan penyempurnaan modul-modul interaktif hingga tahap peluncuran awal (*deployment*).
+
+Tahap pertama dimulai dengan mengintegrasikan font *Pixelify Sans* dan *MedievalSharp* agar teks pada seluruh antarmuka tampil lebih proporsional, tegas, dan nyaman dibaca tanpa sedikit pun menghilangkan kesan otentik *pixel art* dan fantasi gotik. Saya juga merombak total tata letak Kitab Mantra Semanggi 5 pada bagian Grimoire Proyek menjadi *grid* simetris 50:50 dengan batas padding aman (*spine margin*), sehingga teks deskripsi dan aset tidak lagi terpotong oleh lekukan punggung buku. Selain itu, ikon pada daftar proyek diperkaya dengan simbol-simbol tematik yang variatif (gulungan mantra, tengkorak magis, dan kristal alkimia) untuk mempertegas identitas masing-masing dari 9 karya *flagship*.
+
+Tahap kedua difokuskan pada audio dan lingkungan interaktif. Saya mengembangkan modul *Floating Retro Music HUD* yang memutar alunan musik 8-bit Halloween dengan animasi visual gulungan kertas kuno (*scroll unroll effect*). Agar tampilan tetap rapi, saya menambahkan algoritma pembatas area gerak (*roaming boundary*) bagi kawanan maskot di panggung permukaan rumput agar mereka tidak menabrak atau menutupi panel kontrol audio di pojok layar. Bersamaan dengan itu, warna pada formulir Buku Tamu (Altar Kontak) diselaraskan secara dinamis mengikuti perubahan siklus waktu atmosferik (Malam, Siang, dan Sore), serta dihubungkan langsung ke layanan Web3Forms API agar pesan apresiasi pengunjung dapat terkirim secara instan ke email pengembang.
+
+Tahap ketiga diselesaikan dengan mempercantik kartu profil pengembang menjadi bergaya lisensi petualang anime (*Adventurer Guild Card*). Kartu ini dilengkapi foto potret bergaya fantasi, *progress bar* atribut RPG (Front-End Mastery, Backend Sorcery, System Architecture), serta segel stempel verifikasi resmi. Setelah seluruh rangkaian fitur dan estetika visual tervalidasi dengan baik, saya melakukan proses *bundling* produksi menggunakan Vite dan menuntaskan tahap *deployment* versi awal ke repositori remote GitHub agar dapat diakses dan diuji secara daring.
 
 ---
 
-## 🗺️ Milestone & Kronologi Pengembangan
+## 📅 JURNAL 2: RABU, 29 OKTOBER 2026
+**Fokus Kegiatan**: Rombak Total Fitur Mistis, Interaktivitas Katakombe Bawah Tanah, Penjaga Berjubah, Mode Hemat Daya, dan Penuntasan Layar Mobile.
 
-### 🧙‍♂️ Fase 1: Konsep Alkimia & Grimoire Proyek
-- **Grimoire Buku Mantra Interaktif**: Transformasi daftar proyek konvensional menjadi buku mantra alkimia kuno dua halaman lengkap dengan sampul kulit berornamen runic emas.
-- **9 Flagship Proyek Unggulan**:
-  1. *Web Pemantauan & Simulasi Kebakaran Hutan* (GIS Leaflet, Wind Simulator, Laravel)
-  2. *Classio – School CBT & Admin Platform* (Flutter, Multiplatform Desktop C++ Runner)
-  3. *Hospital Indoor Pathfinding Visualizer* (A* Search Algorithm, HTML5 Canvas)
-  4. *Rhea AI – Healthcare & Triage Assistant* (AI-assisted Medical Triage)
-  5. *Kelompokku – Decoupled Team Collaboration* (React 19 SPA + Laravel RESTful API)
-  6. *Pomodoro Focus Mobile App* (Flutter, FL Chart Statistics)
-  7. *Heart Attack Risk Prediction System* (Data Science, Orange ML, Python)
-  8. *Bank Sampah Management System* (C# .NET Desktop Architecture)
-  9. *Web Portal Publik SMKN 13 Bandung* (Laravel, Automated Feature Testing)
+Melanjutkan pengembangan dari versi rilis kemarin, fokus kegiatan hari ini adalah perombakan menyeluruh pada elemen mistis dunia pekuburan, penambahan karakter penjaga mandiri, interaktivitas lingkungan katakombe, efisiensi performa lintas perangkat, serta penyelesaian tuntas kendala teknis pada antarmuka mobile (*touchscreen*).
 
----
+Tahap pertama diawali dengan memperluas ekosistem interaksi pada Peta *Land of Dusk* (LOD). Saya merancang jaringan rute jalan bercabang (*pathfinding network*) dengan *chibi bodies* para maskot yang dapat berpatroli, serta menyematkan fitur sapaan balon dialog (*pointerenter hover greeting*) sehingga setiap maskot di peta akan langsung merespons dan menyapa ramah saat kursor pengunjung melintas di atas mereka.
 
-### 💀 Fase 2: Ekosistem Makhluk Kuburan & Peta *Land of Dusk*
-- **Kawanan Maskot Otonom**: Kemunculan empat sahabat arwah legendaris di atas panggung rumput:
-  - *Skully*: Tengkorak gemetar yang reaktif terhadap kursor.
-  - *Zombo*: Zombie ramah yang keluar masuk makam.
-  - *Pumpling*: Labu oranye ceria yang suka melompat.
-  - *Witch*: Penyihir kecil pembuat ramuan dengan topi ungu.
-- **Sistem Interaksi Sosial**: Maskot dapat saling mendekati, bertukar sapaan balon dialog, dan memancarkan partikel emotikon persahabatan.
-- **Peta Land of Dusk (LOD)**: Peta eksplorasi rute wilayah dengan maskot chibi, node interaktif, navigasi jalan bercabang, dan fitur toggle on/off maskot pada peta.
-- **Sapaan Interaktif Kursor**: Maskot di peta menyapa pengunjung secara personal saat kursor mouse diarahkan ke mereka (*pointerenter* / *hover*).
+Tahap kedua berpusat pada penciptaan karakter baru: **Penjaga Berjubah (*Cloaked Guardian*)** dan **Papan Pengumuman Kayu**. Sosok penjaga ini di-generate menggunakan teknik *pixel art canvas* berukuran 16×20 piksel yang dikonversi sekali jalan menjadi DataURL, menghasilkan grafis ringan tanpa beban komputasi loop GPU. Penjaga ini berdiri tenang di dekat pohon, memiliki inisiatif menyapa pengunjung baru maupun lama secara otonom, dan dibekali kecerdasan pertahanan unik: saat kursor Arwah Reaper mendekat, ia tidak kabur seperti maskot lain, melainkan memasang kuda-kuda siaga dan meluncurkan proyektil sihir pertahanan ber-cooldown ketat 1.0 detik. Di sampingnya, Papan Pengumuman menampilkan kabar berkala sesuai waktu riil dan tombol *▼ GALI KE BAWAH* untuk mengajak pengunjung menelusuri isi perut bumi.
 
----
+Tahap ketiga difokuskan pada Katakombe Bawah Tanah. Saya menyempurnakan indikator kedalaman dengan sistem sumbu Kartesius relatif: permukaan tanah sebagai titik nol (0 m), area langit sebagai ketinggian positif (`⛏ 35 m` tanpa tanda plus), dan katakombe menukik turun hingga dasar batuan terdalam (`⛏ -66 m`). Seluruh kartu pencapaian (*Achievements*) dirombak agar terasa usang, retak, dan terkubur tanah purba menggunakan filter SVG retakan kuno (`--ck`) dan tekstur debu fraktal (`--nz`), lengkap dengan fitur pembersihan interaktif (*dust cleaning*) di mana debu dan retakan akan memudar saat disapu oleh kursor mouse atau sentuhan jari.
 
-### 🌑 Fase 3: Atmosfer Waktu, Senter Kursor & Audio 8-Bit
-- **Siklus 5 Waktu Atmosferik**: Pagi, Siang, Sore, Malam, dan Tengah Malam dengan perubahan palet langit, gradien pegunungan, dan pencahayaan dunia secara prosedural.
-- **Mode Tengah Malam & Senter Global**: Kegelapan total di mana hanya lingkaran cahaya kursor (*global torch flashlight*) yang menerangi layar.
-- **Kursor Arwah Reaper & Sabit Gaib**: Arwah melayang yang memegang sabit ungu, memancarkan roh melayang (*ghost spirits*) dan kelelawar kecil saat layar diklik, serta memicu kepanikan pada maskot biasa.
-- **Sintesis Audio 8-Bit (Web Audio API)**: Sound effect retro tanpa file audio eksternal berat (klik, blip, lompat, bangkit, desis batu, tawa gaib).
-- **Retro Music Player**: Pemutar musik 8-bit tema Halloween (*Halloween-bg.mp3*) dengan HUD kaset retro di pojok kiri bawah.
+Tahap keempat menghadirkan optimasi performa dan standar aksesibilitas modern. Untuk menjamin kenyamanan pengguna smartphone lawas maupun desktop hemat energi, saya menambahkan **Mode Hemat Daya (*Eco & Performance Mode*)** dengan sakelar beraksen hijau emerald di modal *Ritual Settings*. Mode ini mematikan partikel berat (kelelawar, roh arwah, debu makam) dan menyederhanakan bayangan grafis kompleks. Sistem ini juga terintegrasi otomatis dengan preferensi sistem operasi `prefers-reduced-motion` untuk menghemat konsumsi daya baterai.
 
----
-
-### ⛏️ Fase 4: Katakombe Bawah Tanah (-66m) & Penjaga Berjubah
-- **Kedalaman Relatif Sumbu Kartesius**:
-  - Permukaan tanah berada di titik acuan **0 m**.
-  - Area langit/atmosfer diukur dengan ketinggian positif (misal: `⛏ 35 m`).
-  - Katakombe bawah tanah menukik turun hingga batuan dasar terdalam (`⛏ -66 m`).
-- **Penjaga Berjubah (Cloaked Guardian)**:
-  - Sosok misterius berjubah indigo dengan tudung gelap, mata amber menyala, bros emas, dan tongkat lentera bercahaya.
-  - *Sapaan Kontekstual*: Menyapa pendatang baru, menyapa pengunjung lama, dan menyapa saat pengunjung kembali dari bawah tanah.
-  - *Obrolan Otonom*: Memberikan 6 petunjuk rahasia secara berkala saat pengunjung berada di permukaan.
-  - *Pertahanan Anti-Reaper*: Satu-satunya sosok yang tidak takut pada kursor Reaper. Mengaktifkan pose waspada bersudut pertahanan dan menembakkan proyektil sihir oranye dengan cooldown 1.0 detik.
-- **Papan Pengumuman Kayu**: Menampilkan kabar atmosferik dinamis sesuai waktu dan tombol *▼ GALI KE BAWAH* untuk menggulir mulus ke bawah tanah.
-- **Kartu Pencapaian Lapuk & Tertimbun Tanah (Weathered Achievements)**:
-  - Lapisan debu tanah (`--nz`), retakan kuno melintang (`--ck`), dan gundukan tanah bergerigi 16-titik poligon.
-  - *Pembersihan Interaktif*: Debu dan retakan dapat disapu bersih saat kursor mouse digerakkan atau jari digeser di atas kartu.
-
----
-
-### ⚡ Fase 5: Efisiensi Baterai & Aksesibilitas Modern
-- **Mode Hemat Daya (Eco & Performance Mode)**:
-  - Sakelar ke-4 di modal *Ritual Settings* beraksen warna hijau emerald (`#10b981`).
-  - Meringankan beban GPU dengan menyederhanakan bayangan blur dan mematikan partikel berat untuk kenyamanan HP spek kentang.
-- **Dukungan Penuh `prefers-reduced-motion`**:
-  - Menghormati pengaturan aksesibilitas sistem operasi (Android, iOS, Windows, macOS).
-  - Menghentikan animasi loop berulang secara otomatis demi menghemat daya baterai.
-
----
-
-### 📱 Fase 6: Optimasi Pengalaman Mobile & Solusi Layar Kejang (Hari Ini)
-- **Akar Masalah**:
-  - Pada layar sentuh HP (*touchscreen*), mekanisme penguncian scroll permukaan sebelumnya memaksa posisi scroll mundur (`window.scrollTo instant`) saat mendeteksi geseran jari melewati batas permukaan.
-  - Hal ini bertabrakan dengan mesin fisika *kinetic momentum scrolling* bawaan browser mobile (Chrome Android & Safari iOS), memicu osilasi getar hebat 60Hz (*kejang-kejang/tremor*).
-  - Pemanggilan fungsi efek getar tombol secara berulang memicu *layout thrashing* (`void btn.offsetWidth`) di setiap pixel scroll.
-- **Solusi yang Diterapkan**:
-  1. *Fluid Descent on Swipe*: Jika pengguna di perangkat mobile menggeser layar melewati papan pengumuman, sistem secara cerdas langsung mengaktifkan fungsi turun mulus (*smooth glide down*) tanpa mengunci paksa atau mengadu kinetika jari.
-  2. *Transition Immunity Lock (`isTransitioningUnderground`)*: Selama 1.3 detik proses transisi turun ke tanah gembur (`#about`), semua logika pengunci scroll dibebaskan sepenuhnya agar tidak terjadi perebutan koordinat.
-  3. *Offset Navigasi 70px*: Posisi scroll `#about` diperhitungkan dengan kompensasi navbar melayang sehingga judul dan lencana strata tanah tidak tertutup bilah menu.
-  4. *Redesain Papan Pengumuman Mobile*:
-     - Papan kayu diatur menjadi tata letak kolom vertikal yang rapi.
-     - Teks kabar pengumuman tidak lagi terjepit sempit.
-     - Tombol *▼ GALI KE BAWAH* diperlebar penuh (*full width*), sangat nyaman ditekan dengan jempol pengguna HP.
-     - Penjaga Berjubah berdiri kokoh di samping papan dengan balon percakapan yang pas di layar 360px–420px tanpa terpotong.
-
----
-
-## 📊 Matriks Fitur & Status Implementasi
-
-| Fitur | Teknologi | Status | Keterangan |
-| :--- | :--- | :---: | :--- |
-| **Grimoire 9 Flagship** | CSS 3D Transforms & Grid | ✅ Selesai | Responsif di semua ukuran layar |
-| **Kawanan Maskot Otonom** | Canvas Pixel Art & State Machine | ✅ Selesai | 4 karakter dengan obrolan sosial |
-| **Peta Land of Dusk** | SVG / Canvas Chibi Pathfinding | ✅ Selesai | Hover greeting & return button |
-| **Kursor Arwah Reaper** | DOM Follower & Velocity Vector | ✅ Selesai | Efek tebasan sabit & arwah gaib |
-| **Siklus 5 Waktu & Senter** | CSS Custom Properties & Radial Mask | ✅ Selesai | Real-time & manual switch |
-| **Katakombe -66m** | Cartesian Depth Calculator | ✅ Selesai | 13 achievement dengan secret card |
-| **Penjaga Berjubah** | Dual Sprite Frame & Projectile Physics | ✅ Selesai | Anti-Reaper counter attack 1.0s CD |
-| **Weathered Achievements** | CSS Masking & Fractal SVG Noise | ✅ Selesai | Interaktif disapu kursor/jari |
-| **Mode Hemat Daya (Eco)** | Scoped CSS & Media Query | ✅ Selesai | Hemat baterai di HP low-end |
-| **Transisi Halus Mobile** | Throttled Smooth Scroll & Touch Physics | ✅ Selesai | Bebas getar, bebas kejang layar |
-
----
-
-## 💡 Refleksi & Penutup
-Pengembangan portofolio ini membuktikan bahwa batas antara **Web Application Engineering** dan **Creative Game Design** dapat disatukan secara elegan. Dengan menjaga integritas kode murni (*Vanilla JavaScript & CSS*), website ini tidak hanya memikat secara visual dan interaktif bagi para perekrut maupun pengunjung, tetapi juga tetap ringan, berperforma tinggi, dan stabil di segala jenis perangkat.
-
-*Dokumen ini dibuat sebagai catatan abadi proses kreasi dan penyempurnaan portofolio Kaka Andrea Yahya.*
+Tahap kelima ditutup dengan investigasi dan penyelesaian tuntas masalah layar "kejang-kejang" (*tremor/jitter*) pada perangkat mobile saat hendak turun ke bawah tanah. Masalah ini ternyata disebabkan oleh benturan antara mesin fisika *kinetic momentum scrolling* bawaan layar sentuh HP dengan fungsi penguncian scroll instan lama, diperparah oleh pemaksaan kalkulasi layout berulang (*layout thrashing*). Saya menuntaskannya dengan menerapkan status kekebalan transisi (`isTransitioningUnderground`), fitur *fluid auto-unlock* saat jempol menggeser layar melewati papan, kompensasi offset navbar 70px, serta merombak susunan Papan Pengumuman mobile menjadi satu kolom vertikal yang lapang dengan tombol *Gali ke Bawah* berukuran penuh. Seluruh perbaikan berhasil dikompilasi dengan mulus dalam 0.92 detik dan resmi di-push ke repositori utama GitHub.
