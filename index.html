@@ -18,11 +18,7 @@
 </head>
 <body class="theme-night">
 
-  <!-- Background Environment Layer -->
-  <div class="bg-wrapper">
-    <div class="bg-image bg-night active" id="bgNight"></div>
-    <div class="bg-image bg-sunset" id="bgSunset"></div>
-    <div class="bg-image bg-day" id="bgDay"></div>
+  <div class="bg-wrapper" id="bgWrapper">
     <div class="bg-overlay"></div>
     <div class="scanlines"></div>
   </div>
@@ -52,10 +48,10 @@
         <a href="#projects" data-t="projects">Spells</a>
         <a href="#sertificat" data-t="sertificat">Relics</a>
         <a href="#shadows" data-t="shadows">Companions</a>
+        <a href="#achievements" data-t="achievements">Katakombe</a>
         <a href="#contact" data-t="contact">Altar</a>
       </div>
 
-      <!-- Right Action Tools: Sound, Day/Night Theme, Settings Modal -->
       <div class="tools">
         <i class="sep" aria-hidden="true"></i>
         <button type="button" id="soundToggle" class="tool-btn sound-toggle" title="Suara 8-Bit &amp; Musik: NYALA (Klik untuk Mematikan)" aria-label="Toggle Sound" aria-pressed="true">
@@ -68,7 +64,12 @@
             <line x1="3" y1="21" x2="21" y2="3" stroke="#ff4757" stroke-width="2.6" stroke-linecap="round"/>
           </svg>
         </button>
-        <button type="button" id="themeToggle" class="tool-btn theme-toggle" title="Ganti Mode Waktu (Siang / Sore / Malam)" aria-label="Toggle Theme">
+        <button type="button" id="themeToggle" class="tool-btn theme-toggle" title="Ganti Mode Waktu (Pagi / Siang / Sore / Malam / Tengah Malam)" aria-label="Toggle Theme">
+          <span class="theme-icon pagi-icon" title="Mode Pagi" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 3v4M4.9 7.9l2.8 2.8M19.1 7.9l-2.8 2.8M2 18h20M5 18a7 7 0 0 1 14 0" />
+            </svg>
+          </span>
           <span class="theme-icon sun-icon" title="Mode Siang" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <circle cx="12" cy="12" r="4.5"/>
@@ -89,6 +90,13 @@
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               <polygon points="18.5 3.5 19.2 5.2 21 5.8 19.2 6.5 18.5 8.2 17.8 6.5 16 5.8 17.8 5.2" fill="#ffd166"/>
+            </svg>
+          </span>
+          <span class="theme-icon midnight-icon" title="Mode Tengah Malam" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" fill="#a5f3fc"/>
+              <circle cx="19" cy="5" r="1.5" fill="#facc15"/>
+              <circle cx="15" cy="2" r="1" fill="#facc15"/>
             </svg>
           </span>
         </button>
@@ -112,9 +120,9 @@
                 <span class="settings-label" data-i18n="reaper_label">Arwah Reaper</span>
                 <span class="settings-sub" data-i18n="reaper_sub">Sabit gaib &amp; roh ungu</span>
               </div>
-              <button type="button" class="spooky-switch active" id="btnToggleDragon" aria-label="Toggle Kursor Arwah Reaper" role="switch" aria-checked="true">
+              <button type="button" class="spooky-switch" id="btnToggleDragon" aria-label="Toggle Kursor Arwah Reaper" role="switch" aria-checked="false">
                 <span class="switch-track"><span class="switch-knob"></span></span>
-                <span class="switch-label">ON</span>
+                <span class="switch-label">OFF</span>
               </button>
             </div>
 
@@ -148,7 +156,17 @@
     <div class="midnight-flashlight-vignette" id="midnightOverlay" aria-hidden="true"></div>
 
     <main>
-      <section class="hero-section" id="home">
+      <section class="hero-section sky-surface-world" id="home">
+        <div class="sky-atmosphere" id="skyAtmosphere">
+          <div class="sky-procedural"></div>
+          <div class="moon" id="celestialOrb"></div>
+          <div class="mt mt1"></div>
+          <div class="mt mt2"></div>
+          <div class="fence" id="pixelFence"></div>
+          <div class="grass" id="pixelGrass"></div>
+          <div class="fog" id="fogLayer1"></div>
+          <div class="fog f2" id="fogLayer2"></div>
+        </div>
         <div class="hero-container">
           
           <div class="hero-content">
@@ -198,16 +216,29 @@
 
         </div>
 
-        <!-- Scroll Down Indicator -->
-        <a href="#about" class="scroll-down-indicator" aria-label="Scroll ke Grimoire">
-          <span class="scroll-text" data-i18n="scroll_hint">ENTER GRAVEYARD</span>
-          <div class="scroll-arrow">▼</div>
-        </a>
+        <!-- Papan Pengumuman (Notice Board from Reference 7) -->
+        <div class="bd" id="surfaceNoticeBoard">
+          <div class="bp">
+            <b>PAPAN PENGUMUMAN</b>
+            <p id="boardNoticeText">Malam tiba. Kerangka dan zombie bangkit.</p>
+            <button type="button" id="btnDigDown" class="btn-dig-down" aria-label="Gali ke Bawah Tanah">▼ GALI KE BAWAH</button>
+          </div>
+          <div class="lg"><i></i><i></i></div>
+        </div>
+
+        <!-- Penjaga Berjubah (Cloaked Guardian from Reference 7) -->
+        <div class="gd" id="cloakedGuardian" role="button" tabindex="0" title="Penjaga Pekuburan" aria-label="Penjaga Pekuburan">
+          <img id="guardianImg" alt="Penjaga Pekuburan" />
+        </div>
+        <div class="bb wr" id="cloakedBubble"></div>
       </section>
 
-      <!-- ABOUT SECTION (Grimoire Bio & Stats) -->
-      <section class="section about-section" id="about">
+      <!-- ABOUT SECTION (Grimoire Bio & Stats) - Layer 0: Tanah Gembur (0 s.d. -12 M) -->
+      <section class="section about-section soil-stratum layer-tanah-gembur" id="about">
         <div class="section-container">
+          <div class="soil-layer-badge">
+            <span class="lb">▼ 0 s.d. -12 M · TANAH GEMBUR</span>
+          </div>
           <div class="section-header">
             <h2 class="section-title">THE NECROMANCER GRIMOIRE</h2>
             <div class="section-divider">
@@ -592,15 +623,17 @@
                 </div>
 
               </div>
-
             </div>
           </div>
         </div>
       </section>
 
-      <!-- PROJECTS SHOWCASE SECTION -->
-      <section class="section projects-section" id="projects">
+      <!-- PROJECTS SHOWCASE SECTION - Layer 1: Lapisan Tulang (-12 s.d. -24 M) -->
+      <section class="section projects-section soil-stratum layer-tulang" id="projects">
         <div class="section-container">
+          <div class="soil-layer-badge">
+            <span class="lb">▼ -12 s.d. -24 M · LAPISAN TULANG</span>
+          </div>
           <div class="section-header">
             <h2 class="section-title">GRIMOIRE OF SPELLS</h2>
             <div class="section-divider">
@@ -687,8 +720,12 @@
         </div>
       </section>
 
-      <section class="section cert-section" id="sertificat">
+      <!-- RELICS & SCROLLS SECTION - Layer 2: Ruang Artefak (-24 s.d. -36 M) -->
+      <section class="section cert-section soil-stratum layer-katakombe" id="sertificat">
         <div class="section-container">
+          <div class="soil-layer-badge">
+            <span class="lb">▼ -24 s.d. -36 M · RUANG ARTEFAK (RELICS)</span>
+          </div>
           <div class="relic-sec">
             <div class="relic-sign">🎃 Sacred Relics</div>
             <div class="relic-stage">
@@ -747,9 +784,12 @@
         </div>
       </section>
 
-      <!-- SANCTUM GUESTBOOK & COMPANIONS (BUKU TAMU & KAWANAN MASKOT) -->
-      <section class="section shadow-army-section" id="shadows">
+      <!-- SANCTUM GUESTBOOK & COMPANIONS - Layer 3: Ruang Peti Mati & Alam Bayangan (-36 s.d. -46 M) -->
+      <section class="section shadow-army-section soil-stratum layer-peti-mati" id="shadows">
         <div class="section-container">
+          <div class="soil-layer-badge">
+            <span class="lb">▼ -36 s.d. -46 M · RUANG PETI MATI &amp; ALAM BAYANGAN</span>
+          </div>
           
           <!-- Section Main Header -->
           <div class="shadow-section-header">
@@ -1071,12 +1111,38 @@
             </div>
 
           </div>
+
         </div>
       </section>
 
-      <!-- CONTACT SECTION: THE CRYPT ALTAR (MEJA ALTAR KRIPTA KERAMAT) -->
-      <section class="section contact-section" id="contact">
+      <!-- SECTION: KATAKOMBE BATA (-46 s.d. -58 M) - 13 ACHIEVEMENTS -->
+      <section class="section catacombs-section soil-stratum layer-katakombe-bata br" id="achievements">
+        <div class="soil-layer-badge">
+          <span class="lb">▼ -46 s.d. -58 M · KATAKOMBE (BATA)</span>
+        </div>
         <div class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">KATAKOMBE OF ACHIEVEMENTS</h2>
+            <div class="section-divider">
+              <span class="line"></span>
+              <span class="star">✦ 🏆 ✦</span>
+              <span class="line"></span>
+            </div>
+            <p class="section-subtitle">Dinding Bata Bawah Tanah Kuno • 13 Jejak Prestasi &amp; Batu Nisan Keabadian</p>
+          </div>
+
+          <div class="catacomb-achievements-wrapper">
+            <div class="list" id="soilLayers"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Deepest Layer: The Crypt Altar - Layer 5: Jurang Bedrock (-58 s.d. -66 M) -->
+      <section class="section contact-section soil-stratum layer-jurang-terdalam bedrock-crypt" id="contact">
+        <div class="section-container">
+          <div class="soil-layer-badge">
+            <span class="lb">▼ -58 s.d. -66 M · JURANG BEDROCK (ALTAR KRIPTA)</span>
+          </div>
           <div class="section-header">
             <h2 class="section-title">THE CRYPT ALTAR</h2>
             <div class="section-divider">
@@ -1395,22 +1461,52 @@
           </div>
         </div>
       </section>
-    </main>
 
-    <!-- RETRO FOOTER (Restored Original Retro Layout) -->
-    <footer class="footer-retro" id="sanctumFooter">
-      <div class="footer-content">
-        <p class="footer-text">
-          &copy; 2026 <strong>Kaka Andrea Yahya</strong> (Code Necromancer). Crafted with Dark Syntax &amp; Pixel Sorcery.
-        </p>
-        <p class="footer-subtext">
-          <button type="button" class="btn-resurrect-easter-egg" id="btnResurrectTrigger" title="Klik untuk membangkitkan jiwa kembali ke atas!">
-            <span class="blinking-prompt">PRESS START TO RESURRECT</span>
-          </button>
-        </p>
-        <a href="#home" class="back-to-top" id="backToTopBtn" title="Kembali ke atas Sanctum">▲ TOP</a>
+      <!-- LAVA ABYSS WITH INTEGRATED FOOTER (66 M - Absolute Bottom) -->
+      <div class="lava-abyss" id="lavaAbyss">
+        <div class="lava-glow" aria-hidden="true"></div>
+        <div class="lava-waves" aria-hidden="true">
+          <div class="lava-wave wave-1"></div>
+          <div class="lava-wave wave-2"></div>
+        </div>
+        <div class="lava-surface-heat" aria-hidden="true"></div>
+        <div class="lava-particles" aria-hidden="true">
+          <span class="lava-bubble b1"></span>
+          <span class="lava-bubble b2"></span>
+          <span class="lava-bubble b3"></span>
+          <span class="lava-bubble b4"></span>
+          <span class="lava-bubble b5"></span>
+          <span class="lava-ember e1"></span>
+          <span class="lava-ember e2"></span>
+          <span class="lava-ember e3"></span>
+          <span class="lava-ember e4"></span>
+          <span class="lava-ember e5"></span>
+        </div>
+
+        <!-- Integrated Footer Floating Inside Lava Abyss -->
+        <footer class="footer-retro footer-in-lava" id="sanctumFooter">
+          <div class="footer-content">
+            <p class="footer-text">
+              &copy; 2026 <strong>Kaka Andrea Yahya</strong> (Code Necromancer). Crafted with Dark Syntax &amp; Pixel Sorcery.
+            </p>
+            <p class="footer-subtext">
+              <button type="button" class="btn-resurrect-easter-egg" id="btnResurrectTrigger" title="Klik untuk membangkitkan jiwa kembali ke atas!">
+                <span class="blinking-prompt">PRESS START TO RESURRECT</span>
+              </button>
+            </p>
+            <a href="#home" class="back-to-top" id="backToTopBtn" title="Kembali ke atas Sanctum">▲ TOP</a>
+          </div>
+
+          <div class="lava-core-label">
+            <span class="lava-depth-badge">🔥 -66 M · INTI LAVA &amp; VOID BEDROCK 🔥</span>
+          </div>
+
+          <div class="catacomb-bottom-actions">
+            <button type="button" class="btn-to-surface" id="btnToSurface">▲ Ke permukaan</button>
+          </div>
+        </footer>
       </div>
-    </footer>
+    </main>
 
     <!-- Minecraft Style Achievement Toast Notification -->
     <div class="pixel-toast mc-achievement-toast" id="pixelToast" aria-live="polite">
@@ -1780,6 +1876,12 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- FLOATING DEPTH & ACHIEVEMENT HUD (Fixed below music player) -->
+    <div class="catacomb-hud" id="catacombHud" aria-live="polite">
+      <span class="hud-pill" id="catacombDepth">⛏ 0 m</span>
+      <span class="hud-pill" id="catacombCount">🏆 0/13</span>
     </div>
 
   </div> <!-- End earthquakeContainer -->

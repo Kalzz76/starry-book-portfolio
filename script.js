@@ -476,14 +476,138 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   // 3. Tri-Phase Time Mode Switching: Siang / Sore (Sunset) / Malam (Real-Time Auto-Detection)
   // -------------------------------------------------------------------------
+  const ATMOSPHERIC_THEMES = {
+    pagi: {
+      key: 'pagi',
+      title: 'Mode Pagi (Fajar Jingga) — Klik untuk Ganti ke Siang',
+      aria: 'Mode Pagi (Klik untuk ganti ke Mode Siang)',
+      do: '1',
+      d1: '#6fb1e8',
+      d2: '#ffd9a8',
+      d3: '#ffe9c8',
+      dg: '#ffc878aa',
+      gx: '20%',
+      mb: '#fff3b0',
+      ms: '0 0 0 8px #fff3b044, 0 0 70px 30px #ffd27a88',
+      mr: '80%',
+      mt: '470px',
+      m1: '#9fb4dc',
+      m2: '#7890c0',
+      cf: 'brightness(2.4) saturate(.3)',
+      co: '0.8',
+      sc: '#fff4dc',
+      sk: 'transparent',
+      toast: '🌅 Mode Pagi Diaktifkan: Fajar jingga keemasan menyambut hari baru!'
+    },
+    siang: {
+      key: 'siang',
+      title: 'Mode Siang (Cahaya Mentari) — Klik untuk Ganti ke Sore',
+      aria: 'Mode Siang (Klik untuk ganti ke Mode Sore)',
+      do: '1',
+      d1: '#2f8fe8',
+      d2: '#6fc0ff',
+      d3: '#bfe8ff',
+      dg: 'transparent',
+      gx: '50%',
+      mb: '#fff8c0',
+      ms: '0 0 0 8px #fff8c044, 0 0 80px 30px #fff2a099',
+      mr: '12%',
+      mt: '104px',
+      m1: '#7aa0d0',
+      m2: '#5a82b0',
+      cf: 'brightness(2.6) saturate(.2)',
+      co: '0.9',
+      sc: '#fff4dc',
+      sk: 'transparent',
+      toast: '☀️ Mode Siang Diaktifkan: Cahaya terang benderang menyelimuti sanctum!'
+    },
+    sore: {
+      key: 'sore',
+      title: 'Mode Sore / Senja (Lembayung Magis) — Klik untuk Ganti ke Malam',
+      aria: 'Mode Sore (Klik untuk ganti ke Mode Malam)',
+      do: '1',
+      d1: '#3a2f7a',
+      d2: '#d9566f',
+      d3: '#ffb347',
+      dg: '#ff8a1fcc',
+      gx: '75%',
+      mb: '#ffb347',
+      ms: '0 0 0 8px #ff8a1f44, 0 0 90px 36px #ff6a3d88',
+      mr: '16%',
+      mt: '540px',
+      m1: '#7a4a8a',
+      m2: '#4a2a5e',
+      cf: 'brightness(1.7)',
+      co: '0.6',
+      sc: '#fff4dc',
+      sk: 'transparent',
+      toast: '🌇 Mode Sore/Senja Diaktifkan: Lembayung jingga magis menyelimuti langit!'
+    },
+    malam: {
+      key: 'malam',
+      title: 'Mode Malam (Bulan Purnama) — Klik untuk Ganti ke Tengah Malam',
+      aria: 'Mode Malam (Klik untuk ganti ke Mode Tengah Malam)',
+      do: '0',
+      d1: '#000',
+      d2: '#000',
+      d3: '#000',
+      dg: 'transparent',
+      gx: '75%',
+      mb: '#ffe9a8',
+      ms: '0 0 0 6px #ffe9a822, 0 0 50px 16px #ffb34755, inset -14px -8px 0 #f0cf84',
+      mr: '12%',
+      mt: '104px',
+      m1: '#2a1c48',
+      m2: '#1a0f30',
+      cf: 'none',
+      co: '0.45',
+      sc: '#ffb347',
+      sk: 'transparent',
+      toast: '🌙 Mode Malam Diaktifkan: Bulan Purnama menerangi makam bayangan!'
+    },
+    tm: {
+      key: 'tm',
+      title: 'Mode Tengah Malam (Midnight Crimson) — Klik untuk Ganti ke Pagi',
+      aria: 'Mode Tengah Malam (Klik untuk ganti ke Mode Pagi)',
+      do: '1',
+      d1: '#01010a',
+      d2: '#060a24',
+      d3: '#0f1a3d',
+      dg: '#3a6fd855',
+      gx: '50%',
+      mb: '#d9f4ff',
+      ms: '0 0 0 6px #bfe8ff22, 0 0 70px 24px #7fb8ff66, inset -14px -8px 0 #b5d8ea',
+      mr: '30%',
+      mt: '90px',
+      m1: '#070b1e',
+      m2: '#040712',
+      cf: 'brightness(.7)',
+      co: '0.35',
+      sc: '#bfe8ff',
+      sk: '#fff',
+      toast: '🌌 Mode Tengah Malam Diaktifkan: Kabut tebal & atmosfer misterius terbangkitkan!'
+    }
+  };
+
+  const THEME_KEYS = ['pagi', 'siang', 'sore', 'malam', 'tm'];
+
+  function normalizeThemeKey(k) {
+    if (!k) return 'malam';
+    if (k === 'day') return 'siang';
+    if (k === 'sunset') return 'sore';
+    if (k === 'night') return 'malam';
+    if (k === 'midnight') return 'tm';
+    if (ATMOSPHERIC_THEMES[k]) return k;
+    return 'malam';
+  }
+
   function getRealTimeTheme() {
     const hour = new Date().getHours() + (new Date().getMinutes() / 60);
-    // Siang: 06:00 to 14:59 (6 AM to 3 PM)
-    // Sore / Senja (Sunset): 15:00 to 18:29 (3 PM to 6:30 PM)
-    // Malam: 18:30 to 05:59 (6:30 PM to 6 AM)
-    if (hour >= 6 && hour < 15) return 'day';
-    if (hour >= 15 && hour < 18.5) return 'sunset';
-    return 'night';
+    if (hour >= 5 && hour < 8) return 'pagi';
+    if (hour >= 8 && hour < 15) return 'siang';
+    if (hour >= 15 && hour < 18.5) return 'sore';
+    if (hour >= 18.5 && hour < 23) return 'malam';
+    return 'tm';
   }
 
   const shadowBadgeText = document.getElementById('shadowBadgeText');
@@ -493,21 +617,78 @@ document.addEventListener('DOMContentLoaded', () => {
   const shadowCrownRight = document.getElementById('shadowCrownRight');
   const shadowMonarchCrest = document.getElementById('shadowMonarchCrest');
 
-  function updateThemeDynamicTexts(theme) {
-    if (theme === 'day') {
+  const NOTICE_BOARD_DATA = {
+    pagi: {
+      text: 'Embun fajar menyelimuti nisan purba. Pekuburan masih tenang dan sejuk. Mulai petualangan barumu!',
+      badge: '🌅 FAJAR'
+    },
+    siang: {
+      text: 'Matahari bersinar di atas makam. Cahaya terang menembus celah pepohonan. Jelajahi Grimoire Kaka!',
+      badge: '☀️ SIANG'
+    },
+    sore: {
+      text: 'Langit keemasan mulai meredup. Kabut tipis perlahan turun di antara pepohonan purba...',
+      badge: '🌇 SENJA'
+    },
+    malam: {
+      text: 'Malam tiba. Kerangka dan zombie bangkit dari peraduannya. Berhati-hatilah saat menggali!',
+      badge: '🌙 MALAM'
+    },
+    tm: {
+      text: 'Tengah malam mistis. Gerbang dimensi terbuka, arwah kuno berbisik di kegelapan...',
+      badge: '🌌 TENGAH MALAM'
+    }
+  };
+
+  function updateNoticeBoardText(themeKey) {
+    const k = normalizeThemeKey(themeKey);
+    const data = NOTICE_BOARD_DATA[k] || NOTICE_BOARD_DATA.malam;
+    const noticeEl = document.getElementById('boardNoticeText');
+    const badgeEl = document.getElementById('boardTimeBadge');
+    if (noticeEl) {
+      noticeEl.style.opacity = '0';
+      setTimeout(() => {
+        noticeEl.textContent = data.text;
+        noticeEl.style.opacity = '1';
+      }, 150);
+    }
+    if (badgeEl) {
+      badgeEl.textContent = data.badge;
+    }
+  }
+
+  function updateThemeDynamicTexts(themeKey) {
+    const k = normalizeThemeKey(themeKey);
+    updateNoticeBoardText(k);
+
+    if (k === 'pagi') {
+      if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SANCTUM (PAGI)';
+      if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang menyambut fajar keemasan di Sanctum.';
+      if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI PAGI SEGAR & AKTIF';
+      if (shadowCrownLeft) shadowCrownLeft.textContent = '🌅';
+      if (shadowCrownRight) shadowCrownRight.textContent = '🌅';
+      if (shadowMonarchCrest) shadowMonarchCrest.textContent = '🌅 🐱 🐕 🧙‍♂️ 🦅';
+    } else if (k === 'siang') {
       if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SANCTUM (SIANG)';
       if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang berkumpul di bawah hangatnya mentari siang untuk menyapa pengembara digital.';
       if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI SIANG CERIA & AKTIF';
       if (shadowCrownLeft) shadowCrownLeft.textContent = '☀️';
       if (shadowCrownRight) shadowCrownRight.textContent = '☀️';
       if (shadowMonarchCrest) shadowMonarchCrest.textContent = '☀️ 🐱 🐕 🧙‍♂️ 🦅';
-    } else if (theme === 'sunset') {
+    } else if (k === 'sore') {
       if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SENJA (SORE)';
       if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang menikmati lembayung senja magis menjelang malam keramat.';
       if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI SENJA JINGGA & BERJAGA';
       if (shadowCrownLeft) shadowCrownLeft.textContent = '🌇';
       if (shadowCrownRight) shadowCrownRight.textContent = '🌇';
       if (shadowMonarchCrest) shadowMonarchCrest.textContent = '🌇 🦇 🐱 💀 🧙‍♂️';
+    } else if (k === 'tm') {
+      if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT SANCTUM (TENGAH MALAM)';
+      if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang berpatroli di bawah keheningan malam keramat.';
+      if (shadowArenaStatus) shadowArenaStatus.textContent = 'PATROLI TENGAH MALAM MISTERIUS';
+      if (shadowCrownLeft) shadowCrownLeft.textContent = '🌌';
+      if (shadowCrownRight) shadowCrownRight.textContent = '🌌';
+      if (shadowMonarchCrest) shadowMonarchCrest.textContent = '🌌 🦇 🐱 💀 🧙‍♂️';
     } else {
       if (shadowBadgeText) shadowBadgeText.textContent = 'BUKU TAMU & KAWANAN MASKOT HALLOWEEN (MALAM)';
       if (shadowArmySubtitle) shadowArmySubtitle.textContent = 'Buku tamu interaktif & arena kawanan maskot sahabat yang singgah untuk memberikan dukungan serta pesan apresiasi dalam perjalanan portofolio Kaka Andrea Yahya.';
@@ -518,40 +699,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function setTheme(theme) {
-    document.body.classList.remove('theme-day', 'theme-sunset', 'theme-night');
+  function setTheme(rawTheme) {
+    const k = normalizeThemeKey(rawTheme);
+    const cfg = ATMOSPHERIC_THEMES[k];
+
+    document.body.dataset.t = k;
+    document.body.classList.remove('theme-pagi', 'theme-day', 'theme-sunset', 'theme-night', 'theme-midnight');
     if (bgDay) bgDay.classList.remove('active');
     if (bgSunset) bgSunset.classList.remove('active');
     if (bgNight) bgNight.classList.remove('active');
 
-    if (theme === 'day') {
+    if (k === 'pagi') {
+      document.body.classList.add('theme-pagi');
+    } else if (k === 'siang') {
       document.body.classList.add('theme-day');
       if (bgDay) bgDay.classList.add('active');
-    } else if (theme === 'sunset') {
+    } else if (k === 'sore') {
       document.body.classList.add('theme-sunset');
       if (bgSunset) bgSunset.classList.add('active');
+    } else if (k === 'tm') {
+      document.body.classList.add('theme-midnight');
+      if (bgNight) bgNight.classList.add('active');
     } else {
       document.body.classList.add('theme-night');
       if (bgNight) bgNight.classList.add('active');
     }
-    
-    updateThemeDynamicTexts(theme);
-    if (themeToggle) {
-      if (theme === 'day') {
-        themeToggle.title = 'Mode Siang (Cahaya Mentari) — Klik untuk Ganti ke Sore';
-        themeToggle.setAttribute('aria-label', 'Mode Siang (Klik untuk ganti ke Mode Sore)');
-      } else if (theme === 'sunset') {
-        themeToggle.title = 'Mode Sore / Senja (Lembayung Magis) — Klik untuk Ganti ke Malam';
-        themeToggle.setAttribute('aria-label', 'Mode Sore (Klik untuk ganti ke Mode Malam)');
-      } else {
-        themeToggle.title = 'Mode Malam (Bulan Purnama) — Klik untuk Ganti ke Siang';
-        themeToggle.setAttribute('aria-label', 'Mode Malam (Klik untuk ganti ke Mode Siang)');
+
+    const rootStyle = document.documentElement.style;
+    const varNames = ['do', 'd1', 'd2', 'd3', 'dg', 'gx', 'mb', 'ms', 'mr', 'mt', 'm1', 'm2', 'cf', 'co', 'sc', 'sk'];
+    varNames.forEach(vn => {
+      if (cfg[vn] !== undefined) {
+        rootStyle.setProperty('--' + vn, cfg[vn]);
       }
+    });
+
+    const celestialOrb = document.getElementById('celestialOrb');
+    if (celestialOrb) {
+      if (cfg.mt) celestialOrb.style.top = cfg.mt;
+      if (cfg.mr) celestialOrb.style.right = cfg.mr;
     }
-    localStorage.setItem('kaka_theme', theme);
+
+    updateThemeDynamicTexts(k);
+
+    if (themeToggle) {
+      themeToggle.title = cfg.title;
+      themeToggle.setAttribute('aria-label', cfg.aria);
+    }
+    localStorage.setItem('kaka_theme', k);
   }
 
-  // Real-time synchronization: default to user's actual time of day unless manually toggled
   const hasManualOverride = sessionStorage.getItem('kaka_theme_manual') === 'true';
   const realTimeTheme = getRealTimeTheme();
   const initialTheme = hasManualOverride && localStorage.getItem('kaka_theme') 
@@ -562,27 +758,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
-      let current = 'night';
-      if (document.body.classList.contains('theme-day')) current = 'day';
-      else if (document.body.classList.contains('theme-sunset')) current = 'sunset';
-
-      // Cycle: Day (Siang) -> Sunset (Sore) -> Night (Malam) -> Day
-      let next = 'night';
-      if (current === 'day') next = 'sunset';
-      else if (current === 'sunset') next = 'night';
-      else if (current === 'night') next = 'day';
+      const current = normalizeThemeKey(document.body.dataset.t || 'malam');
+      const idx = THEME_KEYS.indexOf(current);
+      const next = THEME_KEYS[(idx + 1) % THEME_KEYS.length];
 
       sessionStorage.setItem('kaka_theme_manual', 'true');
       setTheme(next);
       playSound('toggle');
 
-      let msg = '🌙 Mode Malam Diaktifkan: Bulan Purnama menerangi makam bayangan!';
-      if (next === 'day') {
-        msg = '☀️ Mode Siang Diaktifkan: Cahaya terang menyelimuti sanctum!';
-      } else if (next === 'sunset') {
-        msg = '🌇 Mode Sore/Senja Diaktifkan: Lembayung jingga magis menyelimuti langit!';
+      const nextCfg = ATMOSPHERIC_THEMES[next];
+      if (nextCfg && nextCfg.toast) {
+        showToast(nextCfg.toast);
       }
-      showToast(msg);
     });
   }
 
@@ -602,6 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'projects', name: 'Spells' },
     { id: 'sertificat', name: 'Relics' },
     { id: 'shadows', name: 'Companions' },
+    { id: 'achievements', name: 'Katakombe' },
     { id: 'contact', name: 'Altar' }
   ];
 
@@ -1720,14 +1908,23 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const defaultMascots = [
-    { n: "Luna", i: "🐱", r: "Midnight Cat", b: "Meong! Arsip bayangan tercatat rapi dan tanpa bug.", g: 0, x: 0.49, y: 0.28 },
-    { n: "Boo Casper", i: "👻", r: "Friendly Ghost", b: "Halo pengembara! Senang bertemu teman baru di pemakaman!", g: 1, x: 0.21, y: 0.4 },
-    { n: "Skully", i: "💀", r: "Chibi Skeleton", b: "Hidup santuy sambil ngopi di atas nisan, musik 8-bit tetap jalan!", g: 1, x: 0.26, y: 0.34 },
-    { n: "Pumpkin Pete", i: "🎃", r: "Pumpkin Sprite", b: "Lentera oranye kami akan selalu menerangi jalan pulangmu!", g: 2, x: 0.79, y: 0.43 },
-    { n: "Battie", i: "🦇", r: "Night Bat", b: "Sonar aktif! Siap bermanuver di langit malam dan bangkit lagi!", g: 3, x: 0.29, y: 0.73 },
-    { n: "Archie", i: "🧙‍♂️", r: "Little Wizard", b: "Satu tetes ramuan, seribu baris kode tercipta! Semangat belajar!", g: 4, x: 0.54, y: 0.73 },
-    { n: "Gully", i: "🐸", r: "Marsh Scout", b: "Ribbit! Awas lumpur licin, ikuti jejak daun teratai fosfor!", g: 4, x: 0.62, y: 0.7 },
-    { n: "Pengunjung Misterius", i: "🎭", r: "Dimensional Voyager", b: "Aku berlayar melintasi dimensi untuk mengagumi semesta portofolio ini.", g: 5, x: 0.82, y: 0.74 }
+    { n: "Luna", i: "🐱", r: "Midnight Cat", b: "Meong! Arsip bayangan tercatat rapi dan tanpa bug.", g: 0, x: 0.48, y: 0.32 },
+    { n: "Boo Casper", i: "👻", r: "Friendly Ghost", b: "Halo pengembara! Senang bertemu teman baru di pemakaman!", g: 1, x: 0.18, y: 0.46 },
+    { n: "Skully", i: "💀", r: "Chibi Skeleton", b: "Hidup santuy sambil ngopi di atas nisan, musik 8-bit tetap jalan!", g: 1, x: 0.23, y: 0.50 },
+    { n: "Pumpkin Pete", i: "🎃", r: "Pumpkin Sprite", b: "Lentera oranye kami akan selalu menerangi jalan pulangmu!", g: 2, x: 0.76, y: 0.46 },
+    { n: "Battie", i: "🦇", r: "Night Bat", b: "Sonar aktif! Siap bermanuver di langit malam dan bangkit lagi!", g: 3, x: 0.31, y: 0.72 },
+    { n: "Archie", i: "🧙‍♂️", r: "Little Wizard", b: "Satu tetes ramuan, seribu baris kode tercipta! Semangat belajar!", g: 4, x: 0.53, y: 0.73 },
+    { n: "Gully", i: "🐸", r: "Marsh Scout", b: "Ribbit! Awas lumpur licin, ikuti jejak daun teratai fosfor!", g: 4, x: 0.61, y: 0.70 },
+    { n: "Pengunjung Misterius", i: "🎭", r: "Dimensional Voyager", b: "Aku berlayar melintasi dimensi untuk mengagumi semesta portofolio ini.", g: 5, x: 0.77, y: 0.70 }
+  ];
+
+  const safeRegionAnchors = [
+    [0.48, 0.32], // Moonlit Manor (Region 0)
+    [0.21, 0.44], // Whispering Graveyard (Region 1)
+    [0.76, 0.46], // Pumpkin Hollow (Region 2)
+    [0.31, 0.72], // Batwing Caverns (Region 3)
+    [0.56, 0.72], // Bubbling Bog (Region 4)
+    [0.77, 0.70]  // Ghost Ship Bay (Region 5)
   ];
 
   const defaultMX = {
@@ -2124,10 +2321,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function isInsideRegion(nx, ny, targetRegionIndex) {
-    if (nx < 0.04 || nx > 0.96 || ny < 0.04 || ny > 0.96) return false;
-    const px = Math.min(W - 1, Math.max(0, Math.floor(nx * W)));
-    const py = Math.min(H - 1, Math.max(0, Math.floor(ny * H)));
-    return reg[py * W + px] === targetRegionIndex;
+    if (nx < 0.08 || nx > 0.92 || ny < 0.10 || ny > 0.88) return false;
+    const cx = Math.floor(nx * W);
+    const cy = Math.floor(ny * H);
+    // Footprint check: 5x5 bounding box around mascot must strictly remain on targetRegionIndex
+    for (let dy = -2; dy <= 2; dy++) {
+      for (let dx = -2; dx <= 2; dx++) {
+        const px = cx + dx;
+        const py = cy + dy;
+        if (px < 0 || px >= W || py < 0 || py >= H) return false;
+        if (reg[py * W + px] !== targetRegionIndex) return false;
+      }
+    }
+    return true;
   }
 
   function escapeHTML(str) {
@@ -2137,31 +2343,31 @@ document.addEventListener('DOMContentLoaded', () => {
   function getMascotChibiHTML(m) {
     const name = m && m.n ? m.n : '';
     if (name === 'Boo Casper') {
-      return '<svg class="chibi-svg chibi-casper" viewBox="0 0 48 52"><defs><filter id="gw-casper" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.8"/></filter></defs><path d="M 24 8 C 15 8 12 18 12 30 C 9 28 6 29 6 32 C 6 35 9 37 12 35 C 12 42 16 45 19 41 C 22 38 26 38 29 41 C 32 45 36 42 36 35 C 39 37 42 35 42 32 C 42 29 39 28 36 30 C 36 18 33 8 24 8 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8" filter="url(#gw-casper)"/><ellipse cx="17" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="31" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="19" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><ellipse cx="29" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><circle cx="20" cy="21" r="0.9" fill="#ffffff"/><circle cx="30" cy="21" r="0.9" fill="#ffffff"/><path d="M 22 26 Q 24 28 26 26" fill="none" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M 37 28 Q 44 24 43 19 Q 40 18 37 23" fill="#ffffff" stroke="#38bdf8" stroke-width="1.5"/></svg>';
+      return '<svg class="chibi-svg chibi-casper" viewBox="0 0 48 52"><path d="M 24 8 C 15 8 12 18 12 30 C 9 28 6 29 6 32 C 6 35 9 37 12 35 C 12 42 16 45 19 41 C 22 38 26 38 29 41 C 32 45 36 42 36 35 C 39 37 42 35 42 32 C 42 29 39 28 36 30 C 36 18 33 8 24 8 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8"/><ellipse cx="17" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="31" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="19" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><ellipse cx="29" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><circle cx="20" cy="21" r="0.9" fill="#ffffff"/><circle cx="30" cy="21" r="0.9" fill="#ffffff"/><path d="M 22 26 Q 24 28 26 26" fill="none" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M 37 28 Q 44 24 43 19 Q 40 18 37 23" fill="#ffffff" stroke="#38bdf8" stroke-width="1.5"/></svg>';
     }
     if (name === 'Skully') {
-      return '<svg class="chibi-svg chibi-skully" viewBox="0 0 48 52"><defs><filter id="gw-skully" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#a855f7" flood-opacity="0.75"/></filter></defs><path d="M 24 33 L 24 45" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round"/><path d="M 18 36 Q 24 34 30 36" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 17 39 Q 24 37 31 39" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 19 42 Q 24 40 29 42" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 20 46 Q 24 48 28 46" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/><path d="M 28 35 Q 36 36 34 42" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/><g class="skully-coffee"><rect x="33" y="38" width="8" height="7" rx="1.5" fill="#78350f" stroke="#f59e0b" stroke-width="1"/><path d="M 41 40 Q 44 41.5 41 43" fill="none" stroke="#f59e0b" stroke-width="1"/><path class="steam" d="M 35 36 Q 36 34 35 32 M 38 36 Q 39 34 38 31" fill="none" stroke="#fef08a" stroke-width="0.9" opacity="0.8"/></g><g class="skully-head"><path d="M 14 20 C 14 10 34 10 34 20 C 34 24 31 25 31 28 C 31 30 29 31 24 31 C 19 31 17 30 17 28 C 17 25 14 24 14 20 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" filter="url(#gw-skully)"/><ellipse class="skull-eye l" cx="19.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil l" cx="20" cy="19" r="1.2" fill="#38bdf8"/><ellipse class="skull-eye r" cx="28.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil r" cx="28" cy="19" r="1.2" fill="#38bdf8"/><path d="M 24 23 L 23 25 L 25 25 Z" fill="#1e293b"/><path d="M 20 28 L 28 28 M 22 27 L 22 29 M 24 27 L 24 29 M 26 27 L 26 29" stroke="#64748b" stroke-width="1" stroke-linecap="round"/><path d="M 26 12 L 28 14 L 27 16" fill="none" stroke="#cbd5e1" stroke-width="0.8"/><g class="skull-sweat"><path d="M 11 15 Q 9 17 11 18 Q 12 17 11 15 Z" fill="#38bdf8"/><path d="M 37 14 Q 39 16 37 17 Q 36 16 37 14 Z" fill="#38bdf8"/></g></g></svg>';
+      return '<svg class="chibi-svg chibi-skully" viewBox="0 0 48 52"><path d="M 24 33 L 24 45" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round"/><path d="M 18 36 Q 24 34 30 36" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 17 39 Q 24 37 31 39" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 19 42 Q 24 40 29 42" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 20 46 Q 24 48 28 46" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/><path d="M 28 35 Q 36 36 34 42" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/><g class="skully-coffee"><rect x="33" y="38" width="8" height="7" rx="1.5" fill="#78350f" stroke="#f59e0b" stroke-width="1"/><path d="M 41 40 Q 44 41.5 41 43" fill="none" stroke="#f59e0b" stroke-width="1"/><path class="steam" d="M 35 36 Q 36 34 35 32 M 38 36 Q 39 34 38 31" fill="none" stroke="#fef08a" stroke-width="0.9" opacity="0.8"/></g><g class="skully-head"><path d="M 14 20 C 14 10 34 10 34 20 C 34 24 31 25 31 28 C 31 30 29 31 24 31 C 19 31 17 30 17 28 C 17 25 14 24 14 20 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/><ellipse class="skull-eye l" cx="19.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil l" cx="20" cy="19" r="1.2" fill="#38bdf8"/><ellipse class="skull-eye r" cx="28.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil r" cx="28" cy="19" r="1.2" fill="#38bdf8"/><path d="M 24 23 L 23 25 L 25 25 Z" fill="#1e293b"/><path d="M 20 28 L 28 28 M 22 27 L 22 29 M 24 27 L 24 29 M 26 27 L 26 29" stroke="#64748b" stroke-width="1" stroke-linecap="round"/><path d="M 26 12 L 28 14 L 27 16" fill="none" stroke="#cbd5e1" stroke-width="0.8"/><g class="skull-sweat"><path d="M 11 15 Q 9 17 11 18 Q 12 17 11 15 Z" fill="#38bdf8"/><path d="M 37 14 Q 39 16 37 17 Q 36 16 37 14 Z" fill="#38bdf8"/></g></g></svg>';
     }
     if (name === 'Pumpkin Pete') {
-      return '<svg class="chibi-svg chibi-pete" viewBox="0 0 48 52"><defs><filter id="gw-pete" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/></filter><radialGradient id="gd-pete" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#fdba74"/><stop offset="60%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/></radialGradient></defs><path d="M 24 16 Q 25 8 28 7 Q 31 6 30 10 Q 29 14 26 16" fill="#15803d" stroke="#166534" stroke-width="1.2"/><path d="M 27 11 Q 32 10 33 13 Q 34 16 31 15" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="16" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="32" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="24" cy="31" rx="10" ry="14" fill="url(#gd-pete)" stroke="#7c2d12" stroke-width="1.4" filter="url(#gw-pete)"/><polygon points="18,25 22,28 17,29" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="30,25 31,29 26,28" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="24,28 23,31 25,31" fill="#fef08a"/><path d="M 17 33 L 19 35 L 21 34 L 23 36 L 25 34 L 27 35 L 29 33 Q 24 39 17 33 Z" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><circle cx="11" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/><circle cx="37" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/></svg>';
+      return '<svg class="chibi-svg chibi-pete" viewBox="0 0 48 52"><defs><radialGradient id="gd-pete" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#fdba74"/><stop offset="60%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/></radialGradient></defs><path d="M 24 16 Q 25 8 28 7 Q 31 6 30 10 Q 29 14 26 16" fill="#15803d" stroke="#166534" stroke-width="1.2"/><path d="M 27 11 Q 32 10 33 13 Q 34 16 31 15" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="16" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="32" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="24" cy="31" rx="10" ry="14" fill="url(#gd-pete)" stroke="#7c2d12" stroke-width="1.4"/><polygon points="18,25 22,28 17,29" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="30,25 31,29 26,28" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="24,28 23,31 25,31" fill="#fef08a"/><path d="M 17 33 L 19 35 L 21 34 L 23 36 L 25 34 L 27 35 L 29 33 Q 24 39 17 33 Z" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><circle cx="11" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/><circle cx="37" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/></svg>';
     }
     if (name === 'Battie') {
-      return '<svg class="chibi-svg chibi-battie" viewBox="0 0 48 52"><defs><filter id="gw-battie" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#a855f7" flood-opacity="0.85"/></filter></defs><path class="bat-wing l" d="M 16 28 C 10 20 4 23 3 28 C 4 33 8 32 10 37 C 12 34 14 36 17 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><path class="bat-wing r" d="M 32 28 C 38 20 44 23 45 28 C 44 33 40 32 38 37 C 36 34 34 36 31 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><ellipse cx="24" cy="31" rx="10" ry="11" fill="#3b0764" stroke="#c084fc" stroke-width="1.6" filter="url(#gw-battie)"/><polygon points="17,23 13,11 20,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="16,21 14,14 18,18" fill="#f43f5e"/><polygon points="31,23 35,11 28,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="32,21 34,14 30,18" fill="#f43f5e"/><ellipse cx="20" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="19.5" cy="27.5" r="0.9" fill="#ffffff"/><ellipse cx="28" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="27.5" cy="27.5" r="0.9" fill="#ffffff"/><path d="M 21 33 Q 24 36 27 33" fill="none" stroke="#f3e8ff" stroke-width="1.2"/><polygon points="21,33 22,36 23,33" fill="#ffffff"/><polygon points="25,33 26,36 27,33" fill="#ffffff"/><path d="M 21 42 L 21 44 M 27 42 L 27 44" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      return '<svg class="chibi-svg chibi-battie" viewBox="0 0 48 52"><path class="bat-wing l" d="M 16 28 C 10 20 4 23 3 28 C 4 33 8 32 10 37 C 12 34 14 36 17 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><path class="bat-wing r" d="M 32 28 C 38 20 44 23 45 28 C 44 33 40 32 38 37 C 36 34 34 36 31 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><ellipse cx="24" cy="31" rx="10" ry="11" fill="#3b0764" stroke="#c084fc" stroke-width="1.6"/><polygon points="17,23 13,11 20,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="16,21 14,14 18,18" fill="#f43f5e"/><polygon points="31,23 35,11 28,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="32,21 34,14 30,18" fill="#f43f5e"/><ellipse cx="20" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="19.5" cy="27.5" r="0.9" fill="#ffffff"/><ellipse cx="28" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="27.5" cy="27.5" r="0.9" fill="#ffffff"/><path d="M 21 33 Q 24 36 27 33" fill="none" stroke="#f3e8ff" stroke-width="1.2"/><polygon points="21,33 22,36 23,33" fill="#ffffff"/><polygon points="25,33 26,36 27,33" fill="#ffffff"/><path d="M 21 42 L 21 44 M 27 42 L 27 44" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/></svg>';
     }
     if (name === 'Luna') {
-      return '<svg class="chibi-svg chibi-luna" viewBox="0 0 48 52"><defs><filter id="gw-luna" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#fbbf24" flood-opacity="0.8"/></filter></defs><path class="cat-tail" d="M 32 38 Q 42 36 41 27 Q 40 24 37 25" fill="none" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="24" cy="33" rx="10" ry="11" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.6"/><polygon points="15,22 13,10 21,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="15,20 14,13 19,17" fill="#ec4899"/><polygon points="33,22 35,10 27,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="33,20 34,13 29,17" fill="#ec4899"/><polygon points="24,9 20,18 28,18" fill="#4338ca" stroke="#fbbf24" stroke-width="1"/><ellipse cx="24" cy="18" rx="6" ry="1.8" fill="#312e81" stroke="#fbbf24" stroke-width="0.8"/><path d="M 23 16 Q 24 14 25 16" fill="none" stroke="#fde047" stroke-width="1"/><ellipse cx="19" cy="27" rx="3" ry="3.5" fill="#fde047" filter="url(#gw-luna)"/><ellipse cx="19" cy="27" rx="1" ry="3" fill="#0f172a"/><ellipse cx="29" cy="27" rx="3" ry="3.5" fill="#fde047" filter="url(#gw-luna)"/><ellipse cx="29" cy="27" rx="1" ry="3" fill="#0f172a"/><polygon points="24,31 23,32.5 25,32.5" fill="#f472b6"/><path d="M 15 31 L 8 30 M 15 33 L 9 34 M 33 31 L 40 30 M 33 33 L 39 34" stroke="#818cf8" stroke-width="1" stroke-linecap="round"/><circle cx="20" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/><circle cx="28" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/></svg>';
+      return '<svg class="chibi-svg chibi-luna" viewBox="0 0 48 52"><path class="cat-tail" d="M 32 38 Q 42 36 41 27 Q 40 24 37 25" fill="none" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="24" cy="33" rx="10" ry="11" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.6"/><polygon points="15,22 13,10 21,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="15,20 14,13 19,17" fill="#ec4899"/><polygon points="33,22 35,10 27,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="33,20 34,13 29,17" fill="#ec4899"/><polygon points="24,9 20,18 28,18" fill="#4338ca" stroke="#fbbf24" stroke-width="1"/><ellipse cx="24" cy="18" rx="6" ry="1.8" fill="#312e81" stroke="#fbbf24" stroke-width="0.8"/><path d="M 23 16 Q 24 14 25 16" fill="none" stroke="#fde047" stroke-width="1"/><ellipse cx="19" cy="27" rx="3" ry="3.5" fill="#fde047"/><ellipse cx="19" cy="27" rx="1" ry="3" fill="#0f172a"/><ellipse cx="29" cy="27" rx="3" ry="3.5" fill="#fde047"/><ellipse cx="29" cy="27" rx="1" ry="3" fill="#0f172a"/><polygon points="24,31 23,32.5 25,32.5" fill="#f472b6"/><path d="M 15 31 L 8 30 M 15 33 L 9 34 M 33 31 L 40 30 M 33 33 L 39 34" stroke="#818cf8" stroke-width="1" stroke-linecap="round"/><circle cx="20" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/><circle cx="28" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/></svg>';
     }
     if (name === 'Archie') {
-      return '<svg class="chibi-svg chibi-archie" viewBox="0 0 48 52"><defs><filter id="gw-archie" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#38bdf8" flood-opacity="0.8"/></filter></defs><path d="M 17 32 L 14 45 L 34 45 L 31 32 Z" fill="#312e81" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 32 L 24 45" stroke="#fbbf24" stroke-width="1.2"/><g class="alchem-flask"><path d="M 33 38 L 35 34 L 37 34 L 39 38 C 41 41 38 45 35 45 C 32 45 31 41 33 38 Z" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1" filter="url(#gw-archie)"/><path d="M 32.5 40 C 33 44 38 44 38.5 40 Z" fill="#22c55e"/><circle cx="35" cy="41" r="0.8" fill="#ffffff"/><circle cx="36.5" cy="39" r="0.6" fill="#ffffff"/></g><circle cx="24" cy="27" r="7.5" fill="#fed7aa"/><path d="M 18 29 C 18 36 24 39 24 39 C 24 39 30 36 30 29 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/><ellipse cx="21" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="21.5" cy="25.5" r="0.7" fill="#38bdf8"/><ellipse cx="27" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="26.5" cy="25.5" r="0.7" fill="#38bdf8"/><circle cx="24" cy="28.5" r="1" fill="#f97316"/><path d="M 12 23 Q 24 19 36 23 Q 24 21 12 23 Z" fill="#1e1b4b"/><ellipse cx="24" cy="22" rx="14" ry="3.5" fill="#4338ca" stroke="#818cf8" stroke-width="1.2"/><path d="M 15 21 Q 20 8 30 6 Q 26 12 32 20 Z" fill="#3730a3" stroke="#818cf8" stroke-width="1.2"/><path d="M 16 20 Q 24 18 31 20" stroke="#f59e0b" stroke-width="2.5" fill="none"/><polygon points="24,17 25,19 27,19 25.5,20.5 26,22.5 24,21 22,22.5 22.5,20.5 21,19 23,19" fill="#fef08a"/></svg>';
+      return '<svg class="chibi-svg chibi-archie" viewBox="0 0 48 52"><path d="M 17 32 L 14 45 L 34 45 L 31 32 Z" fill="#312e81" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 32 L 24 45" stroke="#fbbf24" stroke-width="1.2"/><g class="alchem-flask"><path d="M 33 38 L 35 34 L 37 34 L 39 38 C 41 41 38 45 35 45 C 32 45 31 41 33 38 Z" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/><path d="M 32.5 40 C 33 44 38 44 38.5 40 Z" fill="#22c55e"/><circle cx="35" cy="41" r="0.8" fill="#ffffff"/><circle cx="36.5" cy="39" r="0.6" fill="#ffffff"/></g><circle cx="24" cy="27" r="7.5" fill="#fed7aa"/><path d="M 18 29 C 18 36 24 39 24 39 C 24 39 30 36 30 29 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/><ellipse cx="21" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="21.5" cy="25.5" r="0.7" fill="#38bdf8"/><ellipse cx="27" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="26.5" cy="25.5" r="0.7" fill="#38bdf8"/><circle cx="24" cy="28.5" r="1" fill="#f97316"/><path d="M 12 23 Q 24 19 36 23 Q 24 21 12 23 Z" fill="#1e1b4b"/><ellipse cx="24" cy="22" rx="14" ry="3.5" fill="#4338ca" stroke="#818cf8" stroke-width="1.2"/><path d="M 15 21 Q 20 8 30 6 Q 26 12 32 20 Z" fill="#3730a3" stroke="#818cf8" stroke-width="1.2"/><path d="M 16 20 Q 24 18 31 20" stroke="#f59e0b" stroke-width="2.5" fill="none"/><polygon points="24,17 25,19 27,19 25.5,20.5 26,22.5 24,21 22,22.5 22.5,20.5 21,19 23,19" fill="#fef08a"/></svg>';
     }
     if (name === 'Gully') {
-      return '<svg class="chibi-svg chibi-gully" viewBox="0 0 48 52"><defs><filter id="gw-gully" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#22c55e" flood-opacity="0.8"/></filter></defs><ellipse cx="24" cy="33" rx="12" ry="11" fill="#22c55e" stroke="#15803d" stroke-width="1.6" filter="url(#gw-gully)"/><ellipse cx="24" cy="35" rx="8" ry="7" fill="#86efac"/><circle cx="17" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="17" cy="21" r="4" fill="#ffffff"/><circle cx="17.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="18" cy="20" r="0.8" fill="#ffffff"/><circle cx="31" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="31" cy="21" r="4" fill="#ffffff"/><circle cx="30.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="30" cy="20" r="0.8" fill="#ffffff"/><ellipse cx="16" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><ellipse cx="32" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><path d="M 18 30 Q 24 35 30 30" fill="none" stroke="#14532d" stroke-width="1.6" stroke-linecap="round"/><path d="M 12 36 Q 9 37 11 39 M 36 36 Q 39 37 37 39" stroke="#15803d" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="17" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/><ellipse cx="31" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/></svg>';
+      return '<svg class="chibi-svg chibi-gully" viewBox="0 0 48 52"><ellipse cx="24" cy="33" rx="12" ry="11" fill="#22c55e" stroke="#15803d" stroke-width="1.6"/><ellipse cx="24" cy="35" rx="8" ry="7" fill="#86efac"/><circle cx="17" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="17" cy="21" r="4" fill="#ffffff"/><circle cx="17.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="18" cy="20" r="0.8" fill="#ffffff"/><circle cx="31" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="31" cy="21" r="4" fill="#ffffff"/><circle cx="30.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="30" cy="20" r="0.8" fill="#ffffff"/><ellipse cx="16" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><ellipse cx="32" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><path d="M 18 30 Q 24 35 30 30" fill="none" stroke="#14532d" stroke-width="1.6" stroke-linecap="round"/><path d="M 12 36 Q 9 37 11 39 M 36 36 Q 39 37 37 39" stroke="#15803d" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="17" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/><ellipse cx="31" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/></svg>';
     }
     if (name === 'Pengunjung Misterius') {
-      return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><defs><filter id="gw-voyager" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#a855f7" flood-opacity="0.85"/></filter></defs><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6" filter="url(#gw-voyager)"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
+      return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
     }
     const icon = m && m.i ? escapeHTML(m.i) : '✨';
-    return '<svg class="chibi-svg chibi-visitor" viewBox="0 0 48 52"><defs><filter id="gw-v" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f59e0b" flood-opacity="0.8"/></filter></defs><path d="M 16 30 L 13 45 L 35 45 L 32 30 Z" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.4"/><circle cx="24" cy="24" r="11" fill="#2e1065" stroke="#f59e0b" stroke-width="1.6" filter="url(#gw-v)"/><text x="24" y="27" font-size="13" text-anchor="middle" dominant-baseline="central">' + icon + '</text></svg>';
+    return '<svg class="chibi-svg chibi-visitor" viewBox="0 0 48 52"><path d="M 16 30 L 13 45 L 35 45 L 32 30 Z" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.4"/><circle cx="24" cy="24" r="11" fill="#2e1065" stroke="#f59e0b" stroke-width="1.6"/><text x="24" y="27" font-size="13" text-anchor="middle" dominant-baseline="central">' + icon + '</text></svg>';
   }
 
   function sayMascotGreeting(mascotName, customText) {
@@ -2182,6 +2388,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderMascots() {
     if (!lodLayer) return;
+
+    function attachMascotHoverEvents() {
+      lodLayer.querySelectorAll('.mc').forEach((el) => {
+        const onHover = (e) => {
+          if (el._isScared) return;
+          const name = el.dataset.m;
+          if (name) {
+            sayMascotGreeting(name);
+          }
+        };
+        el.addEventListener('mouseenter', onHover);
+        el.addEventListener('pointerenter', onHover);
+      });
+    }
+
     if (cur < 0) {
       if (!isOverviewMascotsEnabled) {
         lodLayer.innerHTML = '';
@@ -2195,6 +2416,7 @@ document.addEventListener('DOMContentLoaded', () => {
           '</div>';
       }).join('');
       lodLayer.innerHTML = mascotsHtml;
+      attachMascotHoverEvents();
       return;
     }
     const r = R[cur];
@@ -2212,6 +2434,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
 
     lodLayer.innerHTML = pinsHtml + mascotsHtml;
+    attachMascotHoverEvents();
   }
 
   function roamMascots() {
@@ -2219,7 +2442,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const visibleMascots = cur >= 0 ? M.filter((m) => m.g === cur) : M;
     visibleMascots.forEach((m) => {
       if (m._isScared) return;
-      const stepDist = 0.012 + Math.random() * 0.022;
+
+      // Ensure mascot's current position is strictly on safe dry land; if not, immediately pull to safe anchor
+      if (!isInsideRegion(m.x, m.y, m.g)) {
+        const anchor = safeRegionAnchors[m.g] || [0.5, 0.5];
+        m.x = anchor[0];
+        m.y = anchor[1];
+        const el = document.querySelector('.mc[data-m="' + m.n + '"]');
+        if (el) {
+          el.style.left = (m.x * 100) + '%';
+          el.style.top = (m.y * 100) + '%';
+        }
+      }
+
+      // Gentle, controlled roam step so mascots never leap across borders or onto coastline
+      const stepDist = 0.006 + Math.random() * 0.010;
       const angle = Math.random() * Math.PI * 2;
       const nx = m.x + Math.cos(angle) * stepDist;
       const ny = m.y + Math.sin(angle) * stepDist;
@@ -2241,20 +2478,23 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       } else {
-        const center = R[m.g].s;
-        const dx = center[0] - m.x;
-        const dy = center[1] - m.y;
+        const anchor = safeRegionAnchors[m.g] || [0.5, 0.5];
+        const dx = anchor[0] - m.x;
+        const dy = anchor[1] - m.y;
         const dist = Math.hypot(dx, dy) || 1;
-        const nudgeX = m.x + (dx / dist) * 0.018;
-        const nudgeY = m.y + (dy / dist) * 0.018;
+        const nudgeX = m.x + (dx / dist) * 0.010;
+        const nudgeY = m.y + (dy / dist) * 0.010;
         if (isInsideRegion(nudgeX, nudgeY, m.g)) {
           m.x = nudgeX;
           m.y = nudgeY;
-          const el = document.querySelector('.mc[data-m="' + m.n + '"]');
-          if (el) {
-            el.style.left = (m.x * 100) + '%';
-            el.style.top = (m.y * 100) + '%';
-          }
+        } else {
+          m.x = anchor[0];
+          m.y = anchor[1];
+        }
+        const el = document.querySelector('.mc[data-m="' + m.n + '"]');
+        if (el) {
+          el.style.left = (m.x * 100) + '%';
+          el.style.top = (m.y * 100) + '%';
         }
       }
     });
@@ -2361,6 +2601,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     lodWorld.addEventListener('mousemove', (e) => {
+      const hoveredMc = e.target.closest('.mc');
+      if (hoveredMc && hoveredMc.dataset.m && !hoveredMc._isScared) {
+        if (!hoveredMc._lastHoverTime || Date.now() - hoveredMc._lastHoverTime > 2500) {
+          hoveredMc._lastHoverTime = Date.now();
+          sayMascotGreeting(hoveredMc.dataset.m);
+        }
+      }
+
       if (cur < 0) {
         const r = regAt(e);
         if (r !== hv) {
@@ -2371,10 +2619,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const skullyEl = document.querySelector('.mc[data-m="Skully"]');
-      if (skullyEl && !skullyEl._isScared && (!skullyEl._lastScared || Date.now() - skullyEl._lastScared > 4000)) {
+      if (skullyEl && !skullyEl._isScared && (!skullyEl._lastScared || Date.now() - skullyEl._lastScared > 7500)) {
         const rect = skullyEl.getBoundingClientRect();
         const dist = Math.hypot(e.clientX - (rect.left + rect.width / 2), e.clientY - (rect.top + rect.height / 2));
-        if (dist < 65) {
+        if (dist < 50) {
           skullyEl._isScared = true;
           skullyEl._lastScared = Date.now();
           skullyEl.classList.add('scared');
@@ -2384,15 +2632,15 @@ document.addEventListener('DOMContentLoaded', () => {
             "Waa kaget! Jangan sergap mendadak dong, kopiku tumpah nih! ☕💀💦",
             "Aduh copot tulangku! Kirain siapa! 😱💀",
             "Ampun Tuan! Aku tengkorak santuy penikmat damai! 💀☕",
-            "Waduh waduh! Tulang rusukku bergetar hebat! 🦴⚡"
+            "Waduh waduh! Tulang rusukku bergetar! 🦴⚡"
           ];
           sayMascotGreeting("Skully", scaredQuotes[Math.floor(Math.random() * scaredQuotes.length)]);
 
           const mSkully = M.find((x) => x.n === "Skully");
           if (mSkully) {
             const angle = Math.atan2((rect.top + rect.height / 2) - e.clientY, (rect.left + rect.width / 2) - e.clientX);
-            const fleeX = mSkully.x + Math.cos(angle) * 0.045;
-            const fleeY = mSkully.y + Math.sin(angle) * 0.045;
+            const fleeX = mSkully.x + Math.cos(angle) * 0.018;
+            const fleeY = mSkully.y + Math.sin(angle) * 0.018;
             if (isInsideRegion(fleeX, fleeY, mSkully.g)) {
               mSkully.x = fleeX;
               mSkully.y = fleeY;
@@ -2404,8 +2652,11 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             skullyEl.classList.remove('scared');
             skullyEl._isScared = false;
+          }, 900);
+
+          setTimeout(() => {
             sayMascotGreeting("Skully", "Huft... santuy lagi... lanjut ngopi ☕💀");
-          }, 2600);
+          }, 2400);
         }
       }
     });
@@ -3473,8 +3724,9 @@ document.addEventListener('DOMContentLoaded', () => {
       this.busy = false;
 
       // 5. Speak after exiting
+      const houseName = (exitHouse && exitHouse.name) ? exitHouse.name : 'Pondok Alkimia';
       const quote = this.el.id === 'd' 
-        ? 'Ramuan baru dari ' + chosenHouse.name + ' sudah siap! ✨' 
+        ? 'Ramuan baru dari ' + houseName + ' sudah siap! ✨' 
         : 'Pumpling kenyang! Ayo lanjut bertualang! 🎃';
       await this.say(quote, 2200);
     }
@@ -3641,6 +3893,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Settings elements declared at top in Elements Selection
 
   let isDragonEnabled = localStorage.getItem('kaka_pumpkin_active') !== 'false';
+  window.isDragonEnabled = isDragonEnabled;
   if (dr && isDragonEnabled) dr.style.display = 'block';
   let isMascotsEnabled = localStorage.getItem('kaka_mascots_active') !== 'false';
   let isMidnightEnabled = localStorage.getItem('kaka_midnight_mode') === 'true';
@@ -3690,6 +3943,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyDragonState() {
+    window.isDragonEnabled = isDragonEnabled;
     updateDragonSwitchUI();
     if (dr) {
       if (!isDragonEnabled) {
@@ -3737,9 +3991,10 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       playSound('toggle');
       isDragonEnabled = !isDragonEnabled;
-      localStorage.setItem('kaka_pumpkin_active', isDragonEnabled);
+      window.isDragonEnabled = isDragonEnabled;
+      localStorage.setItem('kaka_pumpkin_active', isDragonEnabled ? 'true' : 'false');
       applyDragonState();
-      showToast(isDragonEnabled ? '⚡ Kursor Arwah Reaper diaktifkan' : 'Kursor dinonaktifkan');
+      showToast(isDragonEnabled ? '⚡ Mode Arwah Reaper aktif: Makhluk kubur panik!' : '🌿 Mode Biasa aktif: Makhluk kubur tenang');
     });
   }
 
@@ -4338,25 +4593,1910 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => spark.remove(), 1100);
     }
 
-    // Automatically smooth scroll back up to the sanctum!
-    const homeSection = document.getElementById('home');
-    if (homeSection) {
-      homeSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Cinematic Ascension back to surface - starts immediately, glides up smoothly without any delay
+    resurrectToSurface(2800);
   }
 
-    if (btnResurrectTrigger) {
+  let isGraveyardUnlocked = false;
+  let isResurrecting = false;
+
+  function resurrectToSurface(duration = 2800) {
+    if (isResurrecting) return;
+    isResurrecting = true;
+    isGraveyardUnlocked = true; // Subterranean boundary remains open during ascension!
+
+    // Immediately disable native smooth scroll on HTML and Body so rAF window.scrollTo moves instantly without hesitation or stutter
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
+    document.documentElement.classList.add('resurrect-ascending');
+    document.body.classList.add('resurrect-ascending');
+
+    try { playSound('arise'); } catch (_) {}
+    try { playSound('victory'); } catch (_) {}
+    showToast('Jiwa Necromancer Bangkit Melayang Kembali ke Permukaan!', 'RESURRECTION ASCENDING...', '✨');
+
+    const startY = window.scrollY;
+    if (startY <= 10) {
+      document.documentElement.classList.remove('resurrect-ascending');
+      document.body.classList.remove('resurrect-ascending');
+      document.documentElement.style.scrollBehavior = '';
+      document.body.style.scrollBehavior = '';
+      isResurrecting = false;
+      isGraveyardUnlocked = false;
+      return;
+    }
+
+    const startTime = performance.now();
+
+    // Gentle ease-out sine: starts traveling IMMEDIATELY on frame 0, steadily decelerates smoothly without any dead pause!
+    function easeOutSine(t) {
+      return Math.sin((t * Math.PI) / 2);
+    }
+
+    function step(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const ease = easeOutSine(progress);
+      const currentY = Math.round(startY * (1 - ease));
+
+      window.scrollTo(0, currentY);
+      if (typeof window.updateCatacombDepthMeter === 'function') {
+        window.updateCatacombDepthMeter(currentY);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        // Firmly ensure we land at exact top (0, 0) matching user screenshot
+        window.scrollTo(0, 0);
+        document.documentElement.classList.remove('resurrect-ascending');
+        document.body.classList.remove('resurrect-ascending');
+        document.documentElement.style.scrollBehavior = '';
+        document.body.style.scrollBehavior = '';
+        isResurrecting = false;
+        isGraveyardUnlocked = false; // Re-lock strictly AFTER safely reaching surface top!
+        if (typeof window.updateCatacombDepthMeter === 'function') {
+          window.updateCatacombDepthMeter(0);
+        }
+        if (typeof window.onReturnFromUnderground === 'function') {
+          window.onReturnFromUnderground();
+        }
+        try { playSound('system'); } catch (_) {}
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  if (btnResurrectTrigger) {
     btnResurrectTrigger.addEventListener('click', triggerResurrection);
   }
 
   if (backToTopBtn) {
     backToTopBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      playSound('blip');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      resurrectToSurface(2800);
     });
   }
+
+  function initSkyAndCatacombs() {
+    function mk(w, h, f) {
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      f(c.getContext('2d'));
+      return c.toDataURL();
+    }
+
+    function rs(R, P) {
+      return function(x) {
+        R.forEach((r, j) => {
+          for (let i = 0; i < r.length; i++) {
+            if (P[r[i]]) {
+              x.fillStyle = P[r[i]];
+              x.fillRect(i, j, 1, 1);
+            }
+          }
+        });
+      };
+    }
+
+    function gm(a, b) {
+      return mk(7, 6, rs(['..bbb..', '.bBBBb.', 'bBBbbbb', '.bbbbb.', '..bbb..', '...b...'], { b: a, B: b }));
+    }
+
+    const S = {
+      skull: mk(8, 8, rs(['..wwww..', '.wwwwww.', 'wwwwwwww', 'wkkwwkkw', 'wkkwwkkw', 'wwwkkwww', '.wwwwww.', '..wkwk..'], { w: '#e8dcc0', k: '#1a1020' })),
+      bone: mk(12, 4, rs(['ww......ww', 'wwwwwwwwwwww', 'wwwwwwwwwwww', 'ww......ww'].map(r => r.length < 12 ? 'ww........ww' : r), { w: '#e8dcc0' })),
+      pump: mk(10, 8, rs(['....gg....', '..oooooo..', '.oooooooo.', 'ooXooooXoo', 'oooooooooo', 'ooXXXXXXoo', '.oooooooo.', '..oooooo..'], { o: '#ff8a1f', g: '#5cc26a', X: '#2a0f3a' })),
+      bat: mk(9, 5, rs(['b.......b', 'bb.b.b.bb', 'bbbbbbbbb', '.bb.b.bb.', '..b...b..'], { b: '#b78cff' })),
+      tomb: mk(14, 18, function(x) {
+        for (let j = 0; j < 18; j++) {
+          for (let i = 0; i < 14; i++) {
+            const ok = j >= 3 || (j >= 2 && i >= 1 && i < 13) || (j >= 1 && i >= 2 && i < 12) || (i >= 3 && i < 11);
+            if (!ok) continue;
+            x.fillStyle = (i === 0 || i === 13 || j === 0 || j === 17) ? '#4a5568' : (i + j) % 7 === 0 ? '#8a97ad' : '#7d8aa0';
+            x.fillRect(i, j, 1, 1);
+          }
+        }
+        x.fillStyle = '#2f3744';
+        x.fillRect(6, 4, 2, 8);
+        x.fillRect(4, 6, 6, 2);
+        x.fillStyle = '#57a05e';
+        x.fillRect(1, 16, 3, 1);
+        x.fillRect(9, 16, 4, 1);
+      }),
+      coffin: mk(12, 13, function(x) {
+        const w = [4, 6, 8, 10, 12, 12, 12, 10, 8, 8, 6, 6, 4];
+        w.forEach((n, j) => {
+          const x0 = (12 - n) / 2;
+          x.fillStyle = '#2a160a';
+          x.fillRect(x0, j, n, 1);
+          if (j > 0 && j < 12) {
+            x.fillStyle = '#6b3d1c';
+            x.fillRect(x0 + 1, j, n - 2, 1);
+          }
+        });
+        x.fillStyle = '#f6c445';
+        x.fillRect(5, 2, 2, 7);
+        x.fillRect(3, 4, 6, 2);
+      }),
+      worm: mk(16, 6, function(x) {
+        for (let i = 0; i < 16; i++) {
+          x.fillStyle = i > 13 ? '#c0607a' : '#e58aa0';
+          x.fillRect(i, 2 + Math.round(Math.sin(i * 0.7) * 2), 1, 2);
+        }
+      }),
+      house: mk(26, 28, function(x) {
+        let j;
+        for (j = 0; j < 12; j++) {
+          const w = 2 + j * 2;
+          x.fillStyle = j % 4 === 3 ? '#2a1240' : '#3a1a5c';
+          x.fillRect(13 - w / 2, j, w, 1);
+        }
+        x.fillStyle = '#4b3f5e';
+        x.fillRect(3, 12, 20, 15);
+        x.fillStyle = '#3a3046';
+        for (j = 15; j < 27; j += 3) x.fillRect(3, j, 20, 1);
+        x.fillStyle = '#1a0a2e';
+        x.fillRect(2, 12, 22, 1);
+        x.fillRect(2, 27, 22, 1);
+        x.fillStyle = '#3a3446';
+        x.fillRect(17, 3, 3, 6);
+        x.fillStyle = '#1a0a2e';
+        x.fillRect(16, 2, 5, 1);
+        x.fillStyle = '#ffcf4a';
+        x.fillRect(5, 15, 5, 5);
+        x.fillRect(16, 15, 5, 5);
+        x.fillStyle = '#1a0a2e';
+        x.fillRect(7, 15, 1, 5);
+        x.fillRect(5, 17, 5, 1);
+        x.fillRect(18, 15, 1, 5);
+        x.fillRect(16, 17, 5, 1);
+        x.fillStyle = '#2a160a';
+        x.fillRect(11, 20, 4, 7);
+        x.fillStyle = '#f6c445';
+        x.fillRect(13, 23, 1, 1);
+        x.fillStyle = '#8cff6e';
+        x.fillRect(12, 6, 2, 2);
+      }),
+      tree: mk(24, 56, function(x) {
+        let i;
+        const t = '#3b2a1f';
+        x.fillStyle = t;
+        x.fillRect(10, 8, 4, 26);
+        x.fillStyle = '#5a4030';
+        x.fillRect(10, 8, 1, 26);
+        x.fillStyle = t;
+        for (i = 0; i < 8; i++) {
+          x.fillRect(9 - i, 18 - i, 2, 2);
+          x.fillRect(14 + i, 12 - i, 2, 2);
+        }
+        x.fillRect(2, 8, 1, 3);
+        x.fillRect(5, 7, 1, 3);
+        x.fillRect(21, 2, 1, 3);
+        x.fillRect(18, 2, 1, 3);
+        x.fillStyle = '#4a3426';
+        for (i = 0; i < 22; i++) {
+          x.fillRect(10 - Math.round(i * 0.8), 32 + i, 2, 1);
+          x.fillRect(12 + Math.round(i * 0.8), 32 + i, 2, 1);
+        }
+        x.fillRect(11, 34, 2, 22);
+        for (i = 0; i < 10; i++) {
+          x.fillRect(8 - i * 2, 36 + i, 2, 1);
+          x.fillRect(15 + i * 2, 36 + i, 2, 1);
+        }
+        x.fillStyle = '#ffb347';
+        x.fillRect(10, 20, 1, 2);
+        x.fillRect(12, 20, 1, 2);
+        x.fillRect(10, 25, 4, 1);
+      }),
+      ghost: mk(9, 9, rs(['.wwwwwww.', 'wwwwwwwww', 'wwkwwwkww', 'wwkwwwkww', 'wwwwkwwww', 'wwwwwwwww', 'wwwwwwwww', 'ww.www.ww', 'w..w.w..w'], { w: '#e8dcff', k: '#1a1020' })),
+      fen: mk(16, 12, function(x) {
+        x.fillStyle = '#4a3426';
+        x.fillRect(1, 3, 3, 9);
+        x.fillRect(2, 2, 1, 1);
+        x.fillRect(9, 3, 3, 9);
+        x.fillRect(10, 2, 1, 1);
+        x.fillStyle = '#3a2a20';
+        x.fillRect(0, 5, 16, 1);
+        x.fillRect(0, 9, 16, 1);
+      }),
+      chest: mk(14, 11, function(x) {
+        x.fillStyle = '#1a0d06';
+        x.fillRect(0, 1, 14, 10);
+        x.fillStyle = '#7a4a22';
+        x.fillRect(1, 2, 12, 8);
+        x.fillStyle = '#5a3418';
+        x.fillRect(1, 6, 12, 1);
+        x.fillStyle = '#f6c445';
+        x.fillRect(2, 1, 1, 10);
+        x.fillRect(11, 1, 1, 10);
+        x.fillRect(6, 5, 2, 3);
+        x.fillStyle = '#fff2b0';
+        x.fillRect(3, 2, 3, 1);
+      }),
+      cloud: mk(24, 9, function(x) {
+        x.fillStyle = '#7d5aa6';
+        [[4, 4, 16, 4], [8, 1, 9, 5], [13, 3, 8, 4], [0, 6, 24, 3]].forEach(r => {
+          x.fillRect(r[0], r[1], r[2], r[3]);
+        });
+        x.fillStyle = '#a07fcb';
+        x.fillRect(9, 1, 6, 1);
+        x.fillRect(5, 4, 3, 1);
+      }),
+      pine: mk(16, 28, function(x) {
+        x.fillStyle = '#3a2416';
+        x.fillRect(7, 23, 2, 5);
+        [[0, 3, 6], [5, 5, 7], [11, 6, 8], [17, 7, 8]].forEach(t => {
+          for (let j = 0; j < t[2]; j++) {
+            const h = Math.round(t[1] * (j + 1) / t[2]);
+            x.fillStyle = j % 3 === 0 ? '#2f6a4c' : '#24473a';
+            x.fillRect(8 - h, t[0] + j, h * 2, 1);
+          }
+        });
+      }),
+      bare: mk(20, 26, function(x) {
+        let i;
+        x.fillStyle = '#2a1a10';
+        x.fillRect(9, 10, 3, 16);
+        for (i = 0; i < 6; i++) {
+          x.fillRect(8 - i, 10 - i, 2, 2);
+          x.fillRect(12 + i, 8 - i, 2, 2);
+        }
+        x.fillRect(10, 2, 2, 9);
+        x.fillRect(5, 3, 1, 3);
+        x.fillRect(15, 1, 1, 3);
+        x.fillStyle = '#ff8a1f';
+        [[2, 3], [4, 2], [6, 4], [14, 1], [17, 3], [16, 5], [11, 1], [9, 2], [3, 8], [17, 7]].forEach(p => {
+          x.fillRect(p[0], p[1], 2, 2);
+        });
+        x.fillStyle = '#c8501a';
+        [[1, 5], [18, 1], [7, 6]].forEach(p => {
+          x.fillRect(p[0], p[1], 2, 2);
+        });
+      }),
+      pile: mk(14, 6, function(x) {
+        for (let j = 0; j < 6; j++) {
+          const w = 4 + j * 2;
+          for (let i = 0; i < w; i++) {
+            x.fillStyle = (i + j) % 3 === 0 ? '#fff2b0' : '#f6c445';
+            x.fillRect(7 - w / 2 + i, j, 1, 1);
+          }
+        }
+      }),
+      coin: mk(5, 5, rs(['.yyy.', 'yYYYy', 'yYyYy', 'yYYYy', '.yyy.'], { y: '#f6c445', Y: '#fff2b0' })),
+      candle: mk(5, 12, rs(['..f..', '.fFf.', '.fFf.', '..w..', '..w..', '..w..', '..w..', '..w..', '..w..', '.www.', '.www.', 'wwwww'], { f: '#ff8a1f', F: '#ffe27a', w: '#e8dcc0' })),
+      crow: mk(11, 5, rs(['bb.......bb', '.bbb.b.bbb.', '..bbbbbbb..', '....bbb....', '.....b.....'], { b: '#1a1020' })),
+      hut: mk(16, 14, function(x) {
+        let j;
+        x.fillStyle = '#5cc26a';
+        x.fillRect(7, 0, 2, 2);
+        for (j = 0; j < 4; j++) {
+          x.fillStyle = '#4a2a14';
+          x.fillRect(6 - j * 2, 2 + j, 4 + j * 4, 1);
+        }
+        x.fillStyle = '#d9751a';
+        x.fillRect(1, 6, 14, 8);
+        x.fillStyle = '#b85c10';
+        x.fillRect(5, 6, 1, 8);
+        x.fillRect(10, 6, 1, 8);
+        x.fillStyle = '#ffcf4a';
+        x.fillRect(2, 8, 2, 2);
+        x.fillRect(12, 8, 2, 2);
+        x.fillStyle = '#2a0f3a';
+        x.fillRect(6, 9, 4, 5);
+      }),
+      gemC: gm('#4fd0ff', '#e0fbff'),
+      gemP: gm('#c05cff', '#f3d6ff'),
+      gemR: gm('#ff4d6d', '#ffd0d8')
+    };
+
+    const CH = {
+      pumpkin: ['#ff8a1f', '#3a7a45'],
+      witch: ['#e8c9a0', '#6b2fa0'],
+      skel: ['#e8dcc0', '#2a2238'],
+      zomb: ['#8ccf6e', '#4a5f8c'],
+      gd1: ['#e8dcc0', '#5a6275'],
+      gd2: ['#ff8a1f', '#5a6275']
+    };
+    const SP = {};
+    function cs(k, f) {
+      return mk(12, 18, function(x) {
+        const C = CH[k];
+        const Z = '#1a1020';
+        function r(c, a, b, w, h) {
+          x.fillStyle = c;
+          x.fillRect(a, b, w, h);
+        }
+        if (k === 'cat') {
+          r(Z, 2, 13, 8, 5);
+          r(Z, 3, 8, 6, 5);
+          r(Z, 3, 6, 1, 2);
+          r(Z, 8, 6, 1, 2);
+          r(Z, 10, f % 2 ? 10 : 12, 1, 4);
+          r('#ffd84a', 4, 10, 1, 1);
+          r('#ffd84a', 7, 10, 1, 1);
+          r('#c0392b', 3, 12, 6, 1);
+          r('#f6c445', 5, 13, 2, 1);
+          return;
+        }
+        r(Z, 3, 15, 2, f === 2 ? 2 : 3);
+        r(Z, 7, 15, 2, f === 1 ? 2 : 3);
+        r(C[1], 3, 10, 6, 5);
+        r(C[1], 1, 11, 2, 3);
+        if (f === 3) r(C[1], 9, 6, 2, 5);
+        else r(C[1], 9, 11, 2, 3);
+        if (k === 'zomb' && f !== 3) {
+          r(C[1], 9, 10, 3, 2);
+          r(C[1], 0, 10, 3, 2);
+        }
+        r(C[0], 2, 3, 8, 7);
+        r(Z, 4, 6, 1, 2);
+        r(Z, 7, 6, 1, 2);
+        if (k === 'pumpkin') {
+          r('#5cc26a', 5, 2, 2, 1);
+          r(Z, 4, 8, 4, 1);
+          r('#c0392b', 3, 10, 6, 1);
+          r('#c0392b', 8, 11, 1, 3);
+        }
+        if (k === 'witch') {
+          r('#2a1240', 4, 0, 4, 1);
+          r('#2a1240', 3, 1, 6, 2);
+          r('#2a1240', 1, 3, 10, 1);
+          r('#ff8a1f', 3, 2, 6, 1);
+          r('#7a4a22', 11, 9, 1, 9);
+          r('#e6c229', 10, 16, 2, 2);
+        }
+        if (k === 'skel') {
+          r(Z, 3, 5, 2, 3);
+          r(Z, 7, 5, 2, 3);
+          r(C[0], 3, 11, 6, 1);
+          r(C[0], 3, 13, 6, 1);
+          r('#c0392b', 2, 3, 8, 2);
+        }
+        if (k === 'zomb') {
+          r('#c0392b', 4, 9, 4, 1);
+          r('#e8dcc0', 2, 3, 8, 2);
+          r('#ff4d4d', 7, 6, 1, 2);
+        }
+        if (k.slice(0, 2) === 'gd') {
+          r('#8d97ab', 2, 1, 8, 4);
+          r('#5a6275', 5, 0, 2, 1);
+          r('#7a4a22', 0, 3, 1, 15);
+          r('#e8edf5', 0, 1, 1, 2);
+          if (k === 'gd2') r(Z, 4, 8, 4, 1);
+        }
+      });
+    }
+    function fr(k, f) {
+      const n = k + f;
+      return SP[n] || (SP[n] = cs(k, f));
+    }
+
+    function cg(f) {
+      const n = 'cg' + f;
+      return SP[n] || (SP[n] = mk(16, 20, function(x) {
+        function r(c, a, b, w, h) {
+          x.fillStyle = c;
+          x.fillRect(a, b, w, h);
+        }
+        const C = '#1d1433';
+        const E = '#2e1f4d';
+        r('#7a4a22', 0, 2, 1, 18);
+        r('#3a2416', 0, 3, 3, 1);
+        r('#ff8a1f', 0, 4, 3, 3);
+        r('#ffe27a', 1, 5, 1, 1);
+        for (let j = 9; j < 20; j++) {
+          const w = Math.min(14, 8 + ((j - 9) >> 1) * 2);
+          const x0 = 8 - w / 2;
+          r(C, x0, j, w, 1);
+          r(E, x0, j, 1, 1);
+          r(E, x0 + w - 1, j, 1, 1);
+        }
+        r(C, 6, 0, 4, 1);
+        r(C, 5, 1, 6, 2);
+        r(C, 4, 3, 8, 6);
+        r(E, 4, 3, 1, 6);
+        r('#07040d', 5, 4, 6, 4);
+        r('#ffb347', 6, 5, 1, 1);
+        r('#ffb347', 9, 5, 1, 1);
+        r('#f6c445', 7, 9, 2, 1);
+        r('#6b2fa0', 1, 19, 14, 1);
+        r(C, 1, 10, 2, 2);
+        r('#e8dcc0', 1, 11, 1, 1);
+        if (f == 3) {
+          r(C, 12, 5, 2, 6);
+          r('#e8dcc0', 12, 4, 2, 1);
+        }
+      }));
+    }
+
+    const skyAtmosphere = document.getElementById('skyAtmosphere');
+    const pixelFence = document.getElementById('pixelFence');
+    const pixelGrass = document.getElementById('pixelGrass');
+
+    if (skyAtmosphere && pixelFence && pixelGrass) {
+      pixelFence.style.backgroundImage = 'url(' + S.fen + ')';
+
+      const cldConfigs = [
+        [150, 190, 70, -10, 0],
+        [250, 140, 95, -50, 1],
+        [200, 230, 120, -70, 0],
+        [330, 120, 80, -20, 1],
+        [120, 160, 110, -90, 1],
+        [400, 170, 100, -40, 0]
+      ];
+      cldConfigs.forEach(c => {
+        const img = document.createElement('img');
+        img.src = S.cloud;
+        img.className = 'cld';
+        img.alt = '';
+        img.style.cssText = 'top:' + c[0] + 'px;width:' + c[1] + 'px;animation-duration:' + c[2] + 's;animation-delay:' + c[3] + 's' + (c[4] ? ';animation-direction:reverse' : '');
+        skyAtmosphere.insertBefore(img, pixelFence);
+      });
+
+      const pineConfigs = [[0, 100], [8, 70], [36, 86], [58, 96], [68, 74], [90, 110]];
+      pineConfigs.forEach(p => {
+        const img = document.createElement('img');
+        img.src = S.pine;
+        img.className = 'pn';
+        img.alt = '';
+        img.style.cssText = 'left:' + p[0] + '%;width:clamp(50px,' + (p[1] / 12) + 'vw,' + p[1] + 'px)';
+        skyAtmosphere.insertBefore(img, pixelFence);
+      });
+
+      const bareConfigs = [[27, 140], [64, 130]];
+      bareConfigs.forEach(p => {
+        const img = document.createElement('img');
+        img.src = S.bare;
+        img.className = 'pn';
+        img.alt = '';
+        img.style.cssText = 'left:' + p[0] + '%;width:clamp(70px,' + (p[1] / 12) + 'vw,' + p[1] + 'px)';
+        skyAtmosphere.insertBefore(img, pixelFence);
+        for (let k = 0; k < 6; k++) {
+          const lf = document.createElement('i');
+          lf.className = 'lf';
+          const b = 30 + p[1] * 1.3 * (0.55 + Math.random() * 0.35);
+          lf.style.cssText = 'left:calc(' + p[0] + '% + ' + (Math.random() * p[1] * 0.8) + 'px);bottom:' + b + 'px;--dx:' + (Math.random() * 110 - 40) + 'px;--dy:' + (b - 30) + 'px;animation-duration:' + (5 + Math.random() * 4) + 's;animation-delay:-' + (Math.random() * 8) + 's;background:' + ['#ff8a1f', '#ffb347', '#c8501a', '#e6c229'][k % 4];
+          skyAtmosphere.insertBefore(lf, pixelFence);
+        }
+      });
+
+      const ghostConfigs = [
+        [8, 200, 38], [86, 250, 42], [18, 430, 46], [52, 470, 40], [74, 360, 50],
+        [40, 330, 42], [60, 520, 48], [92, 400, 40], [4, 480, 44]
+      ];
+      ghostConfigs.forEach((g, i) => {
+        const img = document.createElement('img');
+        img.src = S.ghost;
+        img.className = 'ghost' + (i < 2 ? ' gs' : '');
+        img.alt = '';
+        img.style.cssText = 'left:' + g[0] + '%;top:' + g[1] + 'px;width:' + g[2] + 'px;opacity:0.7;animation-duration:' + (3.5 + i * 0.5) + 's;animation-delay:-' + (i * 0.8) + 's' + (i % 2 ? ';animation-direction:alternate-reverse' : '');
+        skyAtmosphere.insertBefore(img, pixelGrass);
+      });
+
+      const batConfigs = [
+        [60, 13, 15], [100, 9, 13], [170, 6, 17], [230, 3, 12], [300, 11, 14], [50, 2, 19]
+      ];
+      batConfigs.forEach(b => {
+        const img = document.createElement('img');
+        img.src = S.bat;
+        img.className = 'bat bn';
+        img.alt = '';
+        img.style.cssText = 'top:' + b[0] + 'px;animation-delay:-' + b[1] + 's;animation-duration:' + b[2] + 's';
+        skyAtmosphere.insertBefore(img, pixelGrass);
+      });
+
+      const crowConfigs = [
+        [140, 40, 38, -12, 0], [200, 34, 52, -30, 1], [260, 44, 44, -5, 0], [330, 30, 60, -40, 1]
+      ];
+      crowConfigs.forEach(c => {
+        const img = document.createElement('img');
+        img.src = S.crow;
+        img.className = 'cw';
+        img.alt = '';
+        img.style.cssText = 'top:' + c[0] + 'px;width:' + c[1] + 'px;animation-duration:' + c[2] + 's,0.5s;animation-delay:' + c[3] + 's,0s' + (c[4] ? ';animation-direction:reverse,normal' : '');
+        skyAtmosphere.insertBefore(img, pixelGrass);
+      });
+
+      const houseImg = document.createElement('img');
+      houseImg.src = S.house;
+      houseImg.className = 'house';
+      houseImg.alt = '';
+      skyAtmosphere.insertBefore(houseImg, pixelGrass);
+
+      const hutImg = document.createElement('img');
+      hutImg.src = S.hut;
+      hutImg.className = 'hut';
+      hutImg.alt = '';
+      skyAtmosphere.insertBefore(hutImg, pixelGrass);
+
+      [[2, 4], [13, 3], [22, 3]].forEach((p, i) => {
+        const e = document.createElement('img');
+        e.src = S.tomb;
+        e.alt = '';
+        e.style.cssText = 'position:absolute;bottom:30px;left:' + p[0] + '%;width:' + (14 * (p[1] + (i % 2))) + 'px;z-index:3;';
+        skyAtmosphere.insertBefore(e, pixelGrass);
+      });
+
+      [[42, 46], [68, 46]].forEach(p => {
+        const e = document.createElement('img');
+        e.src = S.pump;
+        e.alt = '';
+        e.style.cssText = 'position:absolute;bottom:30px;left:' + p[0] + '%;width:' + p[1] + 'px;z-index:3;';
+        skyAtmosphere.insertBefore(e, pixelGrass);
+      });
+
+      const cast = [];
+      let vis = 0;
+      let seen = 0;
+      let last = 0;
+      let W = 0;
+      let sc = 5;
+      let X0 = 0;
+      let X1 = 0;
+      const HI = ['Halo!', 'Hai hai~', 'Boo! eh, halo', 'Apa kabar?', 'Hehe, hai!'];
+      const TL = {
+        pagi: [
+          'Selamat pagi! Udara fajar Sanctum sejuk banget! 🌅',
+          'Matahari pagi terbit, ayo mulai ngoding dengan semangat!',
+          'Kaka biasanya ngopi dulu sebelum kompilasi pagi! ☕',
+          'Pagi yang cerah di atas kuburan para master koding~',
+          'Embun pagi membasahi lumut di batu nisan bertuah 🌿',
+          'Selamat pagi pengembara! Semoga harimu bebas dari bug!'
+        ],
+        siang: [
+          'Siang yang benderang! Kacamata pixelku kinclong ☀️',
+          'Panas-panas begini enaknya ngoding di bawah naungan pohon pinus.',
+          'Siang hari Sanctum ramai oleh lalu lalang maskot sahabat!',
+          'Server tetap dingin walau matahari lagi terik-teriknya.',
+          'Waktu istirahat siang, jangan lupa regangkan pinggangmu ya!',
+          'Siang hari di pemukiman arwah tetap adem dan damai ✨'
+        ],
+        sore: [
+          'Senja temaram... langit jingga Sanctum sungguh magis 🌇',
+          'Matahari terbenam, sebentar lagi para arwah mulai bangun!',
+          'Waktu sore paling asyik membaca riwayat proyek di Grimoire.',
+          'Lentera labu mulai menyala satu per satu di sepanjang pagar.',
+          'Angin sore berhembus membawa aroma daun gugur musim gugur 🍂',
+          'Senja yang tenang untuk merenungkan arsitektur kode terbaik.'
+        ],
+        malam: [
+          'Malam tiba! Waktu favorit Code Necromancer beraksi 🌙',
+          'Bulan purnama bersinar terang! Kelelawar mulai berpatroli 🦇',
+          'Selamat malam pengembara, nikmati suasana mistis Sanctum!',
+          'Malam sunyi ditemani suara detak keyboard mekanik...',
+          'Lilin-lilin ungu di altar mulai menyala dengan sendirinya 🕯️',
+          'Kegelapan malam adalah kanvas terbaik untuk cahaya pixel!'
+        ],
+        tm: [
+          'Sssst... sudah tengah malam! Jam keramat para programmer 🌌',
+          'Jam 00:00 adalah waktu mustajab membangkitkan kode legendaris!',
+          'Hantu-hantu lagi asyik nobar tutorial algoritma di awan.',
+          'Begadang tanpa error adalah anugerah terindah malam ini! ✨',
+          'Tengah malam begini jangan lupa minum air putih kawan 💧',
+          'Para arwah kode berbisik: "Kompilasi sukses tanpa warning!"'
+        ]
+      };
+
+      const GENERAL_LINES = [
+        'Selamat datang di Sanctum! Rumah bagi arwah kode 🎃',
+        'Tekan tombol Enter Graveyard kalau mau uji nyali ke bawah tanah!',
+        'Portofolio Kaka Andrea Yahya penuh rahasia tersembunyi loh~',
+        'Kucing hitam kami bisa mencium aroma bug dari jarak 100 meter 🐱',
+        'Peti emas di dasar Katakombe dijaga dua prajurit bertombak!',
+        'Semua maskot di sini ramah dan sudah divaksin anti-kutukan ✨',
+        'Di bawah tanah ada 13 pencapaian yang bisa kamu gali!',
+        'Pondok nenek sihir di pojok kiri selalu sedia ramuan konsentrasi 🧪',
+        'Jangan ragu menjelajah, setiap sudut punya cerita mistis tersendiri!',
+        'Buku Grimoire di lantai pertama menyimpan rekam jejak Kaka!',
+        'Lava di dasar jurang -66M adalah sumber energi Sanctum ini 🔥',
+        'Setiap commit adalah mantra baru yang menghidupkan dunia digital.'
+      ];
+
+      const CHAR_LINES = {
+        pumpkin: [
+          'Halo pengembara! Senang melihatmu mampir di Sanctum! 🎃',
+          'Tahukah kamu? Kaka suka ngoding Laravel & Flutter larut malam! ☕',
+          'Wahai musafir, selamat datang di pemukiman arwah ramah! ✨',
+          'Gali ke bawah tanah yuk, di dasar ada 13 pencapaian rahasia!',
+          'Labu ini bersinar berkat sintaks Tailwind dan CSS murni! 💡',
+          'Pondok nenek sihir di sebelah baunya harum ramuan herbal~',
+          'Jangan lupa sapa kucing hitam di pojok ya, dia pemalu tapi manis 🐱',
+          'Hari yang sempurna untuk membangkitkan proyek web baru!',
+          'Pssst... kalau mau masuk katakombe, pencet tombol Enter Graveyard ya! ⛏️',
+          'Si tengkorak lagi latihan tari balet di atas kuburan, haha! 💀',
+          'Aku labu paling ceria di seluruh jagat digital! 🎃',
+          'Aw geli! Jangan cubit tangkaiku dong hehe~',
+          'Kaka itu murid berprestasi di SMKN 13 Bandung lho! 🎓',
+          'Senyum ramah labuku bisa mengusir bad mood seharian!',
+          'Aroma pai labu hangat baru matang dari perapian nenek sihir!',
+          'Mau kupandu keliling pemukiman arwah yang asri ini?'
+        ],
+        witch: [
+          'Mantra JavaScript kunoku baru saja selesai dikompilasi! 🔮',
+          'Sedang meracik ramuan anti-bug dan konsentrasi 100%! 🧪',
+          'Sapu terbangku lagi servis rutin di bengkel SMKN 13 Bandung~ 🧹',
+          'Salam sihir! Mau kubacakan ramalan masa depan kodingmu? ✨',
+          'Kuali sihirku mendidih tiap kali ada commit baru di GitHub! 🐱‍💻',
+          'Koleksi relik di lantai -24M punya energi magis luar biasa!',
+          'Jangan sentuh ramuan ungu di meja altar ya, bisa bikin kursor melayang!',
+          'Bintang-bintang di langit Sanctum selalu memandu jiwa pengembara.',
+          'Necromancer Kaka selalu menulis kode yang bersih dan terstruktur!',
+          'Awas kuali ramuanku meletup! Kadang keluar partikel CSS!',
+          'Sihir modern itu namanya responsive design berstandar industri! 📱',
+          'Buku sihir Grimoire di bawah bisa kamu bolak-balik lembarannya loh!',
+          'Topi runcingku menangkap sinyal Wi-Fi dari dunia astral 📡',
+          'Kucing hitam itu asisten setia yang paling rajin mengawasi ramuan.',
+          'Mantra terbaik adalah kode yang mudah dibaca oleh tim!',
+          'Jampi-jampi malam ini: semoga deploy ke production selalu lancar!'
+        ],
+        skel: [
+          'Krik-krik! Tulang igaku berbunyi tiap kali ketemu fitur baru 🦴',
+          'Santai dulu kawan, jangan begadang tanpa secangkir kopi hangat! ☕',
+          'Hai manusia! Tengkorak ini ramah, nggak suka gigit kok~',
+          'Di bawah sana ada lantai tulang -12M... tempat tidur favoritku! 💀',
+          'Makan kolak di atas nisan, jangan galau kalau kodingan lisan!',
+          'Duh, engsel lututku butuh oli pelumas semantik HTML nih!',
+          'Peti harta karun di Katakombe dijaga ketat sama prajurit bertombak lho!',
+          'Kelihatannya kamu orang baik, semoga harimu berkah & bebas error!',
+          'Tulangku kuat karena rajin minum susu kalsium berkalori tinggi 🥛',
+          'Si zombie di sebelah sering lupa naruh otaknya di mana, haha!',
+          'Kalau lelah, istirahat sejenak sambil dengar musik 8-bit Sanctum 🎵',
+          'Aku cuma numpang duduk santai di makam leluhur digital ini.',
+          'Tengkorak tanpa stres adalah tengkorak yang selalu rajin git push!',
+          'Mau pinjam tulang keringku buat stik drum 8-bit? 🥁',
+          'Kuburan di sini bersih dan ber-AC alami dari angin malam.',
+          'Kaka punya sertifikat resmi yang tersimpan rapi di peti relik!'
+        ],
+        zomb: [
+          'Braaaains... eh maksudku, halo sahabat internet! 🧟',
+          'Jalanku memang santai kayak query database yang belum diindeks~',
+          'Api di kepalaku abadi, melambangkan semangat ngoding tanpa lelah! 🔥',
+          'Kaka Andrea Yahya itu Code Necromancer berbakat dari Bandung!',
+          'Walau aku zombie, aku rajin mandi air rawa wangi loh!',
+          'Coba klik buku Grimoire di bawah, bisa membalik lembaran 3D sungguhan!',
+          'Jangan takut, monster di Sanctum semuanya bersertifikat ramah turis!',
+          'Uuugh... kopi dingin jam 2 malam rasanya nikmat tiada tara...',
+          'Teman-temanku di bawah tanah lagi sibuk menambang diamond biru 💎',
+          'Jangan lari ya, aku cuma pengen kenalan dan berteman!',
+          'Bawah tanah Sanctum penuh lapisan sejarah yang menakjubkan!',
+          'Aku pelindung kuburan yang setia menemani petualanganmu.',
+          'Otakku mungkin lambat, tapi hatiku tulus mendukung karyamu!',
+          'Langkah kaki zombie: kiri, kanan, seret... santai tapi pasti sampai!',
+          'Di bawah sana hawanya hangat berkat inti lava bumi -66M.',
+          'Kamu hebat sudah meluangkan waktu melihat portofolio ini!'
+        ],
+        cat: [
+          'Meooww! 🐾 Kucing hitam pembawa keberuntungan hadir!',
+          'Purrr... dielus kursor angin rasanya geli-geli enak~',
+          'Aku baru saja menangkap bug memori yang sembunyi di semak-semak!',
+          'Mataku bisa mendeteksi pixel yang geser walau cuma 1px! 👁️',
+          'Ngeong~ Temani aku rebahan di pagar kayu sebentar yuk!',
+          'Kucing hitam di Halloween bukan pembawa sial, tapi penjaga setia! 🎃',
+          'Lompat sana lompat sini, mengejar kunang-kunang digital...',
+          'Meong! Coba klik nisan di samping, kadang ada bisikan arwah!',
+          'Malam ini buluku berkilau di bawah sinar rembulan ungu.',
+          'Miau! Aku suka tidur di atas keyboard waktu Kaka lagi coding 💤',
+          'Kalau lapar, aku berburu ikan pixel di kolam lava bawah tanah!',
+          'Purrr... semoga kodemu selalu sukses di-deploy ke production!',
+          'Ekor kucingku bergoyang mengikuti irama musik chiptune 🎵',
+          'Kucing penyihir punya sembilan nyawa dan sembilan sertifikat!',
+          'Meooong~ Jangan lupa kirim pesan ke Kaka lewat altar di bawah ya!',
+          'Purrr... tidur siang di atas tumpukan kode rapi itu nikmat sekali.'
+        ]
+      };
+      const CK = ['Aw, geli! 🎃', 'Boo!', 'Gali ke bawah tanah yuk!', 'Jangan ganggu aku, lagi seru nih!'];
+      const PK = { pagi: 0.03, siang: 0.03, sore: 0.05, malam: 0.08, tm: 0.12 };
+      const GV = [[2, 56], [13, 56], [22, 42]];
+
+      function gx(i) {
+        return (GV[i][0] * W) / 100 + GV[i][1] / 2;
+      }
+      function hx(h) {
+        return h === 1 ? 0.96 * W - Math.max(120, Math.min(210, 0.3 * W)) * 0.52 : 0.31 * W + Math.max(60, Math.min(92, 0.08 * W)) / 2;
+      }
+      function pk(a) {
+        return a[Math.floor(Math.random() * a.length)];
+      }
+      function st(c, s, t) {
+        c.s = s;
+        c.t = t;
+        c.a = 0;
+      }
+      function sy(c, m, d) {
+        c.b.textContent = m;
+        c.b.classList.add('on');
+        c.bt = d || 2.4;
+      }
+      function ok(c) {
+        return c.s === 'idle' || c.s === 'walk';
+      }
+      function hi(c, m) {
+        st(c, 'wave', 1.6);
+        sy(c, m || pk(HI));
+      }
+      function sp(c) {
+        c.v = Math.random() < c.rn ? (110 + Math.random() * 60) : (34 + Math.random() * 21);
+        c.fr = c.v > 90 ? 11 : 5;
+      }
+      function wk(c, x) {
+        c.g = Math.max(X0, Math.min(X1, x));
+        sp(c);
+        st(c, 'walk', Math.abs(c.g - c.x) / c.v + 2);
+      }
+      function dim() {
+        W = skyAtmosphere.clientWidth || window.innerWidth;
+        sc = W < 640 ? 4 : 5;
+        X0 = 0.04 * W;
+        X1 = 0.96 * W - 24;
+        cast.forEach(c => {
+          c.el.style.width = (12 * sc) + 'px';
+          c.el.style.height = (18 * sc) + 'px';
+        });
+      }
+      function rd(c) {
+        const u = c.k + c.f;
+        c.el.style.left = (c.x - 6 * sc) + 'px';
+        c.el.classList.toggle('fl', !!c.fl);
+        const sn = c.s === 'sink' || c.s === 'hid';
+        c.el.classList.toggle('sk', (sn && !c.hm) || c.s === 'gone');
+        c.el.classList.toggle('fd', sn && !!c.hm);
+        if (c.u !== u) {
+          c.u = u;
+          c.im.src = fr(c.k, c.f);
+        }
+        c.b.style.left = c.x + 'px';
+        c.b.style.bottom = (36 + 18 * sc) + 'px';
+      }
+
+      const castDefs = [
+        ['pumpkin', 0.12, 0.5, 2],
+        ['witch', 0.3, 0.25, 1],
+        ['skel', 0.5, 0.15, 0],
+        ['zomb', 0.7, 0, 0],
+        ['cat', 0.9, 0.6, 0]
+      ];
+      castDefs.forEach(d => {
+        const el = document.createElement('div');
+        const im = document.createElement('img');
+        const b = document.createElement('div');
+        el.className = 'mc';
+        b.className = 'bb';
+        im.alt = '';
+        el.appendChild(im);
+        skyAtmosphere.insertBefore(el, pixelGrass);
+        skyAtmosphere.insertBefore(b, pixelGrass);
+        const c = {
+          k: d[0],
+          f: 0,
+          x: 0,
+          fl: 0,
+          s: 'idle',
+          t: 1 + Math.random() * 2,
+          a: 0,
+          cd: 0,
+          bt: 0,
+          el: el,
+          im: im,
+          b: b,
+          d: d[1],
+          rn: d[2],
+          hm: d[3],
+          fz: 0,
+          bz: 0
+        };
+        el.addEventListener('click', e => {
+          e.stopPropagation();
+          const isReaperActive = typeof window.isDragonEnabled !== 'undefined' ? window.isDragonEnabled : (localStorage.getItem('kaka_pumpkin_active') !== 'false');
+          if (isReaperActive) {
+            scare(c);
+          } else if (ok(c)) {
+            const lines = CHAR_LINES[c.k] || CK;
+            hi(c, pk(lines));
+            try { playMascotSound('blip'); } catch (_) {}
+          }
+        });
+        el.addEventListener('mouseenter', () => {
+          const isReaperActive = typeof window.isDragonEnabled !== 'undefined' ? window.isDragonEnabled : (localStorage.getItem('kaka_pumpkin_active') !== 'false');
+          if (isReaperActive) {
+            scare(c);
+          } else if (ok(c) && c.s !== 'wave' && Math.random() < 0.6) {
+            const lines = CHAR_LINES[c.k] || CK;
+            hi(c, pk(lines));
+          }
+        });
+        cast.push(c);
+      });
+
+      dim();
+      cast.forEach(c => {
+        c.x = X0 + c.d * (X1 - X0);
+        rd(c);
+      });
+
+      let cx = -999, cy = -999;
+      const PN = ['AAAH!', 'Kabur!! 💨', 'Tolong!', 'Jangan dekat!', 'Eeeek!', 'Waaaa! 👻', 'Kaget! ⚡'];
+
+      function scare(c) {
+        const rc = skyAtmosphere.getBoundingClientRect();
+        const mx = cx - rc.left;
+        const d = Math.sign(c.x - mx) || (Math.random() < 0.5 ? 1 : -1);
+        let g = Math.max(X0, Math.min(X1, c.x + d * 320));
+        const hm = c.hm || c.k === 'skel' || c.k === 'zomb';
+        c.toG = 0;
+        if (Math.abs(g - c.x) < 60 || Math.random() < 0.25) {
+          if (hm) {
+            c.toG = 1;
+            g = c.hm ? hx(c.hm) : gx(Math.floor(Math.random() * 3));
+          } else {
+            g = Math.max(X0, Math.min(X1, c.x - d * 320));
+          }
+        }
+        c.g = g;
+        c.v = 200 + Math.random() * 60;
+        c.fr = 16;
+        st(c, 'walk', 8);
+        c.fz = 0.5;
+        if (c.bz <= 0) {
+          sy(c, pk(PN), 1.5);
+          c.bz = 1.6;
+          try { playMascotSound('blip'); } catch (_) {}
+        }
+      }
+
+      function pickAction(c, T) {
+        const r = Math.random();
+        if (c.k === 'cat') return wk(c, c.x + (Math.random() * 320 - 160));
+        if (r < (PK[T] || 0.1)) {
+          c.toG = 1;
+          c.g = c.hm ? hx(c.hm) : gx(Math.floor(Math.random() * 3));
+          sp(c);
+          st(c, 'walk', 20);
+        } else if (T === 'tm' && r > 0.65) {
+          st(c, 'sleep', 6 + Math.random() * 4);
+          sy(c, '💤', c.t);
+        } else {
+          wk(c, X0 + Math.random() * (X1 - X0));
+        }
+      }
+
+      function tick(ts) {
+        requestAnimationFrame(tick);
+        const dt = Math.min(0.05, (ts - last) / 1000);
+        last = ts;
+        const T = document.body.dataset.t || 'malam';
+        const nt = T === 'malam' || T === 'tm';
+        const NI = { skel: 1, zomb: 1 };
+
+        cast.forEach(c => {
+          const al = !NI[c.k] || nt;
+          if (!al && c.s !== 'gone') {
+            c.s = 'gone';
+            c.b.classList.remove('on');
+            rd(c);
+          } else if (al && c.s === 'gone') {
+            c.x = gx(Math.floor(Math.random() * 3));
+            st(c, 'rise', 0.8);
+            rd(c);
+          }
+        });
+
+        if (!vis) return;
+
+        const rc = skyAtmosphere.getBoundingClientRect();
+        const mx = cx - rc.left;
+        const my = rc.bottom - cy;
+        const R2 = Math.pow(sc * 32, 2);
+
+        cast.forEach(c => {
+          c.t -= dt;
+          c.a += dt;
+          c.cd -= dt;
+          if (c.bt > 0 && (c.bt -= dt) <= 0) c.b.classList.remove('on');
+          c.fz -= dt;
+          c.bz -= dt;
+
+          const isReaperActive = typeof window.isDragonEnabled !== 'undefined' ? window.isDragonEnabled : (localStorage.getItem('kaka_pumpkin_active') !== 'false');
+
+          if (isReaperActive && cx > -900 && (c.s === 'idle' || c.s === 'walk' || c.s === 'wave' || c.s === 'sleep') && c.fz <= 0 && !(c.toG && c.v > 180)) {
+            const q = c.x - mx;
+            const h = 30 + 9 * sc - my;
+            if (q * q + h * h < R2) scare(c);
+          } else if (!isReaperActive && cx > -900 && ok(c) && c.cd <= 0) {
+            // Mode biasa: kursor mendekat menyapa ramah tanpa panik atau lari
+            const q = c.x - mx;
+            const h = 30 + 9 * sc - my;
+            if (q * q + h * h < Math.pow(sc * 14, 2)) {
+              c.fl = c.x > mx;
+              hi(c);
+              c.cd = 12;
+            }
+          }
+          const s = c.s;
+          if (s === 'walk') {
+            const d = c.g - c.x;
+            if (Math.abs(d) < 3 || c.t <= 0) {
+              if (c.toG) {
+                c.toG = 0;
+                st(c, 'sink', 0.8);
+              } else {
+                st(c, 'idle', 0.6 + Math.random() * 1.6);
+              }
+            } else {
+              c.x += Math.sign(d) * Math.min(Math.abs(d), c.v * dt);
+              c.fl = d < 0;
+              c.f = 1 + (Math.floor(c.a * c.fr) % 2);
+            }
+          } else if (s === 'wave') {
+            c.f = Math.floor(c.a * 4) % 2 ? 3 : 0;
+            if (c.t <= 0) st(c, 'idle', 1 + Math.random() * 2);
+          } else if (s === 'idle') {
+            c.f = 0;
+            if (c.t <= 0) pickAction(c, T);
+          } else if (s === 'sleep') {
+            c.f = 0;
+            if (c.t <= 0) {
+              sy(c, '...hoaam', 2);
+              st(c, 'idle', 2);
+            }
+          } else if (s === 'sink') {
+            if (c.t <= 0) st(c, 'hid', (3 + Math.random() * 3) * (T === 'tm' ? 2 : 1));
+          } else if (s === 'hid') {
+            if (c.t <= 0) {
+              c.x = c.hm ? hx(c.hm) : gx(Math.floor(Math.random() * 3));
+              st(c, 'rise', 0.8);
+            }
+          } else if (s === 'rise') {
+            if (c.t <= 0) st(c, 'idle', 1);
+          }
+          rd(c);
+        });
+
+        for (let i = 0; i < cast.length; i++) {
+          for (let j = i + 1; j < cast.length; j++) {
+            const a = cast[i];
+            const b = cast[j];
+            if (a.cd <= 0 && b.cd <= 0 && ok(a) && ok(b) && Math.abs(a.x - b.x) < sc * 14) {
+              a.fl = a.x > b.x;
+              b.fl = !a.fl;
+              hi(a);
+              hi(b);
+              a.cd = 14;
+              b.cd = 14;
+            }
+          }
+        }
+      }
+
+      const surfaceObserver = new IntersectionObserver(es => {
+        const v = es[0].isIntersecting;
+        const n = performance.now();
+        if (v && n - seen > 5000) {
+          setTimeout(() => {
+            const l = cast.filter(ok);
+            if (l.length) {
+              const curT = document.body.dataset.t || 'malam';
+              const curLines = TL[curT] || TL.malam;
+              hi(pk(l), Array.isArray(curLines) ? pk(curLines) : curLines);
+            }
+          }, 700);
+        }
+        vis = v;
+        if (!v) seen = n;
+      }, { threshold: 0.15 });
+
+      surfaceObserver.observe(skyAtmosphere);
+      window.addEventListener('resize', () => {
+        dim();
+        cast.forEach(c => {
+          c.x = Math.max(X0, Math.min(X1, c.x));
+        });
+      });
+
+      ['pointermove', 'pointerdown'].forEach(evt => {
+        window.addEventListener(evt, e => {
+          cx = e.clientX;
+          cy = e.clientY;
+        }, { passive: true });
+      });
+      window.addEventListener('pointerleave', () => {
+        cx = -999;
+        cy = -999;
+      });
+
+      // Autonomous Mascot Chatter: mascots spontaneously greet & converse without waiting for mouse!
+      setInterval(() => {
+        const isReaperActive = typeof window.isDragonEnabled !== 'undefined' ? window.isDragonEnabled : (localStorage.getItem('kaka_pumpkin_active') !== 'false');
+        if (isReaperActive || !vis) return;
+
+        const eligible = cast.filter(c => ok(c) && c.bt <= 0 && c.s !== 'gone' && c.s !== 'sleep');
+        if (!eligible.length) return;
+
+        const chosen = pk(eligible);
+        const roll = Math.random();
+        let speech = '';
+        const T = document.body.dataset.t || 'malam';
+        if (roll < 0.65 && CHAR_LINES[chosen.k] && CHAR_LINES[chosen.k].length) {
+          speech = pk(CHAR_LINES[chosen.k]);
+        } else if (roll < 0.85 && TL[T] && Array.isArray(TL[T])) {
+          speech = pk(TL[T]);
+        } else {
+          speech = pk(GENERAL_LINES);
+        }
+
+        st(chosen, 'wave', 1.8);
+        sy(chosen, speech, 3.8);
+        chosen.cd = 6;
+      }, 4200);
+
+      requestAnimationFrame(tick);
+    }
+
+    const catacombDepth = document.getElementById('catacombDepth');
+    const catacombCount = document.getElementById('catacombCount');
+    const btnToSurface = document.getElementById('btnToSurface');
+    const soilLayers = document.getElementById('soilLayers');
+
+    if (!soilLayers) return;
+
+    const ACHIEVEMENT_LAYERS = [
+      {
+        n: 'TANAH GEMBUR',
+        r: '0 s.d. -12 M',
+        a: [
+          { e: '🎃', t: 'Benih Pertama', d: 'Menulis baris kode pertama.', u: 1 },
+          { e: '⛏️', t: 'Penggali Pemula', d: 'Menyelesaikan kelas Dasar Pemrograman Web.', u: 1 },
+          { e: '🐛', t: 'Pemburu Bug', d: 'Memperbaiki 100 bug tanpa menyerah.', u: 1 }
+        ]
+      },
+      {
+        n: 'LAPISAN TULANG',
+        r: '-12 s.d. -24 M',
+        a: [
+          { e: '🦴', t: 'Tulang Responsif', d: 'Membuat tampilan rapi di semua layar.', u: 1 },
+          { e: '💀', t: 'Si Semantik', d: 'Menguasai HTML semantik berstandar industri.', u: 1 },
+          { e: '🔮', t: 'Penyihir CSS', d: 'Membuat 10 animasi yang halus dan hidup.', u: 0 }
+        ]
+      },
+      {
+        n: 'KATAKOMBE',
+        r: '-24 s.d. -36 M',
+        br: 1,
+        a: [
+          { e: '🕯️', t: 'Penjaga JavaScript', d: 'Menyelesaikan kelas dasar JavaScript.', u: 1 },
+          { e: '📱', t: 'Pembuat Aplikasi', d: 'Merilis aplikasi mobile pertama.', u: 0 },
+          { e: '🧙', t: 'Kolaborator', d: 'Mengerjakan proyek bersama tim.', u: 0 }
+        ]
+      },
+      {
+        n: 'RUANG PETI MATI',
+        r: '-36 s.d. -46 M',
+        br: 1,
+        a: [
+          { e: '📜', t: 'Sertifikat Bertuah', d: 'Mengumpulkan 3 sertifikat resmi.', u: 1 },
+          { e: '⚰️', t: 'Proyek Terkutuk', d: 'Menyelesaikan proyek besar sampai rilis.', u: 0 },
+          { e: '🌙', t: 'Malam Tanpa Error', d: 'Begadang tanpa satu pun error muncul.', u: 0 }
+        ]
+      },
+      {
+        n: 'JURANG TERDALAM',
+        r: '-46 s.d. -58 M',
+        dp: 1,
+        a: [
+          { e: '🕳️', t: 'Dunia Seberang', d: 'Menggali sampai ke dasar halaman.', u: 0, s: 1 }
+        ]
+      }
+    ];
+
+    const allAchievements = [];
+    ACHIEVEMENT_LAYERS.forEach(l => {
+      l.a.forEach(a => allAchievements.push(a));
+    });
+
+    const unlockedState = allAchievements.map(a => !!a.u);
+
+    function renderCard(el, i) {
+      const a = allAchievements[i];
+      const isOk = unlockedState[i];
+      const isVisible = isOk || !a.s;
+      el.className = 'ac ' + (isOk ? 'ok' : 'lk') + (a.s ? ' sec' : '') + (el.classList.contains('in') ? ' in' : '');
+      el.innerHTML = '<div class="ic">' + (isOk ? a.e : '🔒') + '</div>' +
+        '<div class="tt">' +
+        '<b>' + (isVisible ? a.t : '???') + '</b>' +
+        '<p>' + (isVisible ? a.d : 'Rahasia. Gali terus sampai paling dasar.') + '</p>' +
+        '<em>' + (isOk ? '✔ TERBUKA' : '✖ TERKUNCI') + '</em>' +
+        '</div>';
+    }
+
+    // Render all 13 achievements into Katakombe section
+    allAchievements.forEach((a, i) => {
+      const c = document.createElement('div');
+      c.dataset.i = i;
+      renderCard(c, i);
+      soilLayers.appendChild(c);
+    });
+
+    const aboutSection = document.getElementById('about');
+    if (aboutSection && S && S.tree) {
+      const rootTreeImg = document.createElement('img');
+      rootTreeImg.src = S.tree;
+      rootTreeImg.className = 'tree';
+      rootTreeImg.alt = '';
+      aboutSection.insertBefore(rootTreeImg, aboutSection.firstChild);
+    }
+
+    // Ore sprites from Reference 6
+    function ore(a) {
+      return mk(10, 8, function(x) {
+        x.fillStyle = "#6b6660";
+        x.fillRect(1, 1, 8, 7);
+        x.fillRect(2, 0, 6, 1);
+        x.fillStyle = "#4a4540";
+        x.fillRect(1, 6, 8, 2);
+        x.fillStyle = a;
+        [[3, 2], [6, 3], [4, 5], [7, 5], [2, 4]].forEach(function(p) {
+          x.fillRect(p[0], p[1], 2, 1);
+          x.fillRect(p[0], p[1] + 1, 1, 1);
+        });
+      });
+    }
+    S.coal = ore("#15151a");
+    S.fe = ore("#d9a46a");
+    S.au = ore("#f6c445");
+    S.dia = ore("#6ee7ff");
+    S.fos = mk(10, 10, function(x) {
+      x.fillStyle = "#b9a98a";
+      [[3, 0, 4, 1], [1, 1, 8, 1], [0, 2, 10, 6], [1, 8, 8, 1], [3, 9, 4, 1]].forEach(function(r) {
+        x.fillRect(r[0], r[1], r[2], r[3]);
+      });
+      x.fillStyle = "#7a6a4a";
+      [[3, 3, 4, 1], [3, 4, 1, 3], [3, 6, 4, 1], [6, 4, 1, 2], [5, 4, 1, 1]].forEach(function(r) {
+        x.fillRect(r[0], r[1], r[2], r[3]);
+      });
+    });
+
+    // Jagged pixel rock strata edge dividers between layers from Reference 6 (High density 50 teeth)
+    document.querySelectorAll(".soil-stratum").forEach(function(l, i) {
+      if (!i) return;
+      var e = document.createElement("i"), p = "0 100%";
+      for (var k = 0; k < 50; k++) {
+        var seed = (k * 7 + i * 13) % 23;
+        var y = (seed % 5) * 3; // Fine rocky teeth: 0, 3, 6, 9, 12px
+        var x1 = (k * 2);
+        var x2 = (k * 2 + 2);
+        p += "," + x1 + "% " + y + "px," + x2 + "% " + y + "px";
+      }
+      p += ",100% 100%";
+      e.className = "ed";
+      e.style.clipPath = "polygon(" + p + ")";
+      l.insertBefore(e, l.firstChild);
+    });
+
+    const decoConfig = [
+      ['worm', 'about', 3, 22, 4],
+      ['worm', 'about', 84, 62, 4],
+      ['bone', 'about', 8, 78, 4],
+      ['pump', 'about', 88, 26, 4],
+      ['skull', 'projects', 5, 18, 5],
+      ['bone', 'projects', 82, 30, 5],
+      ['bone', 'projects', 4, 62, 5],
+      ['skull', 'projects', 86, 72, 4],
+      ['skull', 'sertificat', 6, 40, 5],
+      ['bone', 'sertificat', 84, 20, 5],
+      ['coffin', 'shadows', 3, 26, 5],
+      ['coffin', 'shadows', 88, 58, 5],
+      ['skull', 'shadows', 85, 12, 4],
+      ['bat', 'achievements', 5, 20, 4],
+      ['bat', 'achievements', 93, 25, 4],
+      ['skull', 'achievements', 92, 60, 4],
+      ['bone', 'achievements', 4, 70, 4],
+      ['bat', 'contact', 12, 30, 4],
+      ['bat', 'contact', 84, 40, 4]
+    ];
+    const spriteBaseSizes = { skull: 8, bone: 12, pump: 10, bat: 9, tomb: 14, coffin: 12, worm: 16, chest: 14 };
+
+    decoConfig.forEach(d => {
+      const parent = document.getElementById(d[1]);
+      if (!parent) return;
+      const img = document.createElement('img');
+      img.src = S[d[0]];
+      img.className = 'dc';
+      img.alt = '';
+      const w = (spriteBaseSizes[d[0]] || 12) * d[4];
+      img.style.cssText = 'left:' + d[2] + '%;top:' + d[3] + '%;width:' + w + 'px';
+      parent.appendChild(img);
+    });
+
+    const orePlacements = [
+      ["fe", 'about', 84, 38],
+      ["fos", 'projects', 5, 52],
+      ["au", 'projects', 91, 70],
+      ["coal", 'sertificat', 3, 72],
+      ["dia", 'sertificat', 92, 48],
+      ["au", 'shadows', 5, 22],
+      ["fe", 'shadows', 90, 62],
+      ["dia", 'achievements', 6, 45],
+      ["au", 'achievements', 93, 65]
+    ];
+    orePlacements.forEach(o => {
+      const parent = document.getElementById(o[1]);
+      if (!parent) return;
+      const img = document.createElement('img');
+      img.src = S[o[0]];
+      img.className = 'dc';
+      img.alt = '';
+      img.style.cssText = 'left:' + o[2] + '%;top:' + o[3] + '%;width:50px' + (o[0] === 'au' || o[0] === 'dia' ? ';animation:fl 2s steps(3) infinite' : '');
+      parent.appendChild(img);
+    });
+
+    // Treasure Vault & Guards stationed directly on the Katakombe Floor Boundary (-58 M threshold)
+    const treasureLayer = document.getElementById('achievements');
+    if (treasureLayer) {
+      const treasureItems = [
+        ['pile', 50, -160, 0, 112],
+        ['pile', 50, 50, 0, 98],
+        ['chest', 50, -56, 0, 112],
+        ['candle', 50, -210, 0, 25],
+        ['candle', 50, 185, 0, 25],
+        ['skull', 50, -265, 0, 44],
+        ['bone', 50, 235, 0, 60],
+        ['coin', 50, -110, 32, 22],
+        ['coin', 50, -85, 4, 20],
+        ['coin', 50, 75, 28, 22],
+        ['coin', 50, 125, 4, 20],
+        ['gemC', 50, -185, 4, 28],
+        ['gemP', 50, 160, 4, 28],
+        ['gemR', 50, -62, 2, 24],
+        ['gemC', 50, 62, 2, 24]
+      ];
+      treasureItems.forEach(s => {
+        const img = document.createElement('img');
+        img.src = S[s[0]];
+        img.className = 'ob';
+        img.alt = '';
+        img.style.cssText = 'left:calc(' + s[1] + '% + ' + s[2] + 'px);bottom:' + s[3] + 'px;width:' + s[4] + 'px' + (s[0] === 'candle' ? ';animation:fl 1.6s steps(3) infinite' : '');
+        treasureLayer.appendChild(img);
+      });
+
+      const GUARD_LINES = [
+        'Halt! Siapa yang berani mendekati peti rahasia ini?! ⚔️',
+        'Tenang pengembara, peti emas ini berisi arsip karya suci Kaka!',
+        'Kami prajurit penjaga arwah, setia mengawal perbatasan Katakombe! 🛡️',
+        'Di bawah kaki kami adalah Jurang Bedrock -66 M yang membara 🔥',
+        'Tombak ini ditempa dari CSS murni dan logika JavaScript kuno! ✨',
+        'Kamu berhasil menjelajah sampai sedalam -58 meter! Luar biasa! 🏆',
+        'Peti ini hanya terbuka bagi mereka yang menghargai clean code 💎',
+        'Jangan colek koin emasnya ya, itu buat bayar langganan server haha!',
+        'Kaka Andrea Yahya adalah Code Necromancer sejati, karyanya kokoh!',
+        'Mau kembali ke pemukiman atas? Tekan tombol "Ke permukaan" di bawah! ⬆️',
+        'Sssst... arwah di lapisan lava terdalam lagi tidur lelap 💤',
+        'Salam hormat dari kami berdua, sang penjaga gerbang bawah tanah! ⚔️',
+        'Kami berjaga siang dan malam tanpa pernah kena bug!',
+        'Semua pencapaian di dinding bata ini adalah bukti kerja keras Kaka 📜',
+        'Peti pusaka ini dijaga ketat, tapi kami ramah pada tamu baik hati! 😊',
+        'Kekuatan arwah Katakombe selalu melindungi setiap baris kode di sini!'
+      ];
+
+      function pkGuard(arr) {
+        if (!arr || !arr.length) return '';
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      const guards = [
+        { id: 'gd1', style: 'left:max(8px,calc(50% - 330px))', name: 'Penjaga Kiri' },
+        { id: 'gd2', style: 'right:max(8px,calc(50% - 330px))', name: 'Penjaga Kanan' }
+      ];
+
+      const guardInstances = [];
+
+      guards.forEach((g, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'guard-character ' + (i === 0 ? 'guard-left' : 'guard-right');
+        wrap.style.cssText = 'position:absolute;bottom:0px;width:60px;height:90px;z-index:25;cursor:pointer;' + g.style;
+        wrap.setAttribute('role', 'button');
+        wrap.setAttribute('tabindex', '0');
+        wrap.setAttribute('aria-label', g.name + ' - Klik untuk menyapa');
+        wrap.title = 'Klik penjaga arwah untuk berbicara!';
+
+        const img = document.createElement('img');
+        img.src = fr(g.id, 0);
+        img.className = 'guard-sprite';
+        img.alt = g.name;
+        img.style.cssText = 'width:60px;height:90px;image-rendering:pixelated;display:block;transition:transform 0.18s ease;' + (i ? 'transform:scaleX(-1);' : '');
+
+        const bb = document.createElement('div');
+        bb.className = 'bb guard-bb';
+        bb.style.cssText = 'bottom:96px;left:50%;';
+
+        wrap.appendChild(img);
+        wrap.appendChild(bb);
+        treasureLayer.appendChild(wrap);
+
+        let speakTimer = null;
+        function speak(text) {
+          bb.textContent = text || pkGuard(GUARD_LINES);
+          bb.classList.add('on');
+          try { playMascotSound('blip'); } catch (_) {}
+          // Little spear flourish animation
+          img.style.transform = (i ? 'scaleX(-1) ' : '') + 'translateY(-8px) scale(1.1)';
+          setTimeout(() => {
+            img.style.transform = i ? 'scaleX(-1)' : '';
+          }, 240);
+          clearTimeout(speakTimer);
+          speakTimer = setTimeout(() => {
+            bb.classList.remove('on');
+          }, 3800);
+        }
+
+        wrap.addEventListener('click', e => {
+          e.stopPropagation();
+          speak();
+        });
+
+        wrap.addEventListener('mouseenter', () => {
+          if (!bb.classList.contains('on')) {
+            speak();
+          }
+        });
+
+        // Alternating spear idle stance
+        let n = 0;
+        setInterval(() => {
+          img.src = fr(g.id, (n ^= 1) * 3);
+        }, 1500 + i * 400);
+
+        guardInstances.push({ wrap, img, bb, speak });
+      });
+
+      // Observe the guards directly so they immediately greet the user upon arrival at the Katakombe floor boundary!
+      let hasGreetedArrival = false;
+      const guardArrivalObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !hasGreetedArrival) {
+            hasGreetedArrival = true;
+            // Immediate arrival greeting dialogue between the two guards
+            setTimeout(() => {
+              if (guardInstances[0]) {
+                guardInstances[0].speak('⚔️ Halt! Siapa yang berani mendekati peti rahasia ini?!');
+              }
+            }, 300);
+            setTimeout(() => {
+              if (guardInstances[1]) {
+                guardInstances[1].speak('Tenang kawan! Dia pengembara yang berhasil menggali 13 pencapaian! 🏆');
+              }
+            }, 2600);
+            setTimeout(() => {
+              if (guardInstances[0]) {
+                guardInstances[0].speak('Baguslah kalau begitu! Selamat datang di perbatasan Katakombe -58 M! ✨');
+              }
+            }, 5500);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      guardInstances.forEach(g => guardArrivalObserver.observe(g.wrap));
+
+      // Autonomous Guard Chatter:
+      // When guards are in viewport, they periodically converse autonomously every 5.5 seconds
+      setInterval(() => {
+        if (!guardInstances.length) return;
+        const rect = guardInstances[0].wrap.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+        if (!isInView) return;
+
+        const isSpeaking = guardInstances.some(g => g.bb.classList.contains('on'));
+        if (isSpeaking) return;
+
+        const chosen = pkGuard(guardInstances);
+        if (chosen) chosen.speak();
+      }, 5500);
+    }
+
+    const sittingMascotConfigs = [
+      [3, 'skel', 'right:18px', [0, 3], 'Woy! Enak rebahan di tulang nih... Dingin empuk!'],
+      [10, 'zomb', 'left:18px', [0, 2], 'Gelap banget di sini! Untung kepalaku berapi 🔥']
+    ];
+    sittingMascotConfigs.forEach(r => {
+      const cardEl = document.querySelector('.ac[data-i="' + r[0] + '"]');
+      if (!cardEl) return;
+      const s = document.createElement('span');
+      const im = document.createElement('img');
+      s.className = 'rs';
+      s.style.cssText = r[2];
+      s.dataset.say = r[4];
+      im.alt = '';
+      im.src = fr(r[1], 0);
+      s.appendChild(im);
+      cardEl.appendChild(s);
+      let n = 0;
+      setInterval(() => {
+        im.src = fr(r[1], r[3][n ^= 1]);
+      }, 700);
+      s.addEventListener('click', e => {
+        e.stopPropagation();
+        playMascotSound('blip');
+        s.classList.add('say');
+        setTimeout(() => s.classList.remove('say'), 2600);
+      });
+    });
+
+    const cardObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          cardObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.01, rootMargin: '600px 0px' });
+
+    document.querySelectorAll('.ac').forEach(c => cardObserver.observe(c));
+
+    function updateCatacombCount() {
+      const opened = unlockedState.filter(Boolean).length;
+      if (catacombCount) {
+        catacombCount.textContent = '🏆 ' + opened + '/' + allAchievements.length;
+      }
+    }
+
+    // ===== SURFACE SCROLL LOCK UNTIL "ENTER GRAVEYARD" / "GALI KE BAWAH" IS CLICKED =====
+    isGraveyardUnlocked = false;
+    const homeSection = document.getElementById('home');
+    const enterGraveyardBtn = document.getElementById('btnEnterGraveyard') || document.querySelector('.scroll-down-indicator');
+    const btnDigDown = document.getElementById('btnDigDown');
+
+    function getSurfaceScrollLimit() {
+      if (!homeSection) return 0;
+      return Math.max(0, homeSection.offsetTop + homeSection.offsetHeight - window.innerHeight);
+    }
+
+    function pulseEnterGraveyard() {
+      const btn = document.getElementById('btnDigDown') || enterGraveyardBtn;
+      if (btn) {
+        btn.classList.remove('pulse-hint');
+        void btn.offsetWidth; // Force reflow
+        btn.classList.add('pulse-hint');
+      }
+    }
+
+    let hasScrolledUnderground = false;
+
+    function unlockGraveyardAndScroll(targetSelector) {
+      isGraveyardUnlocked = true;
+      hasScrolledUnderground = false;
+      playSound('blip');
+      const target = document.querySelector(targetSelector || '#about');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    if (btnDigDown) {
+      btnDigDown.addEventListener('click', e => {
+        e.preventDefault();
+        unlockGraveyardAndScroll('#about');
+      });
+    }
+
+    if (enterGraveyardBtn) {
+      enterGraveyardBtn.addEventListener('click', e => {
+        e.preventDefault();
+        unlockGraveyardAndScroll('#about');
+      });
+    }
+
+    // Nav links & buttons: unlock if going underground, re-lock if going to surface
+    document.querySelectorAll('#links a, .hero-actions a').forEach(link => {
+      link.addEventListener('click', () => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        if (href === '#home') {
+          isGraveyardUnlocked = false; // Re-lock when returning to surface
+          hasScrolledUnderground = false;
+        } else {
+          isGraveyardUnlocked = true; // Unlock for subterranean exploration
+          hasScrolledUnderground = true;
+        }
+      });
+    });
+
+    // Intercept wheel past surface when locked
+    window.addEventListener('wheel', e => {
+      if (isGraveyardUnlocked || isResurrecting) return;
+      const limit = getSurfaceScrollLimit();
+      if (window.scrollY >= limit - 4 && e.deltaY > 0) {
+        e.preventDefault();
+        window.scrollTo({ top: limit, behavior: 'instant' });
+        pulseEnterGraveyard();
+      }
+    }, { passive: false });
+
+    // Intercept touch dragging past surface when locked
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', e => {
+      if (isGraveyardUnlocked || isResurrecting) return;
+      const limit = getSurfaceScrollLimit();
+      const delta = touchStartY - e.touches[0].clientY;
+      if (window.scrollY >= limit - 4 && delta > 0) {
+        e.preventDefault();
+        window.scrollTo({ top: limit, behavior: 'instant' });
+        pulseEnterGraveyard();
+      }
+    }, { passive: false });
+
+    // Cartesian Y-Axis depth & altitude calculation:
+    // Surface ground is 0 m (Y=0).
+    // Sky/atmosphere is positive altitude (35 m down to 0 m, no '+' sign).
+    // Going underground descends on negative Y axis (0 m down to -66 m).
+    function updateCatacombDepthMeter(scrollY = window.scrollY) {
+      const limit = getSurfaceScrollLimit();
+      const totalDist = document.documentElement.scrollHeight - window.innerHeight;
+      const undergroundDist = totalDist - limit;
+      let depthMeters = 0;
+
+      if (scrollY > limit && undergroundDist > 0) {
+        const ratio = Math.min(1, Math.max(0, (scrollY - limit) / undergroundDist));
+        depthMeters = -Math.round(ratio * 66);
+      } else if (limit > 0) {
+        const skyRatio = Math.max(0, Math.min(1, (limit - scrollY) / limit));
+        depthMeters = Math.round(skyRatio * 35);
+      } else {
+        depthMeters = 0;
+      }
+
+      if (catacombDepth) {
+        catacombDepth.textContent = '⛏ ' + depthMeters + ' m';
+      }
+
+      // Check if user was previously deep underground (< -15m) and returns to surface (>= 0m)
+      if (typeof window._lastRecordedDepth === 'number') {
+        if (window._lastRecordedDepth < -15 && depthMeters >= 0) {
+          if (typeof window.onReturnFromUnderground === 'function') {
+            window.onReturnFromUnderground();
+          }
+        }
+      }
+      window._lastRecordedDepth = depthMeters;
+
+      // Secret 13th Achievement unlock when reaching the deepest bedrock (-64m to -66m)
+      if (depthMeters <= -64) {
+        const lastIdx = allAchievements.length - 1;
+        if (!unlockedState[lastIdx]) {
+          unlockedState[lastIdx] = true;
+          const secretCard = document.querySelector('.ac[data-i="' + lastIdx + '"]');
+          if (secretCard) {
+            renderCard(secretCard, lastIdx);
+          }
+          updateCatacombCount();
+          playSound('achievement');
+          showToast(allAchievements[lastIdx].t + ' — ' + allAchievements[lastIdx].d, 'ACHIEVEMENT TERBUKA!', '🏆');
+        }
+      }
+
+      return depthMeters;
+    }
+
+    window.updateCatacombDepthMeter = updateCatacombDepthMeter;
+
+    function onCatacombScroll() {
+      if (isResurrecting) return; // Never clamp or halt scroll while cinematic ascension is in flight!
+      const limit = getSurfaceScrollLimit();
+
+      if (window.scrollY > limit) {
+        hasScrolledUnderground = true;
+      }
+
+      // Clamp scroll if user scrolls past surface while locked
+      if (!isGraveyardUnlocked && window.scrollY > limit) {
+        window.scrollTo({ top: limit, behavior: 'instant' });
+        pulseEnterGraveyard();
+        return;
+      }
+
+      // Re-lock ONLY when user has been underground and now intentionally scrolls all the way back to the top
+      if (isGraveyardUnlocked && window.scrollY <= 15 && hasScrolledUnderground) {
+        isGraveyardUnlocked = false;
+        hasScrolledUnderground = false;
+      }
+
+      updateCatacombDepthMeter(window.scrollY);
+    }
+
+    // ===== PENJAGA BERJUBAH (CLOAKED GUARDIAN & NOTICE BOARD - Reference 7) =====
+    const cloakedGuardian = document.getElementById('cloakedGuardian');
+    const guardianImg = document.getElementById('guardianImg');
+    const cloakedBubble = document.getElementById('cloakedBubble');
+    const boardNoticeText = document.getElementById('boardNoticeText');
+
+    if (guardianImg && typeof cg === 'function') {
+      guardianImg.src = cg(0);
+    }
+
+    // Papan Pengumuman: teks berubah sesuai waktu (pagi, siang, sore, malam, tengah malam)
+    const BN = {
+      pagi: "Pagi cerah. Gagak beterbangan.",
+      siang: "Siang terik. Kuburan sepi.",
+      sore: "Senja tiba. Hantu mulai berbisik.",
+      malam: "Malam tiba. Kerangka dan zombie bangkit.",
+      tm: "Tengah malam. Jangan bangunkan mereka."
+    };
+
+    function updateNoticeBoard() {
+      const tKey = document.body.dataset.t || (document.body.classList.contains('theme-day') ? 'siang' : document.body.classList.contains('theme-sunset') ? 'sore' : 'malam');
+      const t = BN[tKey] || BN.malam;
+      if (boardNoticeText) {
+        boardNoticeText.textContent = t;
+      }
+    }
+    updateNoticeBoard();
+    setInterval(updateNoticeBoard, 1500);
+
+    const HT = [
+      "Gali ke bawah, pendatang. Penghargaanmu menunggu di dalam tanah.",
+      "Ada satu achievement rahasia di dasar jurang. Gali sampai paling dalam.",
+      "Penghuni pekuburan ini ramah. Sapa mereka, klik saja.",
+      "Kerangka dan zombie hanya bangkit saat malam. Datanglah setelah gelap.",
+      "Panel di pojok kanan bawah mengubah waktu. Coba tengah malam.",
+      "Bawa Reaper mendekat, dan mereka kabur ketakutan. Aku tidak."
+    ];
+
+    const AUTONOMOUS_LINES = [
+      "Ssst... ada 13 batu nisan rahasia di dalam Katakombe bawah tanah. 📜",
+      "Papan pengumuman di sampingku selalu mengabarkan peristiwa pekuburan saat waktu bergulir. ⏳",
+      "Lentera ini terus menyala membimbing para musafir yang singgah. ✨",
+      "Berani menggali hingga ke Jurang Bedrock (-66 M)? Ada piala pusaka di dasar! ⛏️",
+      "Angin malam pekuburan membawa bisikan kode yang tenang dan rapi... 🕯️",
+      "Selamat datang di gerbang pekuburan. Santai dan nikmati petualanganmu. 🎃",
+      "Bahkan kerangka dan zombie di sini ramah pada pengunjung yang baik hati. 💀",
+      "Jika butuh petunjuk arah, klik saja aku atau periksa papan pengumuman! 📜"
+    ];
+
+    const REAPER_DEFENSE_LINES = [
+      "Reaper, ya? Aku tidak takut padamu! ⚔️",
+      "Lentera suciku akan menghalau kabut kelammu, Reaper! 🔥",
+      "Pedang sabit gaibmu tak mempan di sini! Mundurlah! ✨",
+      "Halt! Pekuburan ini di bawah penjagaanku, Reaper! 🛡️",
+      "Cahaya lentera ini membakar arwah gelap! Jangan mendekat! ⚡"
+    ];
+
+    let hn = 0;
+    let autoLineIdx = 0;
+    let reaperLineIdx = 0;
+    let gcd = 0; // Cooldown for Guardian Reaper projectile (ticks every 200ms; gcd=1.0 -> 1s cooldown)
+
+    function gsay(t, d = 4200) {
+      if (!cloakedBubble) return;
+      cloakedBubble.textContent = t;
+      if (cloakedGuardian) {
+        cloakedBubble.style.left = (cloakedGuardian.offsetLeft + cloakedGuardian.offsetWidth / 2) + "px";
+        cloakedBubble.style.bottom = (38 + cloakedGuardian.offsetHeight) + "px";
+      }
+      cloakedBubble.classList.add("on");
+      if (guardianImg && typeof cg === 'function') {
+        guardianImg.src = cg(3);
+      }
+      clearTimeout(gsay.a);
+      clearTimeout(gsay.b);
+      gsay.a = setTimeout(() => {
+        if (guardianImg && typeof cg === 'function' && (!cloakedGuardian || !cloakedGuardian.classList.contains('defend'))) {
+          guardianImg.src = cg(0);
+        }
+      }, 900);
+      gsay.b = setTimeout(() => {
+        cloakedBubble.classList.remove("on");
+      }, d);
+    }
+
+    function gh() {
+      gsay(HT[hn++ % HT.length], 5200);
+    }
+
+    let nw = 1;
+    try {
+      nw = !localStorage.getItem("gv");
+      localStorage.setItem("gv", "1");
+    } catch (x) {}
+
+    function gv() {
+      if (nw) {
+        nw = 0;
+        gsay("Hm. Pendatang baru. Selamat datang di pekuburan.", 4200);
+        setTimeout(gh, 4800);
+      } else {
+        const welcomeBack = [
+          "Kau kembali. Butuh petunjuk? Klik aku.",
+          "Selamat datang kembali, penggali makam berjiwa kode! ✨",
+          "Salam hangat dari pekuburan. Siap menjelajah ke bawah tanah?"
+        ];
+        gsay(welcomeBack[Math.floor(Math.random() * welcomeBack.length)], 3800);
+      }
+    }
+
+    // Return from underground greeting
+    window.onReturnFromUnderground = function() {
+      if (window._justGreetedReturn) return;
+      window._justGreetedReturn = true;
+      setTimeout(() => { window._justGreetedReturn = false; }, 8000);
+      gsay("Kau berhasil bangkit dari kedalaman! Selamat kembali ke daratan, kawan. ✨", 4500);
+    };
+
+    if (cloakedGuardian) {
+      cloakedGuardian.addEventListener('mouseenter', () => {
+        if (!cloakedBubble || !cloakedBubble.classList.contains('on')) {
+          gh();
+        }
+      });
+      cloakedGuardian.addEventListener('pointerenter', () => {
+        if (!cloakedBubble || !cloakedBubble.classList.contains('on')) {
+          gh();
+        }
+      });
+      cloakedGuardian.onclick = (e) => {
+        e.stopPropagation();
+        playSound('blip');
+        gh();
+      };
+
+      let gs = -1e5;
+      const guardianObserver = new IntersectionObserver(entries => {
+        const v = entries[0].isIntersecting;
+        const n = performance.now();
+        if (v && n - gs > 8000) {
+          setTimeout(gv, 1200);
+        }
+        if (!v) gs = n;
+      }, { threshold: 0.15 });
+
+      guardianObserver.observe(cloakedGuardian);
+    }
+
+    // Sapaan Mandiri Proaktif: Maskot berbicara sendiri secara berkala saat terlihat di layar
+    setInterval(() => {
+      if (!cloakedGuardian) return;
+      const rect = cloakedGuardian.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!isInView) return;
+
+      // Jangan menginterupsi jika sedang berbicara atau sedang siaga menghadapi Reaper
+      if (cloakedBubble && cloakedBubble.classList.contains('on')) return;
+      if (cloakedGuardian.classList.contains('defend')) return;
+
+      const line = AUTONOMOUS_LINES[autoLineIdx++ % AUTONOMOUS_LINES.length];
+      gsay(line, 4500);
+    }, 7000);
+
+    // Track mouse coordinates for fast & responsive Reaper distance checks
+    window._lastMouseX = -999;
+    window._lastMouseY = -999;
+    ['mousemove', 'pointermove', 'pointerdown'].forEach(ev => {
+      window.addEventListener(ev, e => {
+        window._lastMouseX = e.clientX;
+        window._lastMouseY = e.clientY;
+      }, { passive: true });
+    });
+
+    // Reactive Reaper Check Loop (checks every 200ms with 180px aura & 150px projectile defense)
+    setInterval(() => {
+      gcd -= 0.2;
+      if (!cloakedGuardian) return;
+
+      const isReaper = typeof window.isDragonEnabled !== 'undefined'
+        ? window.isDragonEnabled
+        : (localStorage.getItem('kaka_pumpkin_active') !== 'false');
+
+      if (!isReaper) {
+        cloakedGuardian.classList.remove('defend');
+        return;
+      }
+
+      const rect = cloakedGuardian.getBoundingClientRect();
+      if (rect.width === 0 || rect.top > window.innerHeight || rect.bottom < 0) {
+        cloakedGuardian.classList.remove('defend');
+        return;
+      }
+
+      const gx = rect.left + rect.width / 2;
+      const gy = rect.top + rect.height / 2;
+      const dist = Math.hypot(window._lastMouseX - gx, window._lastMouseY - gy);
+
+      if (dist < 180) {
+        // Visual alert stance immediately when Reaper enters 180px
+        cloakedGuardian.classList.add('defend');
+        if (guardianImg && typeof cg === 'function') {
+          guardianImg.src = cg(3); // staff raised alert
+        }
+
+        // Attack & bold verbal challenge at 150px with 1s cooldown
+        if (dist < 150 && gcd <= 0) {
+          gcd = 1.0; // Exact 1-second cooldown (ticks every 0.2s: 1.0 / 0.2 = 5 ticks = 1.0s)
+          const defQuote = REAPER_DEFENSE_LINES[reaperLineIdx++ % REAPER_DEFENSE_LINES.length];
+          gsay(defQuote, 2000);
+          fireGuardianProjectile(gx - 14, gy - 12, window._lastMouseX, window._lastMouseY);
+        }
+      } else {
+        cloakedGuardian.classList.remove('defend');
+        if (guardianImg && typeof cg === 'function' && (!cloakedBubble || !cloakedBubble.classList.contains('on'))) {
+          guardianImg.src = cg(0);
+        }
+      }
+    }, 200);
+
+    function fireGuardianProjectile(originX, originY, targetX, targetY) {
+      playSound('blip');
+      const proj = document.createElement('div');
+      proj.className = 'cloaked-projectile';
+      proj.style.left = originX + 'px';
+      proj.style.top = originY + 'px';
+      document.body.appendChild(proj);
+
+      void proj.offsetWidth; // Force reflow
+      const dx = targetX - originX;
+      const dy = targetY - originY;
+      proj.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(0.6)';
+      proj.style.opacity = '0.9';
+
+      setTimeout(() => {
+        proj.style.opacity = '0';
+        setTimeout(() => {
+          if (proj.parentNode) proj.parentNode.removeChild(proj);
+        }, 180);
+      }, 380);
+    }
+
+    // ===== DUST & CRACK CLEANING WITH CURSOR (Reference 7) =====
+    // Moving cursor over .ac achievement cards sweeps away dust & cracks dynamically!
+    document.querySelectorAll('.ac').forEach(c => {
+      c.addEventListener('pointermove', e => {
+        const r = c.getBoundingClientRect();
+        c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+      c.addEventListener('pointerleave', () => {
+        c.style.setProperty('--mx', '-999px');
+        c.style.setProperty('--my', '-999px');
+      });
+    });
+
+    window.addEventListener('scroll', onCatacombScroll, { passive: true });
+    window.addEventListener('resize', onCatacombScroll);
+
+    if (btnToSurface) {
+      btnToSurface.addEventListener('click', e => {
+        e.preventDefault();
+        resurrectToSurface(2800);
+      });
+    }
+
+    updateCatacombCount();
+    onCatacombScroll();
+  }
+
+  initSkyAndCatacombs();
 });
 
 
