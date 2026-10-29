@@ -13644,3 +13644,107 @@ body.resurrect-ascending::before {
 .footer-in-lava .catacomb-bottom-actions {
   margin-top: 12px;
 }
+
+/* ==========================================================================
+   PERFORMANCE & ACCESSIBILITY OPTIMIZATIONS
+   1. prefers-reduced-motion (OS-Level Battery & Accessibility Mode)
+   2. body.eco-performance-mode (User-Toggled Eco & Low-End Device Mode)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .spider,
+  .mc-bubble,
+  .bb.wr,
+  .gd,
+  .gd.defend,
+  .ghost-spirit,
+  .mini-bat,
+  .dirt-eruption-particle,
+  .mascot-social-particle,
+  .tremor {
+    animation: none !important;
+  }
+}
+
+/* Mode Hemat Daya (Eco & Performance Mode) */
+body.eco-performance-mode .spider {
+  animation: none !important;
+  transform: none !important;
+}
+
+body.eco-performance-mode .mc-bubble {
+  animation: none !important;
+  box-shadow: 0 2px 0 #000 !important;
+}
+
+body.eco-performance-mode .bb.wr {
+  animation: none !important;
+  box-shadow: 0 4px 0 #000 !important;
+}
+
+body.eco-performance-mode .gd {
+  animation: none !important;
+  filter: none !important;
+}
+
+body.eco-performance-mode .gd.defend {
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+body.eco-performance-mode .ghost-spirit,
+body.eco-performance-mode .mini-bat,
+body.eco-performance-mode .dirt-eruption-particle,
+body.eco-performance-mode .mascot-social-particle {
+  display: none !important;
+}
+
+body.eco-performance-mode .ac {
+  box-shadow: 0 3px 0 #000 !important;
+}
+
+body.eco-performance-mode .ac::before {
+  filter: none !important;
+}
+
+body.eco-performance-mode .project-card,
+body.eco-performance-mode .skill-card,
+body.eco-performance-mode .experience-card,
+body.eco-performance-mode .catacomb-card {
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45) !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+body.eco-performance-mode .cloaked-projectile {
+  box-shadow: 0 0 4px #ffaa33 !important;
+}
+
+body.eco-performance-mode .sky-procedural,
+body.eco-performance-mode .sky-atmosphere {
+  filter: none !important;
+}
+
+/* Distinctive Eco emerald styling in Settings dropdown */
+#rowTogglePerfMode .switch-track {
+  transition: all 0.2s ease;
+}
+
+.spooky-switch#btnTogglePerfMode.active .switch-track {
+  background: #10b981 !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6) !important;
+}
+
+.spooky-switch#btnTogglePerfMode.active .switch-label {
+  color: #34d399 !important;
+}

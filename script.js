@@ -3282,7 +3282,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let isAnyMascotSocializing = false;
 
   function spawnMascotParticle(charEl, emoji) {
-    if (!charEl) return;
+    if (!charEl || window.isEcoMode) return;
     const p = document.createElement('div');
     p.className = 'mascot-social-particle';
     p.textContent = emoji;
@@ -3576,7 +3576,7 @@ document.addEventListener('DOMContentLoaded', () => {
       playMascotSound('arise');
       if (grave) grave.classList.add('shaking');
 
-      if (grave) {
+      if (grave && !window.isEcoMode) {
         const rect = grave.getBoundingClientRect();
         const isZombie = this.el.id === 'c';
         const glyphs = isZombie 
@@ -3898,7 +3898,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let isMascotsEnabled = localStorage.getItem('kaka_mascots_active') !== 'false';
   let isMidnightEnabled = localStorage.getItem('kaka_midnight_mode') === 'true';
 
+  const systemPrefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let isEcoMode = localStorage.getItem('kaka_eco_mode') !== null
+    ? localStorage.getItem('kaka_eco_mode') === 'true'
+    : !!systemPrefersReducedMotion;
+  window.isEcoMode = isEcoMode;
+
+  const btnToggleDragon = document.getElementById('btnToggleDragon');
+  const btnToggleMascots = document.getElementById('btnToggleMascots');
   const btnToggleMidnight = document.getElementById('btnToggleMidnight');
+  const btnTogglePerfMode = document.getElementById('btnTogglePerfMode');
 
   function updateDragonSwitchUI() {
     if (!btnToggleDragon) return;
@@ -3942,6 +3951,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function updateEcoSwitchUI() {
+    if (!btnTogglePerfMode) return;
+    const label = btnTogglePerfMode.querySelector('.switch-label');
+    if (isEcoMode) {
+      btnTogglePerfMode.classList.add('active');
+      btnTogglePerfMode.setAttribute('aria-checked', 'true');
+      if (label) label.textContent = 'ON';
+    } else {
+      btnTogglePerfMode.classList.remove('active');
+      btnTogglePerfMode.setAttribute('aria-checked', 'false');
+      if (label) label.textContent = 'OFF';
+    }
+  }
+
   function applyDragonState() {
     window.isDragonEnabled = isDragonEnabled;
     updateDragonSwitchUI();
@@ -3968,6 +3991,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('mode-tengah-malam');
     } else {
       document.body.classList.remove('mode-tengah-malam');
+    }
+  }
+
+  function applyEcoModeState() {
+    window.isEcoMode = isEcoMode;
+    updateEcoSwitchUI();
+    if (isEcoMode) {
+      document.body.classList.add('eco-performance-mode');
+    } else {
+      document.body.classList.remove('eco-performance-mode');
     }
   }
 
@@ -4020,9 +4053,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (btnTogglePerfMode) {
+    btnTogglePerfMode.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playSound('toggle');
+      isEcoMode = !isEcoMode;
+      localStorage.setItem('kaka_eco_mode', isEcoMode ? 'true' : 'false');
+      applyEcoModeState();
+      showToast(
+        isEcoMode
+          ? '⚡ Mode Hemat Daya AKTIF: Efek visual disederhanakan untuk baterai & RAM.'
+          : '✨ Mode Grafis Penuh AKTIF: Seluruh efek animasi visual dinyalakan kembali.'
+      );
+    });
+  }
+
+  if (window.matchMedia) {
+    try {
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+        if (localStorage.getItem('kaka_eco_mode') === null) {
+          isEcoMode = e.matches;
+          applyEcoModeState();
+        }
+      });
+    } catch (_) {}
+  }
+
   applyDragonState();
   applyMascotsState();
   applyMidnightState();
+  applyEcoModeState();
 
   // -------------------------------------------------------------------------
   // 11. Autonomous Mascot Characters (Skeleton, Pumpkin, Zombie, Witch)
@@ -4319,6 +4379,8 @@ document.addEventListener('DOMContentLoaded', () => {
           di.style.transform = `scaleX(${face})`;
         }, 180);
       }
+
+      if (window.isEcoMode) return;
 
       requestAnimationFrame(() => {
         // 3 Purple Spirits
