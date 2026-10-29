@@ -1248,15 +1248,43 @@ body.theme-sunset .lang-switch-group {
 
 @media (max-width: 640px) {
   .bd {
-    left: 2%;
-    width: 196px;
+    left: 10px;
+    width: min(210px, 56vw);
+    bottom: 24px;
   }
-  .gd {
-    left: calc(2% + 200px);
-    width: 56px;
+  .bp {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+  .bp b {
+    font-size: 12px;
+    text-align: center;
+    letter-spacing: .04em;
   }
   .bp p {
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.12;
+    text-align: center;
+    margin: 2px 0 4px;
+  }
+  .bp button {
+    width: 100%;
+    font-size: 12px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .gd {
+    left: calc(min(210px, 56vw) + 16px);
+    bottom: 24px;
+    width: 54px;
+  }
+  .bb.wr {
+    width: min(200px, 58vw);
+    font-size: 15px;
+    padding: 5px 8px;
   }
 }
 

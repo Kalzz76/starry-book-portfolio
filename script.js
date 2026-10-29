@@ -6124,6 +6124,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== SURFACE SCROLL LOCK UNTIL "ENTER GRAVEYARD" / "GALI KE BAWAH" IS CLICKED =====
     isGraveyardUnlocked = false;
+    let isTransitioningUnderground = false;
+    let hasScrolledUnderground = false;
+    let lastPulseTime = 0;
     const homeSection = document.getElementById('home');
     const enterGraveyardBtn = document.getElementById('btnEnterGraveyard') || document.querySelector('.scroll-down-indicator');
     const btnDigDown = document.getElementById('btnDigDown');
@@ -6134,24 +6137,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function pulseEnterGraveyard() {
+      const now = performance.now();
+      if (now - lastPulseTime < 900) return; // Prevent layout thrashing on fast scroll!
+      lastPulseTime = now;
       const btn = document.getElementById('btnDigDown') || enterGraveyardBtn;
       if (btn) {
-        btn.classList.remove('pulse-hint');
-        void btn.offsetWidth; // Force reflow
         btn.classList.add('pulse-hint');
+        setTimeout(() => btn.classList.remove('pulse-hint'), 800);
       }
     }
 
-    let hasScrolledUnderground = false;
-
     function unlockGraveyardAndScroll(targetSelector) {
       isGraveyardUnlocked = true;
-      hasScrolledUnderground = false;
+      hasScrolledUnderground = true;
+      isTransitioningUnderground = true;
       playSound('blip');
+
       const target = document.querySelector(targetSelector || '#about');
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+        const navHeight = 70;
+        const targetTop = Math.max(0, target.offsetTop - navHeight);
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
       }
+
+      // Safely release transition lock once smooth scroll settles
+      setTimeout(() => {
+        isTransitioningUnderground = false;
+      }, 1300);
     }
 
     if (btnDigDown) {
@@ -6183,9 +6195,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Intercept wheel past surface when locked
+    // Intercept wheel past surface when locked (desktop mouse wheel)
     window.addEventListener('wheel', e => {
-      if (isGraveyardUnlocked || isResurrecting) return;
+      if (isGraveyardUnlocked || isResurrecting || isTransitioningUnderground) return;
       const limit = getSurfaceScrollLimit();
       if (window.scrollY >= limit - 4 && e.deltaY > 0) {
         e.preventDefault();
@@ -6194,22 +6206,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, { passive: false });
 
-    // Intercept touch dragging past surface when locked
+    // Touch dragging on mobile: smoothly unlock on intentional swipe down
     let touchStartY = 0;
     window.addEventListener('touchstart', e => {
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     window.addEventListener('touchmove', e => {
-      if (isGraveyardUnlocked || isResurrecting) return;
+      if (isGraveyardUnlocked || isResurrecting || isTransitioningUnderground) return;
       const limit = getSurfaceScrollLimit();
       const delta = touchStartY - e.touches[0].clientY;
-      if (window.scrollY >= limit - 4 && delta > 0) {
-        e.preventDefault();
-        window.scrollTo({ top: limit, behavior: 'instant' });
-        pulseEnterGraveyard();
+      if (window.scrollY >= limit - 4 && delta > 25) {
+        // User swiped down past surface board on mobile: seamlessly unlock & glide down
+        unlockGraveyardAndScroll('#about');
       }
-    }, { passive: false });
+    }, { passive: true });
 
     // Cartesian Y-Axis depth & altitude calculation:
     // Surface ground is 0 m (Y=0).
@@ -6266,22 +6277,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateCatacombDepthMeter = updateCatacombDepthMeter;
 
     function onCatacombScroll() {
-      if (isResurrecting) return; // Never clamp or halt scroll while cinematic ascension is in flight!
+      if (isResurrecting || isTransitioningUnderground) return; // Never clamp or halt scroll during transition or cinematic ascension!
       const limit = getSurfaceScrollLimit();
 
-      if (window.scrollY > limit) {
+      if (window.scrollY > limit + 10) {
         hasScrolledUnderground = true;
       }
 
       // Clamp scroll if user scrolls past surface while locked
       if (!isGraveyardUnlocked && window.scrollY > limit) {
+        // On mobile touch screens, gracefully unlock instead of fighting kinetic momentum and vibrating the screen
+        if (window.innerWidth <= 768) {
+          unlockGraveyardAndScroll('#about');
+          return;
+        }
         window.scrollTo({ top: limit, behavior: 'instant' });
         pulseEnterGraveyard();
         return;
       }
 
-      // Re-lock ONLY when user has been underground and now intentionally scrolls all the way back to the top
-      if (isGraveyardUnlocked && window.scrollY <= 15 && hasScrolledUnderground) {
+      // Re-lock ONLY when user has explored underground and now intentionally scrolls all the way back to the very top
+      if (isGraveyardUnlocked && window.scrollY <= 15 && hasScrolledUnderground && !isTransitioningUnderground) {
         isGraveyardUnlocked = false;
         hasScrolledUnderground = false;
       }
