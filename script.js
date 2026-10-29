@@ -2755,33 +2755,91 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Altar Inscription Form Submission with Wax Seal Animation & Particles
+  const WEB3FORMS_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_WEB3FORMS_KEY) 
+    ? import.meta.env.VITE_WEB3FORMS_KEY 
+    : '33c1fbdf-f08c-48a2-8ef0-59cccb96b6fc';
+
   if (altarContactForm) {
-    altarContactForm.addEventListener('submit', (e) => {
+    let isSubmitting = false;
+
+    altarContactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (isSubmitting) return;
 
-      const name = (document.getElementById('altarSenderName')?.value || 'Pengembara').trim();
-      playSound('victory');
-
-      // Spawn bloody wax seal / purple ghost celebration particles
+      const nameInput = document.getElementById('altarSenderName');
+      const emailInput = document.getElementById('altarSenderEmail');
+      const subjectInput = document.getElementById('altarSenderSubject');
+      const messageInput = document.getElementById('altarSenderMessage');
       const btn = document.getElementById('btnSubmitAltar');
+
+      const name = (nameInput?.value || 'Pengembara').trim();
+      const email = (emailInput?.value || '').trim();
+      const subject = (subjectInput?.value || 'Pesan dari Altar Keramat').trim();
+      const message = (messageInput?.value || '').trim();
+
+      if (!message || !email) return;
+
+      isSubmitting = true;
+      let originalBtnContent = '';
       if (btn) {
-        const rect = btn.getBoundingClientRect();
-        for (let i = 0; i < 4; i++) {
-          const seal = document.createElement('span');
-          seal.className = 'ghost-spirit';
-          seal.textContent = i % 2 === 0 ? '🩸' : '🕯️';
-          seal.style.left = (rect.left + rect.width / 2 + (Math.random() * 40 - 20)) + 'px';
-          seal.style.top = (rect.top + (Math.random() * 20 - 10)) + 'px';
-          seal.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
-          seal.style.setProperty('--dy', (-60 - Math.random() * 50) + 'px');
-          document.body.appendChild(seal);
-          setTimeout(() => seal.remove(), 850);
-        }
+        originalBtnContent = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="wax-stamp">⏳</span><span class="btn-text">MENTRANSMISIKAN MANTRA...</span>';
       }
 
-      showToast(`🩸 Segel lilin terukir! Pesan dari ${name} terkirim ke Kaka Andrea Yahya!`);
-      altarContactForm.reset();
+      try {
+        const payload = {
+          access_key: WEB3FORMS_KEY,
+          name: name,
+          email: email,
+          subject: `[Altar Necromancer] ${subject}`,
+          message: message,
+          from_name: `${name} (Via Altar Portfolio)`
+        };
+
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          playSound('victory');
+
+          if (btn) {
+            const rect = btn.getBoundingClientRect();
+            for (let i = 0; i < 6; i++) {
+              const seal = document.createElement('span');
+              seal.className = 'ghost-spirit';
+              seal.textContent = i % 2 === 0 ? '🩸' : '🕯️';
+              seal.style.left = (rect.left + rect.width / 2 + (Math.random() * 40 - 20)) + 'px';
+              seal.style.top = (rect.top + (Math.random() * 20 - 10)) + 'px';
+              seal.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
+              seal.style.setProperty('--dy', (-60 - Math.random() * 50) + 'px');
+              document.body.appendChild(seal);
+              setTimeout(() => seal.remove(), 850);
+            }
+          }
+
+          showToast(`🩸 Segel lilin terukir! Pesan dari ${name} berhasil terkirim ke Kaka Andrea Yahya!`);
+          altarContactForm.reset();
+        } else {
+          showToast(`⚠️ Transmisi gagal: ${data.message || 'Periksa kembali formulir Anda.'}`);
+        }
+      } catch (err) {
+        showToast('⚠️ Gagal terhubung ke jaringan astral. Silakan periksa koneksi internet Anda!');
+      } finally {
+        isSubmitting = false;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalBtnContent;
+        }
+      }
     });
   }
 
