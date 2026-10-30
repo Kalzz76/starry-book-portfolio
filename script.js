@@ -2996,6 +2996,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // -------------------------------------------------------------------------
   // MEKANISME RAHASIA: OTORITAS SANG NECROMANCER (5 MENIT + COOLDOWN)
+  // Akses MURNI via Shortcut: Ctrl + Shift + K (Tidak ada tombol visible)
   // -------------------------------------------------------------------------
   const NECRO_AUTH_KEY = 'necroAuth';
   const NECRO_CD_KEY = 'necroCd';
@@ -3007,6 +3008,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let necroFails = 0;
   let necroLock = 0;
   let currentTargetMascot = null;
+
+  const necroWrongMantraPool = [
+    'Mantra salah. Arwah menertawakanmu.',
+    'Bukan itu katanya! Hantu-hantu berbisik geli.',
+    'Kekuatan gaib menolak mantra ini.',
+    'Mantra palsu! Segel kuno tetap membisu.',
+    'Kabut malam membungkam suaramu. Arwah tak bergeming.',
+    'Gagal menggetarkan altar. Mantra tidak dikenali.',
+    'Aura gelap menangkis mantra yang kamu ucapkan.'
+  ];
+  let lastNecroMsgIdx = -1;
 
   try {
     necroExp = +localStorage.getItem(NECRO_AUTH_KEY) || 0;
@@ -3023,22 +3035,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = Date.now();
     const isCooling = !necroAuth && necroCd > now;
 
-    const rune = document.getElementById('lodSecretRune');
-    if (rune) {
-      rune.classList.toggle('active', necroAuth);
-      rune.classList.toggle('on', necroAuth);
-      rune.title = necroAuth 
-        ? ('Otoritas Necromancer Aktif (' + formatNecroTime(necroExp - now) + ')') 
-        : (isCooling ? ('Segel Beristirahat (' + formatNecroTime(necroCd - now) + ')') : 'Segel Necromancer Kuno');
-    }
-
+    // Label status: HANYA muncul saat otoritas aktif atau cooldown, selain itu tersembunyi
     const chip = document.getElementById('necroChip');
     if (chip) {
-      chip.textContent = necroAuth 
-        ? ('✦ OTORITAS AKTIF · ' + formatNecroTime(necroExp - now))
-        : (isCooling ? ('✦ SEGEL ISTIRAHAT · ' + formatNecroTime(necroCd - now)) : '✦ OTORITAS TERKUNCI');
-      chip.classList.toggle('on', necroAuth);
-      chip.classList.toggle('low', necroAuth && (necroExp - now < 30000));
+      if (necroAuth) {
+        chip.classList.add('active-visible', 'on');
+        chip.classList.toggle('low', (necroExp - now < 30000));
+        chip.textContent = '✦ OTORITAS AKTIF · ' + formatNecroTime(necroExp - now);
+      } else if (isCooling) {
+        chip.classList.add('active-visible');
+        chip.classList.remove('on', 'low');
+        chip.textContent = '✦ SEGEL ISTIRAHAT · ' + formatNecroTime(necroCd - now);
+      } else {
+        chip.classList.remove('active-visible', 'on', 'low');
+        chip.textContent = '';
+      }
     }
 
     const btnBanish = document.getElementById('btnBanishSpirit');
@@ -3048,14 +3059,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function endNecroAuth(msg, noCd) {
+  function endNecroAuth(msg) {
     necroAuth = false;
     necroExp = 0;
     try { localStorage.removeItem(NECRO_AUTH_KEY); } catch (e) {}
-    if (!noCd) {
-      necroCd = Date.now() + NECRO_CD_DURATION;
-      try { localStorage.setItem(NECRO_CD_KEY, necroCd); } catch (e) {}
-    }
+    necroCd = Date.now() + NECRO_CD_DURATION;
+    try { localStorage.setItem(NECRO_CD_KEY, necroCd); } catch (e) {}
+
     const confirmModal = document.getElementById('necroConfirmModal');
     if (confirmModal) confirmModal.classList.remove('on');
     const adminBar = document.getElementById('lodAdminActionBar');
@@ -3109,7 +3119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnOk.disabled = isLocked;
 
     if (isLocked) {
-      if (err) err.textContent = 'Terlalu banyak percobaan. Tunggu ' + left + ' detik.';
+      if (err) err.textContent = 'Batas 5 kesempatan habis! Segel membeku selama ' + left + ' detik.';
       clearTimeout(updateLockUI.timer);
       updateLockUI.timer = setTimeout(updateLockUI, 500);
     } else if (necroLock) {
@@ -3150,8 +3160,19 @@ document.addEventListener('DOMContentLoaded', () => {
       necroFails++;
       if (necroFails >= 5) {
         necroLock = Date.now() + 30000;
+        updateLockUI();
+      } else {
+        let rIdx;
+        do {
+          rIdx = Math.floor(Math.random() * necroWrongMantraPool.length);
+        } while (rIdx === lastNecroMsgIdx && necroWrongMantraPool.length > 1);
+        lastNecroMsgIdx = rIdx;
+
+        if (err) {
+          err.textContent = necroWrongMantraPool[rIdx] + ' (' + necroFails + '/5)';
+        }
       }
-      if (err) err.textContent = 'Mantra salah. Arwah menertawakanmu. (' + necroFails + '/5)';
+
       if (modalBox) {
         modalBox.classList.remove('necro-sk');
         void modalBox.offsetWidth;
@@ -3178,14 +3199,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmModal) confirmModal.classList.add('on');
   }
 
-  function boomParticles(el) {
-    const cx = el ? (el.getBoundingClientRect().left + el.getBoundingClientRect().width / 2) : (window.innerWidth / 2);
-    const cy = el ? (el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2) : (window.innerHeight / 2);
+  function boomParticles(cxOrEl, cyOpt) {
+    let cx = 0;
+    let cy = 0;
+    if (typeof cxOrEl === 'number' && typeof cyOpt === 'number') {
+      cx = cxOrEl;
+      cy = cyOpt;
+    } else if (cxOrEl && cxOrEl.getBoundingClientRect) {
+      const r = cxOrEl.getBoundingClientRect();
+      cx = r.left + r.width / 2;
+      cy = r.top + r.height / 2;
+    } else {
+      cx = window.innerWidth / 2;
+      cy = window.innerHeight / 2;
+    }
+
     const symbols = ['☠️', '🔥', '✦', '💜'];
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 28; i++) {
       const p = document.createElement('span');
       const a = Math.random() * Math.PI * 2;
-      const d = 70 + Math.random() * 120;
+      const d = 70 + Math.random() * 130;
       p.className = 'necro-pt';
       p.textContent = symbols[i % 4];
       p.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;--dx:' + (Math.cos(a) * d) + 'px;--dy:' + (Math.sin(a) * d) + 'px;--rt:' + (Math.random() * 360 - 180) + 'deg;';
@@ -3206,8 +3239,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const m = currentTargetMascot;
     if (!m) return;
 
-    boomParticles(lodDtC);
-    await banishMascot(m);
+    // 1. Efek eliminasi di peta (animasi penguapan / vaporize & ledakan partikel tepat pada maskot di peta)
+    const mapEl = document.querySelector('.mc[data-id="' + m.id + '"]')
+      || document.querySelector('.mc[data-m="' + m.n + '"]');
+
+    if (mapEl) {
+      mapEl.classList.add('banished');
+      const r = mapEl.getBoundingClientRect();
+      boomParticles(r.left + r.width / 2, r.top + r.height / 2);
+    }
+
+    // 2. Ledakan partikel pada kartu modal detail
+    if (lodDtC) {
+      const rC = lodDtC.getBoundingClientRect();
+      boomParticles(rC.left + rC.width / 2, rC.top + rC.height / 2);
+    }
+
+    playSound('defeat');
+
+    // 3. Tutup modal detail agar user melihat jelas efek penghapusan di peta
+    if (lodDt) lodDt.hidden = true;
+
+    // 4. Beri jeda 650ms untuk menikmati animasi eliminasi sebelum dihapus dari state & DB
+    setTimeout(async () => {
+      await banishMascot(m);
+    }, 650);
   }
 
   async function banishMascot(m) {
@@ -3250,8 +3306,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 4. Close detail modal, update UI & counts
-    if (lodDt) lodDt.hidden = true;
+    // 4. Update UI & counts
     playSound('toggle');
     updateHUDCount();
     if (lodRgs) {
@@ -3300,28 +3355,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const necroChip = document.getElementById('necroChip');
-  if (necroChip) {
-    necroChip.addEventListener('click', () => {
-      if (necroAuth) endNecroAuth('Segel ditutup kembali.', false);
-      else askNecroAuth();
-    });
-  }
-
-  const lodSecretRune = document.getElementById('lodSecretRune');
-  if (lodSecretRune) {
-    lodSecretRune.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (necroAuth) endNecroAuth('Segel ditutup kembali.', false);
-      else askNecroAuth();
-    });
-  }
-
+  // Shortcut rahasia: Ctrl + Shift + K (satu-satunya cara membuka gerbang segel)
   window.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && (e.key === 'K' || e.key === 'k')) {
       e.preventDefault();
       if (necroAuth) {
-        showToast('Otoritas Sang Necromancer sudah aktif (' + formatNecroTime(necroExp - Date.now()) + ' tersisa).', 'Otoritas Aktif', '🔮');
+        showToast('Otoritas Sang Necromancer sedang aktif (' + formatNecroTime(necroExp - Date.now()) + ' tersisa).', 'Otoritas Aktif', '🔮');
       } else {
         askNecroAuth();
       }

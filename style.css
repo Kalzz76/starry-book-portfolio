@@ -13853,7 +13853,7 @@ body.eco-performance-mode .sky-atmosphere {
    14. MEKANISME RAHASIA OTORITAS NECROMANCER (SEGEL NECROMANCER)
    -------------------------------------------------------------------------- */
 .necro-chip {
-  display: inline-block;
+  display: none;
   border: 2px solid #4a4658;
   background: #140b22;
   color: #8d88a0;
@@ -13863,15 +13863,15 @@ body.eco-performance-mode .sky-atmosphere {
   font-weight: 700;
   letter-spacing: 0.08em;
   border-radius: 4px;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
   margin-left: 8px;
   vertical-align: middle;
   transition: all 0.25s ease;
   user-select: none;
 }
-.necro-chip:hover {
-  border-color: #ff8a1f;
-  color: #ffb347;
+.necro-chip.active-visible {
+  display: inline-block !important;
 }
 .necro-chip.on {
   border-color: #ff3b3b;
@@ -13881,6 +13881,35 @@ body.eco-performance-mode .sky-atmosphere {
 .necro-chip.low,
 .btn-banish-spirit.low {
   animation: necroPls 1s steps(2) infinite;
+}
+
+/* Map Elimination Vaporization Effect */
+.mc.banished {
+  animation: mascotVaporize 0.65s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+  pointer-events: none !important;
+  z-index: 100 !important;
+}
+@keyframes mascotVaporize {
+  0% {
+    transform: translate(-50%, -50%) scale(calc(1 / var(--z, 1)));
+    filter: drop-shadow(0 0 16px #ff3b3b) brightness(1.8);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(-50%, -65%) scale(calc(1.35 / var(--z, 1))) rotate(14deg);
+    filter: drop-shadow(0 0 30px #a855f7) hue-rotate(180deg) brightness(2.6);
+    opacity: 0.95;
+  }
+  70% {
+    transform: translate(-50%, -85%) scale(calc(0.7 / var(--z, 1))) rotate(32deg);
+    filter: drop-shadow(0 0 35px #ec4899) brightness(2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -105%) scale(0) rotate(50deg);
+    filter: drop-shadow(0 0 45px #ff0055) brightness(0);
+    opacity: 0;
+  }
 }
 
 .necro-ov {
