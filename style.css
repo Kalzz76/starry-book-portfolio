@@ -305,23 +305,14 @@ body {
   position: absolute;
   left: 30%;
   top: 300px;
-  width: 50px;
-  opacity: .55;
+  width: 52px;
+  opacity: .75;
   animation: gh 4.5s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 3;
 }
 @keyframes gh { to { transform: translate(24px, -20px); } }
-[data-t=tm] .ghost { filter: drop-shadow(0 0 6px #bfe8ff); }
-
-/* Limit sky bats and ghosts density for cleaner retro atmosphere */
-.ghost:nth-of-type(n+4) { display: none !important; }
-.bat.bn:nth-of-type(n+3) { display: none !important; }
-
-@media (max-width: 768px) {
-  .ghost:nth-of-type(n+2) { display: none !important; }
-  .bat.bn:nth-of-type(n+2) { display: none !important; }
-}
+[data-t=tm] .ghost { filter: drop-shadow(0 0 8px #bfe8ff); }
 
 .cld {
   position: absolute;
@@ -12373,6 +12364,64 @@ body.theme-day .leaf svg {
 }
 .lod-x:hover {
   color: var(--nav-or2);
+}
+
+.lod-secret-rune {
+  position: absolute;
+  top: 14px;
+  right: 52px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  padding: 4px;
+}
+.lod-secret-rune:hover {
+  color: #a855f7;
+  text-shadow: 0 0 8px #c084fc;
+  transform: rotate(45deg);
+}
+.lod-secret-rune.active {
+  color: #ef4444;
+  text-shadow: 0 0 10px #f87171;
+}
+
+.lod-admin-actions {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(239, 68, 68, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.3s ease;
+}
+
+.btn-banish-spirit {
+  background: linear-gradient(180deg, #7f1d1d 0%, #450a0a 100%);
+  border: 2px solid #ef4444;
+  color: #fecaca;
+  font-family: var(--font-pixel, inherit);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-banish-spirit:hover {
+  background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+  border-color: #f87171;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
 }
 
 .lod-status-footer {
