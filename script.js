@@ -2038,24 +2038,128 @@ document.addEventListener('DOMContentLoaded', () => {
   let M = [...defaultMascots];
   let MX = Object.assign({}, defaultMX);
 
-  visitorMascots.forEach((vm) => {
+  function addCompanionToMap(vm) {
+    if (!vm || !vm.name) return false;
+    const exists = M.some(m => m.isGuest && m.n === vm.name && m.b === '"' + vm.text + '"');
+    if (exists) return false;
+
+    const regIdx = typeof vm.region === 'number' && R[vm.region] ? vm.region : 2;
+    const reg = R[regIdx] || R[0];
+
     M.push({
+      id: vm.id || null,
       n: vm.name,
-      i: vm.icon,
-      r: vm.role,
+      i: vm.icon || '🎃',
+      r: vm.role || 'Visitor Sprite',
       b: '"' + vm.text + '"',
-      g: vm.region,
-      x: vm.x || (R[vm.region].s[0] + (Math.random() * 0.1 - 0.05)),
-      y: vm.y || (R[vm.region].s[1] + (Math.random() * 0.1 - 0.05)),
+      g: regIdx,
+      x: typeof vm.x === 'number' ? vm.x : (reg.s[0] + (Math.random() * 0.08 - 0.04)),
+      y: typeof vm.y === 'number' ? vm.y : (reg.s[1] + (Math.random() * 0.08 - 0.04)),
       isGuest: true
     });
+
     MX[vm.name] = {
-      o: R[vm.region].p[0] ? R[vm.region].p[0][0] + ", " + R[vm.region].n : R[vm.region].n,
-      d: 'Pengunjung Sanctum berwujud ' + vm.role + ' dari ' + R[vm.region].n + '.',
+      o: reg.p && reg.p[0] ? reg.p[0][0] + ", " + reg.n : reg.n,
+      d: 'Pengunjung Sanctum berwujud ' + (vm.role || 'Visitor') + ' dari ' + reg.n + '.',
       m: 'Bergabung di Land of Dusk melalui Sanctum Guestbook. Pesan: "' + vm.text + '"',
-      h: [[defaultMascots[vm.region % defaultMascots.length].n, "Teman Sekawasan"]]
+      h: [[defaultMascots[regIdx % defaultMascots.length].n, "Teman Sekawasan"]]
     };
-  });
+
+    return true;
+  }
+
+  // Preload cached visitor mascots from localStorage
+  visitorMascots.forEach(vm => addCompanionToMap(vm));
+
+  // -------------------------------------------------------------------------
+  // SUPABASE CONFIGURATION FOR REAL-TIME COMPANIONS GUESTBOOK
+  // -------------------------------------------------------------------------
+  const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL) 
+    || (typeof window !== 'undefined' && window.VITE_SUPABASE_URL) 
+    || '';
+  const SUPABASE_ANON_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY) 
+    || (typeof window !== 'undefined' && window.VITE_SUPABASE_ANON_KEY) 
+    || '';
+
+  let supabaseClient = null;
+  if (typeof window !== 'undefined' && window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes('YOUR_')) {
+    try {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.warn('[Supabase] Init warning:', e);
+    }
+  }
+
+  async function loadSupabaseCompanions() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('companions')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        let addedCount = 0;
+        data.forEach(row => {
+          const companion = {
+            id: row.id,
+            name: row.name || 'Pengunjung Anonim',
+            role: row.role || 'Visitor Sprite',
+            icon: row.icon || '🎃',
+            mascotType: row.mascot_type || 'type-pumpkin',
+            region: typeof row.region === 'number' ? row.region : 2,
+            text: row.message || '',
+            x: typeof row.x === 'number' ? row.x : null,
+            y: typeof row.y === 'number' ? row.y : null,
+            time: row.created_at ? new Date(row.created_at).getTime() : Date.now()
+          };
+          if (addCompanionToMap(companion)) addedCount++;
+        });
+
+        if (addedCount > 0) {
+          updateHUDCount();
+          if (lodRgs) {
+            lodRgs.innerHTML = R.map((r, i) => {
+              const count = M.filter((m) => m.g === i).length;
+              return '<button class="rg" data-i="' + i + '" style="left:' + (r.s[0] * 100) + '%;top:' + (r.s[1] * 100) + '%"><b>' + r.e + '</b><span>' + r.n + ' (' + count + ')</span></button>';
+            }).join('');
+          }
+          renderMascots();
+        }
+      }
+
+      // Realtime subscription: Show newly inserted mascots on-the-fly
+      supabaseClient
+        .channel('public:companions')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'companions' }, payload => {
+          if (payload && payload.new) {
+            const row = payload.new;
+            const companion = {
+              id: row.id,
+              name: row.name,
+              role: row.role,
+              icon: row.icon,
+              mascotType: row.mascot_type,
+              region: row.region,
+              text: row.message,
+              x: row.x,
+              y: row.y
+            };
+            if (addCompanionToMap(companion)) {
+              updateHUDCount();
+              renderMascots();
+              playSound('blip');
+              showToast('✨ Sahabat baru "' + companion.name + '" bergabung di Land of Dusk!');
+            }
+          }
+        })
+        .subscribe();
+
+    } catch (err) {
+      console.warn('[Supabase] Fetch notice:', err);
+    }
+  }
 
   const lodWrapper = document.getElementById('lodWrapper');
   const lodStage = document.getElementById('lodStage');
@@ -2709,6 +2813,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   paint(-1);
   renderMascots();
+  loadSupabaseCompanions();
 
   function openD(n) {
     const m = M.find((x) => x.n === n);
@@ -2855,23 +2960,27 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('kaka_land_of_dusk_mascots_v2', JSON.stringify(visitorMascots));
       } catch (err) {}
 
-      M.push({
-        n: newMascot.name,
-        i: newMascot.icon,
-        r: newMascot.role,
-        b: '"' + newMascot.text + '"',
-        g: newMascot.region,
-        x: newMascot.x,
-        y: newMascot.y,
-        isGuest: true
-      });
+      addCompanionToMap(newMascot);
 
-      MX[newMascot.name] = {
-        o: targetRegion.p[0] ? targetRegion.p[0][0] + ", " + targetRegion.n : targetRegion.n,
-        d: 'Pengunjung Sanctum berwujud ' + newMascot.role + ' dari ' + targetRegion.n + '.',
-        m: 'Bergabung di Land of Dusk melalui Sanctum Guestbook. Pesan: "' + newMascot.text + '"',
-        h: [[defaultMascots[regionIndex % defaultMascots.length].n, "Teman Sekawasan"]]
-      };
+      // Asynchronously send to Supabase if configured
+      if (supabaseClient) {
+        supabaseClient
+          .from('companions')
+          .insert([{
+            name: newMascot.name,
+            role: newMascot.role,
+            icon: newMascot.icon,
+            mascot_type: newMascot.mascotType,
+            region: newMascot.region,
+            message: newMascot.text,
+            x: newMascot.x,
+            y: newMascot.y
+          }])
+          .then(({ error }) => {
+            if (error) console.warn('[Supabase] Insert notice:', error.message);
+          })
+          .catch(err => console.warn('[Supabase] Network notice:', err));
+      }
 
       updateHUDCount();
 
