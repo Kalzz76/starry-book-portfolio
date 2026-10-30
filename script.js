@@ -2055,7 +2055,8 @@ document.addEventListener('DOMContentLoaded', () => {
       g: regIdx,
       x: typeof vm.x === 'number' ? vm.x : (reg.s[0] + (Math.random() * 0.08 - 0.04)),
       y: typeof vm.y === 'number' ? vm.y : (reg.s[1] + (Math.random() * 0.08 - 0.04)),
-      isGuest: true
+      isGuest: true,
+      mascotType: vm.mascotType || vm.mascot_type
     });
 
     MX[vm.name] = {
@@ -2074,12 +2075,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   // SUPABASE CONFIGURATION FOR REAL-TIME COMPANIONS GUESTBOOK
   // -------------------------------------------------------------------------
+  const DEFAULT_SUPABASE_URL = 'https://kzapgweajqioupgiufqf.supabase.co';
+  const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6YXBnd2VhanFpb3VwZ2l1ZnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMTM2MjYsImV4cCI6MjEwODg4OTYyNn0.5gPKB7lAydL9Z3qNkrff2ZA2dQ77PE-E9Q_FHtE8fFU';
+
   const SUPABASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL) 
     || (typeof window !== 'undefined' && window.VITE_SUPABASE_URL) 
-    || '';
+    || DEFAULT_SUPABASE_URL;
   const SUPABASE_ANON_KEY = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY) 
     || (typeof window !== 'undefined' && window.VITE_SUPABASE_ANON_KEY) 
-    || '';
+    || DEFAULT_SUPABASE_ANON_KEY;
 
   let supabaseClient = null;
   if (typeof window !== 'undefined' && window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes('YOUR_')) {
@@ -2090,74 +2094,144 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function loadSupabaseCompanions() {
-    if (!supabaseClient) return;
-    try {
-      const { data, error } = await supabaseClient
-        .from('companions')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(100);
-
-      if (!error && Array.isArray(data) && data.length > 0) {
-        let addedCount = 0;
-        data.forEach(row => {
-          const companion = {
-            id: row.id,
-            name: row.name || 'Pengunjung Anonim',
-            role: row.role || 'Visitor Sprite',
-            icon: row.icon || '🎃',
-            mascotType: row.mascot_type || 'type-pumpkin',
-            region: typeof row.region === 'number' ? row.region : 2,
-            text: row.message || '',
-            x: typeof row.x === 'number' ? row.x : null,
-            y: typeof row.y === 'number' ? row.y : null,
-            time: row.created_at ? new Date(row.created_at).getTime() : Date.now()
-          };
-          if (addCompanionToMap(companion)) addedCount++;
-        });
-
-        if (addedCount > 0) {
-          updateHUDCount();
-          if (lodRgs) {
-            lodRgs.innerHTML = R.map((r, i) => {
-              const count = M.filter((m) => m.g === i).length;
-              return '<button class="rg" data-i="' + i + '" style="left:' + (r.s[0] * 100) + '%;top:' + (r.s[1] * 100) + '%"><b>' + r.e + '</b><span>' + r.n + ' (' + count + ')</span></button>';
-            }).join('');
-          }
-          renderMascots();
+  // Robust function to insert companion into Supabase (Client + direct REST fetch fallback)
+  async function persistCompanionToSupabase(payload) {
+    let inserted = false;
+    if (supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient.from('companions').insert([payload]);
+        if (!error) {
+          console.log('[Supabase] Inserted successfully via client:', payload.name);
+          inserted = true;
+        } else {
+          console.warn('[Supabase] Client insert notice, trying REST fallback:', error.message);
         }
+      } catch (err) {
+        console.warn('[Supabase] Client insert exception, trying REST fallback:', err);
       }
+    }
+    if (!inserted && SUPABASE_URL && SUPABASE_ANON_KEY) {
+      try {
+        const res = await fetch(SUPABASE_URL + '/rest/v1/companions', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify([payload])
+        });
+        if (res.ok) {
+          console.log('[Supabase] Inserted successfully via direct REST API:', payload.name);
+          inserted = true;
+        } else {
+          const errText = await res.text();
+          console.warn('[Supabase] REST insert response:', res.status, errText);
+        }
+      } catch (e) {
+        console.warn('[Supabase] REST fetch failed:', e);
+      }
+    }
+    return inserted;
+  }
 
-      // Realtime subscription: Show newly inserted mascots on-the-fly
-      supabaseClient
-        .channel('public:companions')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'companions' }, payload => {
-          if (payload && payload.new) {
-            const row = payload.new;
-            const companion = {
-              id: row.id,
-              name: row.name,
-              role: row.role,
-              icon: row.icon,
-              mascotType: row.mascot_type,
-              region: row.region,
-              text: row.message,
-              x: row.x,
-              y: row.y
-            };
-            if (addCompanionToMap(companion)) {
-              updateHUDCount();
-              renderMascots();
-              playSound('blip');
-              showToast('✨ Sahabat baru "' + companion.name + '" bergabung di Land of Dusk!');
-            }
+  async function loadSupabaseCompanions() {
+    let rows = null;
+    // 1. Try via Supabase JS client
+    if (supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient
+          .from('companions')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(100);
+        if (!error && Array.isArray(data)) {
+          rows = data;
+        }
+      } catch (e) {
+        console.warn('[Supabase] Client fetch error, falling back to REST:', e);
+      }
+    }
+
+    // 2. Direct REST API fallback if client was unavailable or errored
+    if (!rows && SUPABASE_URL && SUPABASE_ANON_KEY) {
+      try {
+        const res = await fetch(SUPABASE_URL + '/rest/v1/companions?select=*&order=created_at.asc&limit=100', {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
           }
-        })
-        .subscribe();
+        });
+        if (res.ok) {
+          rows = await res.json();
+        }
+      } catch (err) {
+        console.warn('[Supabase] Direct REST fetch notice:', err);
+      }
+    }
 
-    } catch (err) {
-      console.warn('[Supabase] Fetch notice:', err);
+    if (Array.isArray(rows) && rows.length > 0) {
+      let addedCount = 0;
+      rows.forEach(row => {
+        const companion = {
+          id: row.id,
+          name: row.name || 'Pengunjung Anonim',
+          role: row.role || 'Visitor Sprite',
+          icon: row.icon || '🎃',
+          mascotType: row.mascot_type || 'type-pumpkin',
+          region: typeof row.region === 'number' ? row.region : 2,
+          text: row.message || '',
+          x: typeof row.x === 'number' ? row.x : null,
+          y: typeof row.y === 'number' ? row.y : null,
+          time: row.created_at ? new Date(row.created_at).getTime() : Date.now()
+        };
+        if (addCompanionToMap(companion)) addedCount++;
+      });
+
+      if (addedCount > 0) {
+        updateHUDCount();
+        if (lodRgs) {
+          lodRgs.innerHTML = R.map((r, i) => {
+            const count = M.filter((m) => m.g === i).length;
+            return '<button class="rg" data-i="' + i + '" style="left:' + (r.s[0] * 100) + '%;top:' + (r.s[1] * 100) + '%"><b>' + r.e + '</b><span>' + r.n + ' (' + count + ')</span></button>';
+          }).join('');
+        }
+        renderMascots();
+      }
+    }
+
+    // Realtime subscription: Show newly inserted mascots on-the-fly
+    if (supabaseClient) {
+      try {
+        supabaseClient
+          .channel('public:companions')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'companions' }, payload => {
+            if (payload && payload.new) {
+              const row = payload.new;
+              const companion = {
+                id: row.id,
+                name: row.name,
+                role: row.role,
+                icon: row.icon,
+                mascotType: row.mascot_type,
+                region: row.region,
+                text: row.message,
+                x: row.x,
+                y: row.y
+              };
+              if (addCompanionToMap(companion)) {
+                updateHUDCount();
+                renderMascots();
+                playSound('blip');
+                showToast('✨ Sahabat baru "' + companion.name + '" bergabung di Land of Dusk!');
+              }
+            }
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('[Supabase] Subscription error:', err);
+      }
     }
   }
 
@@ -2445,33 +2519,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getMascotChibiHTML(m) {
-    const name = m && m.n ? m.n : '';
-    if (name === 'Boo Casper') {
+    if (!m) return '';
+    const name = typeof m === 'string' ? m : (m.n || m.name || '');
+    const role = (m && (m.r || m.role)) || '';
+    const type = (m && (m.mascotType || m.mascot_type)) || '';
+    const icon = (m && (m.i || m.icon)) || '';
+    const lowerName = name.toLowerCase();
+
+    // 1. Ghost (Boo Casper, Friendly Ghost, 👻)
+    if (name === 'Boo Casper' || role === 'Friendly Ghost' || type === 'type-ghost' || icon === '👻' || lowerName.includes('ghost') || lowerName.includes('casper') || lowerName.includes('hantu')) {
       return '<svg class="chibi-svg chibi-casper" viewBox="0 0 48 52"><path d="M 24 8 C 15 8 12 18 12 30 C 9 28 6 29 6 32 C 6 35 9 37 12 35 C 12 42 16 45 19 41 C 22 38 26 38 29 41 C 32 45 36 42 36 35 C 39 37 42 35 42 32 C 42 29 39 28 36 30 C 36 18 33 8 24 8 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8"/><ellipse cx="17" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="31" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="19" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><ellipse cx="29" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><circle cx="20" cy="21" r="0.9" fill="#ffffff"/><circle cx="30" cy="21" r="0.9" fill="#ffffff"/><path d="M 22 26 Q 24 28 26 26" fill="none" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M 37 28 Q 44 24 43 19 Q 40 18 37 23" fill="#ffffff" stroke="#38bdf8" stroke-width="1.5"/></svg>';
     }
-    if (name === 'Skully') {
+
+    // 2. Skeleton (Skully, Chibi Skeleton, 💀)
+    if (name === 'Skully' || role === 'Chibi Skeleton' || type === 'type-skeleton' || icon === '💀' || lowerName.includes('skully') || lowerName.includes('skeleton') || lowerName.includes('tengkorak')) {
       return '<svg class="chibi-svg chibi-skully" viewBox="0 0 48 52"><path d="M 24 33 L 24 45" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round"/><path d="M 18 36 Q 24 34 30 36" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 17 39 Q 24 37 31 39" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 19 42 Q 24 40 29 42" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/><path d="M 20 46 Q 24 48 28 46" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/><path d="M 28 35 Q 36 36 34 42" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/><g class="skully-coffee"><rect x="33" y="38" width="8" height="7" rx="1.5" fill="#78350f" stroke="#f59e0b" stroke-width="1"/><path d="M 41 40 Q 44 41.5 41 43" fill="none" stroke="#f59e0b" stroke-width="1"/><path class="steam" d="M 35 36 Q 36 34 35 32 M 38 36 Q 39 34 38 31" fill="none" stroke="#fef08a" stroke-width="0.9" opacity="0.8"/></g><g class="skully-head"><path d="M 14 20 C 14 10 34 10 34 20 C 34 24 31 25 31 28 C 31 30 29 31 24 31 C 19 31 17 30 17 28 C 17 25 14 24 14 20 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/><ellipse class="skull-eye l" cx="19.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil l" cx="20" cy="19" r="1.2" fill="#38bdf8"/><ellipse class="skull-eye r" cx="28.5" cy="19.5" rx="3.5" ry="4" fill="#0f172a"/><circle class="skull-pupil r" cx="28" cy="19" r="1.2" fill="#38bdf8"/><path d="M 24 23 L 23 25 L 25 25 Z" fill="#1e293b"/><path d="M 20 28 L 28 28 M 22 27 L 22 29 M 24 27 L 24 29 M 26 27 L 26 29" stroke="#64748b" stroke-width="1" stroke-linecap="round"/><path d="M 26 12 L 28 14 L 27 16" fill="none" stroke="#cbd5e1" stroke-width="0.8"/><g class="skull-sweat"><path d="M 11 15 Q 9 17 11 18 Q 12 17 11 15 Z" fill="#38bdf8"/><path d="M 37 14 Q 39 16 37 17 Q 36 16 37 14 Z" fill="#38bdf8"/></g></g></svg>';
     }
-    if (name === 'Pumpkin Pete') {
+
+    // 3. Pumpkin (Pumpkin Pete, Pumpkin Sprite, 🎃)
+    if (name === 'Pumpkin Pete' || role === 'Pumpkin Sprite' || type === 'type-pumpkin' || icon === '🎃' || lowerName.includes('pete') || lowerName.includes('pumpkin') || lowerName.includes('labu')) {
       return '<svg class="chibi-svg chibi-pete" viewBox="0 0 48 52"><defs><radialGradient id="gd-pete" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#fdba74"/><stop offset="60%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/></radialGradient></defs><path d="M 24 16 Q 25 8 28 7 Q 31 6 30 10 Q 29 14 26 16" fill="#15803d" stroke="#166534" stroke-width="1.2"/><path d="M 27 11 Q 32 10 33 13 Q 34 16 31 15" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="16" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="32" cy="31" rx="9" ry="13" fill="#ea580c" stroke="#7c2d12" stroke-width="1.2"/><ellipse cx="24" cy="31" rx="10" ry="14" fill="url(#gd-pete)" stroke="#7c2d12" stroke-width="1.4"/><polygon points="18,25 22,28 17,29" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="30,25 31,29 26,28" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><polygon points="24,28 23,31 25,31" fill="#fef08a"/><path d="M 17 33 L 19 35 L 21 34 L 23 36 L 25 34 L 27 35 L 29 33 Q 24 39 17 33 Z" fill="#fef08a" stroke="#f59e0b" stroke-width="0.8"/><circle cx="11" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/><circle cx="37" cy="33" r="2.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1"/></svg>';
     }
-    if (name === 'Battie') {
+
+    // 4. Bat (Battie, Night Bat, 🦇)
+    if (name === 'Battie' || role === 'Night Bat' || type === 'type-bat' || icon === '🦇' || lowerName.includes('battie') || lowerName.includes('bat') || lowerName.includes('kelelawar')) {
       return '<svg class="chibi-svg chibi-battie" viewBox="0 0 48 52"><path class="bat-wing l" d="M 16 28 C 10 20 4 23 3 28 C 4 33 8 32 10 37 C 12 34 14 36 17 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><path class="bat-wing r" d="M 32 28 C 38 20 44 23 45 28 C 44 33 40 32 38 37 C 36 34 34 36 31 34 Z" fill="#581c87" stroke="#a855f7" stroke-width="1.4"/><ellipse cx="24" cy="31" rx="10" ry="11" fill="#3b0764" stroke="#c084fc" stroke-width="1.6"/><polygon points="17,23 13,11 20,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="16,21 14,14 18,18" fill="#f43f5e"/><polygon points="31,23 35,11 28,18" fill="#581c87" stroke="#c084fc" stroke-width="1.2"/><polygon points="32,21 34,14 30,18" fill="#f43f5e"/><ellipse cx="20" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="19.5" cy="27.5" r="0.9" fill="#ffffff"/><ellipse cx="28" cy="28" rx="2.4" ry="2.8" fill="#ef4444"/><circle cx="27.5" cy="27.5" r="0.9" fill="#ffffff"/><path d="M 21 33 Q 24 36 27 33" fill="none" stroke="#f3e8ff" stroke-width="1.2"/><polygon points="21,33 22,36 23,33" fill="#ffffff"/><polygon points="25,33 26,36 27,33" fill="#ffffff"/><path d="M 21 42 L 21 44 M 27 42 L 27 44" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/></svg>';
     }
-    if (name === 'Luna') {
+
+    // 5. Cat (Luna, Midnight Cat, 🐱)
+    if (name === 'Luna' || role === 'Midnight Cat' || type === 'type-cat' || icon === '🐱' || lowerName.includes('luna') || lowerName.includes('cat') || lowerName.includes('kucing')) {
       return '<svg class="chibi-svg chibi-luna" viewBox="0 0 48 52"><path class="cat-tail" d="M 32 38 Q 42 36 41 27 Q 40 24 37 25" fill="none" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="24" cy="33" rx="10" ry="11" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.6"/><polygon points="15,22 13,10 21,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="15,20 14,13 19,17" fill="#ec4899"/><polygon points="33,22 35,10 27,17" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2"/><polygon points="33,20 34,13 29,17" fill="#ec4899"/><polygon points="24,9 20,18 28,18" fill="#4338ca" stroke="#fbbf24" stroke-width="1"/><ellipse cx="24" cy="18" rx="6" ry="1.8" fill="#312e81" stroke="#fbbf24" stroke-width="0.8"/><path d="M 23 16 Q 24 14 25 16" fill="none" stroke="#fde047" stroke-width="1"/><ellipse cx="19" cy="27" rx="3" ry="3.5" fill="#fde047"/><ellipse cx="19" cy="27" rx="1" ry="3" fill="#0f172a"/><ellipse cx="29" cy="27" rx="3" ry="3.5" fill="#fde047"/><ellipse cx="29" cy="27" rx="1" ry="3" fill="#0f172a"/><polygon points="24,31 23,32.5 25,32.5" fill="#f472b6"/><path d="M 15 31 L 8 30 M 15 33 L 9 34 M 33 31 L 40 30 M 33 33 L 39 34" stroke="#818cf8" stroke-width="1" stroke-linecap="round"/><circle cx="20" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/><circle cx="28" cy="42" r="2.2" fill="#312e81" stroke="#6366f1" stroke-width="1"/></svg>';
     }
-    if (name === 'Archie') {
+
+    // 6. Wizard (Archie, Little Wizard, 🧙‍♂️)
+    if (name === 'Archie' || role === 'Little Wizard' || type === 'type-wizard' || icon === '🧙‍♂️' || lowerName.includes('archie') || lowerName.includes('wizard') || lowerName.includes('penyihir')) {
       return '<svg class="chibi-svg chibi-archie" viewBox="0 0 48 52"><path d="M 17 32 L 14 45 L 34 45 L 31 32 Z" fill="#312e81" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 32 L 24 45" stroke="#fbbf24" stroke-width="1.2"/><g class="alchem-flask"><path d="M 33 38 L 35 34 L 37 34 L 39 38 C 41 41 38 45 35 45 C 32 45 31 41 33 38 Z" fill="#06b6d4" stroke="#a5f3fc" stroke-width="1"/><path d="M 32.5 40 C 33 44 38 44 38.5 40 Z" fill="#22c55e"/><circle cx="35" cy="41" r="0.8" fill="#ffffff"/><circle cx="36.5" cy="39" r="0.6" fill="#ffffff"/></g><circle cx="24" cy="27" r="7.5" fill="#fed7aa"/><path d="M 18 29 C 18 36 24 39 24 39 C 24 39 30 36 30 29 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/><ellipse cx="21" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="21.5" cy="25.5" r="0.7" fill="#38bdf8"/><ellipse cx="27" cy="26" rx="1.8" ry="2" fill="#0f172a"/><circle cx="26.5" cy="25.5" r="0.7" fill="#38bdf8"/><circle cx="24" cy="28.5" r="1" fill="#f97316"/><path d="M 12 23 Q 24 19 36 23 Q 24 21 12 23 Z" fill="#1e1b4b"/><ellipse cx="24" cy="22" rx="14" ry="3.5" fill="#4338ca" stroke="#818cf8" stroke-width="1.2"/><path d="M 15 21 Q 20 8 30 6 Q 26 12 32 20 Z" fill="#3730a3" stroke="#818cf8" stroke-width="1.2"/><path d="M 16 20 Q 24 18 31 20" stroke="#f59e0b" stroke-width="2.5" fill="none"/><polygon points="24,17 25,19 27,19 25.5,20.5 26,22.5 24,21 22,22.5 22.5,20.5 21,19 23,19" fill="#fef08a"/></svg>';
     }
-    if (name === 'Gully') {
+
+    // 7. Toad / Frog (Gully, Swamp Guardian Toad, 🐸)
+    if (name === 'Gully' || role === 'Swamp Guardian Toad' || type === 'type-frog' || icon === '🐸' || lowerName.includes('gully') || lowerName.includes('frog') || lowerName.includes('toad') || lowerName.includes('katak')) {
       return '<svg class="chibi-svg chibi-gully" viewBox="0 0 48 52"><ellipse cx="24" cy="33" rx="12" ry="11" fill="#22c55e" stroke="#15803d" stroke-width="1.6"/><ellipse cx="24" cy="35" rx="8" ry="7" fill="#86efac"/><circle cx="17" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="17" cy="21" r="4" fill="#ffffff"/><circle cx="17.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="18" cy="20" r="0.8" fill="#ffffff"/><circle cx="31" cy="21" r="5.5" fill="#22c55e" stroke="#15803d" stroke-width="1.4"/><circle cx="31" cy="21" r="4" fill="#ffffff"/><circle cx="30.5" cy="21" r="2.2" fill="#0f172a"/><circle cx="30" cy="20" r="0.8" fill="#ffffff"/><ellipse cx="16" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><ellipse cx="32" cy="32" rx="2.5" ry="1.6" fill="#f472b6" opacity="0.8"/><path d="M 18 30 Q 24 35 30 30" fill="none" stroke="#14532d" stroke-width="1.6" stroke-linecap="round"/><path d="M 12 36 Q 9 37 11 39 M 36 36 Q 39 37 37 39" stroke="#15803d" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="17" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/><ellipse cx="31" cy="43" rx="3.5" ry="1.8" fill="#16a34a"/></svg>';
     }
-    if (name === 'Pengunjung Misterius') {
-      return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
-    }
-    const icon = m && m.i ? escapeHTML(m.i) : '✨';
-    return '<svg class="chibi-svg chibi-visitor" viewBox="0 0 48 52"><path d="M 16 30 L 13 45 L 35 45 L 32 30 Z" fill="#1e1b4b" stroke="#f59e0b" stroke-width="1.4"/><circle cx="24" cy="24" r="11" fill="#2e1065" stroke="#f59e0b" stroke-width="1.6"/><text x="24" y="27" font-size="13" text-anchor="middle" dominant-baseline="central">' + icon + '</text></svg>';
+
+    // 8. Mysterious Voyager (Pengunjung Misterius, Mysterious Voyager, 🎭 / 👤)
+    return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
   }
 
   function sayMascotGreeting(mascotName, customText) {
@@ -2962,25 +3053,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       addCompanionToMap(newMascot);
 
-      // Asynchronously send to Supabase if configured
-      if (supabaseClient) {
-        supabaseClient
-          .from('companions')
-          .insert([{
-            name: newMascot.name,
-            role: newMascot.role,
-            icon: newMascot.icon,
-            mascot_type: newMascot.mascotType,
-            region: newMascot.region,
-            message: newMascot.text,
-            x: newMascot.x,
-            y: newMascot.y
-          }])
-          .then(({ error }) => {
-            if (error) console.warn('[Supabase] Insert notice:', error.message);
-          })
-          .catch(err => console.warn('[Supabase] Network notice:', err));
-      }
+      // Asynchronously send to Supabase (via client or direct REST fallback)
+      persistCompanionToSupabase({
+        name: newMascot.name,
+        role: newMascot.role,
+        icon: newMascot.icon,
+        mascot_type: newMascot.mascotType,
+        region: newMascot.region,
+        message: newMascot.text,
+        x: newMascot.x,
+        y: newMascot.y
+      });
 
       updateHUDCount();
 
@@ -5254,22 +5337,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      const ghostConfigs = [
-        [8, 200, 38], [86, 250, 42], [18, 430, 46], [52, 470, 40], [74, 360, 50],
-        [40, 330, 42], [60, 520, 48], [92, 400, 40], [4, 480, 44]
-      ];
+      // Atmospheric Spooky Sky: Calm & Balanced Night Spirits
+      const isMobileSky = window.innerWidth <= 768;
+      const ghostConfigs = isMobileSky
+        ? [[80, 240, 36]]
+        : [[14, 220, 36], [82, 260, 40], [52, 410, 42]];
+
       ghostConfigs.forEach((g, i) => {
         const img = document.createElement('img');
         img.src = S.ghost;
-        img.className = 'ghost' + (i < 2 ? ' gs' : '');
+        img.className = 'ghost' + (i === 0 ? ' gs' : '');
         img.alt = '';
-        img.style.cssText = 'left:' + g[0] + '%;top:' + g[1] + 'px;width:' + g[2] + 'px;opacity:0.7;animation-duration:' + (3.5 + i * 0.5) + 's;animation-delay:-' + (i * 0.8) + 's' + (i % 2 ? ';animation-direction:alternate-reverse' : '');
+        img.style.cssText = 'left:' + g[0] + '%;top:' + g[1] + 'px;width:' + g[2] + 'px;opacity:0.55;animation-duration:' + (4.5 + i * 1.2) + 's;animation-delay:-' + (i * 1.5) + 's' + (i % 2 ? ';animation-direction:alternate-reverse' : '');
         skyAtmosphere.insertBefore(img, pixelGrass);
       });
 
-      const batConfigs = [
-        [60, 13, 15], [100, 9, 13], [170, 6, 17], [230, 3, 12], [300, 11, 14], [50, 2, 19]
-      ];
+      const batConfigs = isMobileSky
+        ? [[110, 8, 16]]
+        : [[75, 12, 16], [210, 5, 18]];
+
       batConfigs.forEach(b => {
         const img = document.createElement('img');
         img.src = S.bat;

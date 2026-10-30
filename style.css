@@ -305,14 +305,23 @@ body {
   position: absolute;
   left: 30%;
   top: 300px;
-  width: 54px;
-  opacity: .8;
-  animation: gh 4s ease-in-out infinite alternate;
+  width: 50px;
+  opacity: .55;
+  animation: gh 4.5s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 3;
 }
-@keyframes gh { to { transform: translate(30px, -26px); } }
-[data-t=tm] .ghost { filter: drop-shadow(0 0 8px #bfe8ff); }
+@keyframes gh { to { transform: translate(24px, -20px); } }
+[data-t=tm] .ghost { filter: drop-shadow(0 0 6px #bfe8ff); }
+
+/* Limit sky bats and ghosts density for cleaner retro atmosphere */
+.ghost:nth-of-type(n+4) { display: none !important; }
+.bat.bn:nth-of-type(n+3) { display: none !important; }
+
+@media (max-width: 768px) {
+  .ghost:nth-of-type(n+2) { display: none !important; }
+  .bat.bn:nth-of-type(n+2) { display: none !important; }
+}
 
 .cld {
   position: absolute;
