@@ -392,6 +392,153 @@ document.addEventListener('DOMContentLoaded', () => {
           osc.start(now + 0.12 + idx * 0.08);
           osc.stop(now + 0.12 + idx * 0.08 + 0.5);
         });
+
+      } else if (type === 'necro_unseal') {
+        // Grand Gothic Necromancer Awakening (Forbidden Seal Breaking)
+        // 1. Deep Sub-bass Impact Toll (D2 73.4Hz -> D1 36.7Hz)
+        const subOsc = audioCtx.createOscillator();
+        const subGain = audioCtx.createGain();
+        const subFilter = audioCtx.createBiquadFilter();
+
+        subOsc.type = 'sawtooth';
+        subOsc.frequency.setValueAtTime(92, now);
+        subOsc.frequency.exponentialRampToValueAtTime(36.7, now + 0.9);
+
+        subFilter.type = 'lowpass';
+        subFilter.frequency.setValueAtTime(320, now);
+        subFilter.frequency.exponentialRampToValueAtTime(80, now + 0.9);
+
+        subOsc.connect(subFilter);
+        subFilter.connect(subGain);
+        subGain.connect(audioCtx.destination);
+
+        subGain.gain.setValueAtTime(0.01, now);
+        subGain.gain.linearRampToValueAtTime(0.25, now + 0.04);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+
+        subOsc.start(now);
+        subOsc.stop(now + 1.1);
+
+        // 2. Chilling Dark Tritone Chord Arpeggio: D3 (146.8), A3 (220.0), D4 (293.7), F4 (349.2), G#4 (415.3 tritone), D5 (587.3)
+        const darkChord = [146.83, 220.00, 293.66, 349.23, 415.30, 587.33];
+        darkChord.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = idx < 2 ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(freq, now + 0.08 + idx * 0.06);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          gain.gain.setValueAtTime(0.001, now + 0.08 + idx * 0.06);
+          gain.gain.linearRampToValueAtTime(0.12, now + 0.08 + idx * 0.06 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08 + idx * 0.06 + 0.75);
+
+          osc.start(now + 0.08 + idx * 0.06);
+          osc.stop(now + 0.08 + idx * 0.06 + 0.8);
+        });
+
+        // 3. Shimmering High Harmonic Halo (Ethereal soul whisper at 1174.6Hz D6)
+        const highOsc = audioCtx.createOscillator();
+        const highGain = audioCtx.createGain();
+        highOsc.type = 'sine';
+        highOsc.frequency.setValueAtTime(1174.66, now + 0.35);
+        highOsc.frequency.linearRampToValueAtTime(1178, now + 0.7);
+        highOsc.frequency.linearRampToValueAtTime(1174.66, now + 1.1);
+
+        highOsc.connect(highGain);
+        highGain.connect(audioCtx.destination);
+
+        highGain.gain.setValueAtTime(0.001, now + 0.35);
+        highGain.gain.linearRampToValueAtTime(0.07, now + 0.42);
+        highGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+
+        highOsc.start(now + 0.35);
+        highOsc.stop(now + 1.3);
+
+      } else if (type === 'necro_fail') {
+        // Dissonant mocking spirits buzz (clashing minor 2nd)
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(185, now);
+        osc1.frequency.linearRampToValueAtTime(145, now + 0.28);
+        osc2.frequency.setValueAtTime(196, now);
+        osc2.frequency.linearRampToValueAtTime(154, now + 0.28);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.32);
+        osc2.stop(now + 0.32);
+
+      } else if (type === 'necro_chip_show') {
+        // Subtle rising mystic crystal ping (F#5, C#6)
+        const notes = [739.99, 1108.73];
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          gain.gain.setValueAtTime(0.001, now + idx * 0.05);
+          gain.gain.linearRampToValueAtTime(0.06, now + idx * 0.05 + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.3);
+          osc.start(now + idx * 0.05);
+          osc.stop(now + idx * 0.05 + 0.32);
+        });
+
+      } else if (type === 'necro_chip_hide') {
+        // Soft fading mist chime
+        const notes = [659.25, 440.00, 293.66];
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          gain.gain.setValueAtTime(0.001, now + idx * 0.07);
+          gain.gain.linearRampToValueAtTime(0.04, now + idx * 0.07 + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.36);
+        });
+
+      } else if (type === 'defeat') {
+        // Dimensional Vaporization / Soul Dissolution Blast
+        const osc = audioCtx.createOscillator();
+        const filter = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.45);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(650, now);
+        filter.frequency.exponentialRampToValueAtTime(110, now + 0.45);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.2, now + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+
+        osc.start(now);
+        osc.stop(now + 0.48);
       }
     } catch (e) {
       console.warn('Audio play error:', e);
@@ -3031,24 +3178,47 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
   }
 
+  let wasChipVisible = false;
+
   function syncNecroState() {
     const now = Date.now();
     const isCooling = !necroAuth && necroCd > now;
-
-    // Label status: HANYA muncul saat otoritas aktif atau cooldown, selain itu tersembunyi
+    const shouldBeVisible = necroAuth || isCooling;
     const chip = document.getElementById('necroChip');
+
+    // Label status: HANYA muncul saat otoritas aktif atau cooldown, dengan animasi halus & audio chime
     if (chip) {
-      if (necroAuth) {
-        chip.classList.add('active-visible', 'on');
-        chip.classList.toggle('low', (necroExp - now < 30000));
-        chip.textContent = '✦ OTORITAS AKTIF · ' + formatNecroTime(necroExp - now);
-      } else if (isCooling) {
-        chip.classList.add('active-visible');
-        chip.classList.remove('on', 'low');
-        chip.textContent = '✦ SEGEL ISTIRAHAT · ' + formatNecroTime(necroCd - now);
+      if (shouldBeVisible) {
+        if (!wasChipVisible) {
+          wasChipVisible = true;
+          chip.classList.remove('chip-leaving');
+          chip.classList.add('active-visible');
+          playSound('necro_chip_show');
+        }
+
+        if (necroAuth) {
+          chip.classList.add('on');
+          chip.classList.toggle('low', (necroExp - now < 30000));
+          chip.textContent = '✦ OTORITAS AKTIF · ' + formatNecroTime(necroExp - now);
+        } else {
+          chip.classList.remove('on', 'low');
+          chip.textContent = '✦ SEGEL ISTIRAHAT · ' + formatNecroTime(necroCd - now);
+        }
       } else {
-        chip.classList.remove('active-visible', 'on', 'low');
-        chip.textContent = '';
+        if (wasChipVisible) {
+          wasChipVisible = false;
+          chip.classList.add('chip-leaving');
+          playSound('necro_chip_hide');
+          setTimeout(() => {
+            if (!wasChipVisible) {
+              chip.classList.remove('active-visible', 'chip-leaving', 'on', 'low');
+              chip.textContent = '';
+            }
+          }, 420);
+        } else if (!chip.classList.contains('chip-leaving')) {
+          chip.classList.remove('active-visible', 'on', 'low');
+          chip.textContent = '';
+        }
       }
     }
 
@@ -3102,6 +3272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     input.type = 'password';
     if (err) err.textContent = '';
     modal.classList.add('on');
+    playSound('ghost');
     updateLockUI();
     setTimeout(() => { if (!input.disabled) input.focus(); }, 60);
   }
@@ -3152,7 +3323,7 @@ document.addEventListener('DOMContentLoaded', () => {
       necroFails = 0;
       if (modal) modal.classList.remove('on');
       syncNecroState();
-      playSound('victory');
+      playSound('necro_unseal');
       showToast('✦ Segel terbuka selama 5 menit. Gunakan kuasa pembasmi arwah dengan bijak!', 'Otoritas Necromancer', '⚔️');
       const currentName = lodDtN ? lodDtN.textContent : '';
       if (currentName) openD(currentName);
@@ -3178,7 +3349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         void modalBox.offsetWidth;
         modalBox.classList.add('necro-sk');
       }
-      playSound('click');
+      playSound('necro_fail');
       input.select();
       updateLockUI();
     }

@@ -13854,9 +13854,9 @@ body.eco-performance-mode .sky-atmosphere {
    -------------------------------------------------------------------------- */
 .necro-chip {
   display: none;
-  border: 2px solid #4a4658;
+  border: 2px solid #6b2fa0;
   background: #140b22;
-  color: #8d88a0;
+  color: #c4b5fd;
   padding: 3px 12px;
   font-family: var(--font-pixel, 'Pixelify Sans', monospace);
   font-size: 11px;
@@ -13867,20 +13867,61 @@ body.eco-performance-mode .sky-atmosphere {
   pointer-events: none;
   margin-left: 8px;
   vertical-align: middle;
-  transition: all 0.25s ease;
   user-select: none;
+  box-shadow: 0 0 10px rgba(107, 47, 160, 0.4);
+  transform-origin: center left;
+  white-space: nowrap;
 }
 .necro-chip.active-visible {
   display: inline-block !important;
+  animation: necroChipEnter 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.necro-chip.chip-leaving {
+  animation: necroChipExit 0.42s cubic-bezier(0.4, 0, 1, 1) forwards !important;
 }
 .necro-chip.on {
   border-color: #ff3b3b;
   color: #ffb0b0;
-  box-shadow: 0 0 14px rgba(255, 59, 59, 0.55);
+  box-shadow: 0 0 16px rgba(255, 59, 59, 0.65), 0 0 6px #ff8a1f;
 }
 .necro-chip.low,
 .btn-banish-spirit.low {
-  animation: necroPls 1s steps(2) infinite;
+  animation: necroPls 0.9s steps(2) infinite !important;
+}
+
+@keyframes necroChipEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) translateY(-8px);
+    filter: brightness(2.5) drop-shadow(0 0 20px #ff8a1f);
+  }
+  70% {
+    transform: scale(1.08) translateY(1px);
+    filter: brightness(1.4);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes necroChipExit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(1.06) translateY(-2px);
+    filter: brightness(1.6) drop-shadow(0 0 14px #a855f7);
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3) translateY(8px);
+    filter: brightness(0.2) blur(3px);
+  }
 }
 
 /* Map Elimination Vaporization Effect */
@@ -14118,5 +14159,11 @@ body.eco-performance-mode .sky-atmosphere {
 @media (max-width: 600px) {
   .necro-chip {
     display: none;
+  }
+  .necro-chip.active-visible {
+    display: inline-block !important;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-left: 4px;
   }
 }
