@@ -846,6 +846,7 @@
                 <div class="lod-title-group">
                   <span class="lod-realm-badge">REALM OF SANCTUM</span>
                   <h3 class="lod-title" id="lodTtl">Land of Dusk</h3>
+                  <span class="necro-chip" id="necroChip" title="Status Kuasa Segel Necromancer">✦ OTORITAS TERKUNCI</span>
                 </div>
 
                 <span class="lod-hint" id="lodHint">Klik salah satu wilayah kerajaan untuk menjelajah asal-usul tempat &amp; maskot penghuninya</span>
@@ -1073,7 +1074,6 @@
                       <option value="type-skeleton">💀 Tengkorak Santuy (Chibi Skeleton)</option>
                       <option value="type-wizard">🧙‍♂️ Penyihir Cilik (Little Wizard)</option>
                       <option value="type-frog">🐸 Katak Rawa (Swamp Guardian Toad)</option>
-                      <option value="type-voyager">🎭 Tamu Bertopeng (Mysterious Voyager)</option>
                     </select>
                   </div>
                 </div>
@@ -1114,9 +1114,7 @@
                 <!-- Submit Button -->
                 <button type="submit" class="btn-extract-submit" id="btnSubmitArise">
                   <span class="btn-pulse-flame"></span>
-                  <span class="btn-ico">✨</span>
                   <span>KIRIM PESAN &amp; GABUNG KE ARENA</span>
-                  <span class="btn-ico">✨</span>
                 </button>
               </form>
 
@@ -1897,6 +1895,41 @@
     </div>
 
   </div> <!-- End earthquakeContainer -->
+
+  <!-- NECROMANCER SECRET AUTHORITY MODALS (Segel Necromancer) -->
+  <!-- 1. Dialog Mantra Otoritas -->
+  <div class="necro-ov" id="necroMantraModal" aria-hidden="true">
+    <div class="necro-dg" id="necroMantraBox" role="dialog" aria-modal="true" aria-labelledby="necroMantraTitle">
+      <svg class="necro-web" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M0 0L40 0M0 0L0 40M0 0L34 34M0 0L40 18M0 0L18 40M8 0Q8 8 0 8M18 0Q18 18 0 18M30 0Q30 30 0 30" stroke="#b78cff" stroke-opacity=".6" fill="none"/>
+      </svg>
+      <h2 id="necroMantraTitle">🗝️ KONTROL RAHASIA NECROMANCER</h2>
+      <div class="necro-dv">✦ 🎃 ✦</div>
+      <p>Masukkan Mantra Otoritas untuk membuka kuasa membasmi arwah:</p>
+      <div class="necro-fw">
+        <input class="necro-in" id="necroMantraInput" type="password" autocomplete="off" aria-label="Mantra Otoritas" placeholder="Mantra..." />
+        <button type="button" class="necro-eye" id="necroMantraEye" aria-label="Tampilkan atau sembunyikan mantra">👁</button>
+      </div>
+      <div class="necro-er" id="necroMantraError" role="alert"></div>
+      <div class="necro-bt">
+        <button type="button" class="necro-b g" id="btnNecroMantraCancel">BATAL</button>
+        <button type="button" class="necro-b p" id="btnNecroMantraSubmit">BUKA SEGEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Dialog Konfirmasi Basmi Arwah -->
+  <div class="necro-ov" id="necroConfirmModal" aria-hidden="true">
+    <div class="necro-dg" role="alertdialog" aria-modal="true" aria-labelledby="necroConfirmTitle">
+      <h2 id="necroConfirmTitle">☠️ BASMI ARWAH?</h2>
+      <div class="necro-dv">✦ 🔥 ✦</div>
+      <p id="necroConfirmText">Basmi arwah ini? Komentarnya akan terhapus permanen dari Land of Dusk.</p>
+      <div class="necro-bt">
+        <button type="button" class="necro-b g" id="btnNecroConfirmCancel">BATAL</button>
+        <button type="button" class="necro-b d" id="btnNecroConfirmKill">BASMI</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Supabase Client for Public Companions Guestbook -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

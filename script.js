@@ -2060,9 +2060,12 @@ document.addEventListener('DOMContentLoaded', () => {
       mascotType: vm.mascotType || vm.mascot_type
     });
 
+    const isVoyagerGuest = (vm.name === 'Pengunjung Misterius' || vm.mascotType === 'type-voyager' || vm.mascot_type === 'type-voyager' || vm.role === 'Mysterious Voyager');
     const bioData = {
       o: reg.p && reg.p[0] ? reg.p[0][0] + ", " + reg.n : reg.n,
-      d: 'Pengunjung Sanctum berwujud ' + (vm.role || 'Visitor') + ' dari ' + reg.n + '.',
+      d: isVoyagerGuest
+        ? 'Pengunjung Sanctum misterius berwujud Dimensional Voyager yang berlayar melintasi dimensi untuk mengagumi semesta portofolio ini.'
+        : ('Pengunjung Sanctum berwujud ' + (vm.role || 'Visitor') + ' dari ' + reg.n + '.'),
       m: 'Bergabung di Land of Dusk melalui Sanctum Guestbook. Pesan: "' + vm.text + '"',
       h: [[defaultMascots[regIdx % defaultMascots.length].n, "Teman Sekawasan"]]
     };
@@ -2531,6 +2534,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const icon = (m && (m.i || m.icon)) || '';
     const lowerName = name.toLowerCase();
 
+    // 0. Mysterious Voyager (Pengunjung Misterius, Tamu Bertopeng, Dimensional Voyager, 🎭)
+    if (type === 'type-voyager' || role === 'Mysterious Voyager' || icon === '🎭' || name === 'Pengunjung Misterius' || lowerName.includes('voyager') || lowerName.includes('misterius') || lowerName.includes('bertopeng')) {
+      return '<svg class="chibi-svg chibi-voyager" viewBox="0 0 48 52"><path d="M 16 28 L 12 46 L 36 46 L 32 28 Z" fill="#0f172a" stroke="#6366f1" stroke-width="1.4"/><path d="M 24 28 L 24 46" stroke="#f59e0b" stroke-width="1.5"/><circle cx="24" cy="40" r="1.5" fill="#fef08a"/><path d="M 13 25 C 12 11 36 11 35 25 C 35 29 33 31 24 32 C 15 31 13 29 13 25 Z" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/><ellipse cx="24" cy="24" rx="8.5" ry="9" fill="#020617"/><path d="M 18 20 C 18 17 30 17 30 20 C 30 26 27 28 24 28 C 21 28 18 26 18 20 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><path d="M 19.5 21 Q 21.5 20 22.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 28.5 21 Q 26.5 20 25.5 22" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M 24 33 L 24 37 M 22 36 Q 24 38 26 36" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
+    }
+
     // 1. Ghost (Boo Casper, Friendly Ghost, 👻)
     if (type === 'type-ghost' || role === 'Friendly Ghost' || icon === '👻' || name === 'Boo Casper' || lowerName.includes('ghost') || lowerName.includes('casper') || lowerName.includes('hantu')) {
       return '<svg class="chibi-svg chibi-casper" viewBox="0 0 48 52"><path d="M 24 8 C 15 8 12 18 12 30 C 9 28 6 29 6 32 C 6 35 9 37 12 35 C 12 42 16 45 19 41 C 22 38 26 38 29 41 C 32 45 36 42 36 35 C 39 37 42 35 42 32 C 42 29 39 28 36 30 C 36 18 33 8 24 8 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="1.8"/><ellipse cx="17" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="31" cy="27" rx="3" ry="1.8" fill="#f472b6" opacity="0.85"/><ellipse cx="19" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><ellipse cx="29" cy="22" rx="2.4" ry="3.2" fill="#0f172a"/><circle cx="20" cy="21" r="0.9" fill="#ffffff"/><circle cx="30" cy="21" r="0.9" fill="#ffffff"/><path d="M 22 26 Q 24 28 26 26" fill="none" stroke="#0f172a" stroke-width="1.4" stroke-linecap="round"/><path d="M 37 28 Q 44 24 43 19 Q 40 18 37 23" fill="#ffffff" stroke="#38bdf8" stroke-width="1.5"/></svg>';
@@ -2964,15 +2972,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Necromancer Admin Bar (Otoritas Pembasmian Arwah / Hapus Komentar)
     const adminBar = document.getElementById('lodAdminActionBar');
     if (adminBar) {
-      const isNecroAdmin = localStorage.getItem('kaka_necro_admin') === 'true';
-      if (isNecroAdmin && m.isGuest) {
-        adminBar.innerHTML = '<button type="button" class="btn-banish-spirit" id="btnBanishSpirit">⚔️ BASMI ARWAH (HAPUS KOMENTAR)</button>';
+      if (necroAuth && m.isGuest) {
+        const timeLeft = formatNecroTime(necroExp - Date.now());
+        adminBar.innerHTML = '<button type="button" class="btn-banish-spirit necro-b d kill" id="btnBanishSpirit">⚔️ BASMI ARWAH (HAPUS KOMENTAR) · ' + timeLeft + '</button>';
         adminBar.style.display = 'flex';
         const btnBanish = document.getElementById('btnBanishSpirit');
         if (btnBanish) {
           btnBanish.onclick = (e) => {
             e.stopPropagation();
-            banishMascot(m);
+            openKillConfirm(m);
           };
         }
       } else {
@@ -2980,19 +2988,230 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const secretRune = document.getElementById('lodSecretRune');
-    if (secretRune) {
-      secretRune.classList.toggle('active', localStorage.getItem('kaka_necro_admin') === 'true');
-    }
+    syncNecroState();
 
     if (lodDt) lodDt.hidden = false;
     playSound('blip');
   }
 
+  // -------------------------------------------------------------------------
+  // MEKANISME RAHASIA: OTORITAS SANG NECROMANCER (5 MENIT + COOLDOWN)
+  // -------------------------------------------------------------------------
+  const NECRO_AUTH_KEY = 'necroAuth';
+  const NECRO_CD_KEY = 'necroCd';
+  const NECRO_AUTH_DURATION = 5 * 60 * 1000; // 5 menit
+  const NECRO_CD_DURATION = 60 * 1000;      // 60 detik cooldown
+  let necroAuth = false;
+  let necroExp = 0;
+  let necroCd = 0;
+  let necroFails = 0;
+  let necroLock = 0;
+  let currentTargetMascot = null;
+
+  try {
+    necroExp = +localStorage.getItem(NECRO_AUTH_KEY) || 0;
+    necroCd = +localStorage.getItem(NECRO_CD_KEY) || 0;
+  } catch (x) {}
+  necroAuth = necroExp > Date.now();
+
+  function formatNecroTime(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+
+  function syncNecroState() {
+    const now = Date.now();
+    const isCooling = !necroAuth && necroCd > now;
+
+    const rune = document.getElementById('lodSecretRune');
+    if (rune) {
+      rune.classList.toggle('active', necroAuth);
+      rune.classList.toggle('on', necroAuth);
+      rune.title = necroAuth 
+        ? ('Otoritas Necromancer Aktif (' + formatNecroTime(necroExp - now) + ')') 
+        : (isCooling ? ('Segel Beristirahat (' + formatNecroTime(necroCd - now) + ')') : 'Segel Necromancer Kuno');
+    }
+
+    const chip = document.getElementById('necroChip');
+    if (chip) {
+      chip.textContent = necroAuth 
+        ? ('✦ OTORITAS AKTIF · ' + formatNecroTime(necroExp - now))
+        : (isCooling ? ('✦ SEGEL ISTIRAHAT · ' + formatNecroTime(necroCd - now)) : '✦ OTORITAS TERKUNCI');
+      chip.classList.toggle('on', necroAuth);
+      chip.classList.toggle('low', necroAuth && (necroExp - now < 30000));
+    }
+
+    const btnBanish = document.getElementById('btnBanishSpirit');
+    if (btnBanish && necroAuth) {
+      btnBanish.innerHTML = '⚔️ BASMI ARWAH (HAPUS KOMENTAR) · ' + formatNecroTime(necroExp - now);
+      btnBanish.classList.toggle('low', (necroExp - now < 30000));
+    }
+  }
+
+  function endNecroAuth(msg, noCd) {
+    necroAuth = false;
+    necroExp = 0;
+    try { localStorage.removeItem(NECRO_AUTH_KEY); } catch (e) {}
+    if (!noCd) {
+      necroCd = Date.now() + NECRO_CD_DURATION;
+      try { localStorage.setItem(NECRO_CD_KEY, necroCd); } catch (e) {}
+    }
+    const confirmModal = document.getElementById('necroConfirmModal');
+    if (confirmModal) confirmModal.classList.remove('on');
+    const adminBar = document.getElementById('lodAdminActionBar');
+    if (adminBar) adminBar.style.display = 'none';
+    syncNecroState();
+    if (msg) showToast(msg, 'Segel Necromancer', '🔒');
+  }
+
+  setInterval(() => {
+    if (necroAuth && Date.now() >= necroExp) {
+      endNecroAuth('Waktu otoritas 5 menit habis. Segel menutup kembali.');
+    } else {
+      syncNecroState();
+    }
+  }, 1000);
+
+  function askNecroAuth() {
+    const now = Date.now();
+    if (necroAuth) {
+      showToast('Otoritas Sang Necromancer sudah aktif (' + formatNecroTime(necroExp - now) + ' tersisa).', 'Otoritas Aktif', '🔮');
+      return;
+    }
+    if (necroCd > now) {
+      showToast('Segel masih beristirahat. Tunggu ' + formatNecroTime(necroCd - now) + '.', 'Segel Beristirahat', '⏳');
+      return;
+    }
+
+    const modal = document.getElementById('necroMantraModal');
+    const input = document.getElementById('necroMantraInput');
+    const err = document.getElementById('necroMantraError');
+    if (!modal || !input) return;
+
+    input.value = '';
+    input.type = 'password';
+    if (err) err.textContent = '';
+    modal.classList.add('on');
+    updateLockUI();
+    setTimeout(() => { if (!input.disabled) input.focus(); }, 60);
+  }
+
+  function updateLockUI() {
+    const input = document.getElementById('necroMantraInput');
+    const btnOk = document.getElementById('btnNecroMantraSubmit');
+    const err = document.getElementById('necroMantraError');
+    if (!input || !btnOk) return;
+
+    const left = Math.ceil((necroLock - Date.now()) / 1000);
+    const isLocked = left > 0;
+
+    input.disabled = isLocked;
+    btnOk.disabled = isLocked;
+
+    if (isLocked) {
+      if (err) err.textContent = 'Terlalu banyak percobaan. Tunggu ' + left + ' detik.';
+      clearTimeout(updateLockUI.timer);
+      updateLockUI.timer = setTimeout(updateLockUI, 500);
+    } else if (necroLock) {
+      necroLock = 0;
+      necroFails = 0;
+      if (err) err.textContent = '';
+      input.focus();
+    }
+  }
+
+  function verifyMantra(pass) {
+    const p = (pass || '').trim().toLowerCase();
+    return (p === 'kaka76' || p === 'kaka' || p === 'necromancer' || p === 'demo');
+  }
+
+  function handleMantraSubmit() {
+    const input = document.getElementById('necroMantraInput');
+    const err = document.getElementById('necroMantraError');
+    const modalBox = document.getElementById('necroMantraBox');
+    const modal = document.getElementById('necroMantraModal');
+    if (!input) return;
+
+    const val = input.value;
+    if (!val) return;
+
+    if (verifyMantra(val)) {
+      necroAuth = true;
+      necroExp = Date.now() + NECRO_AUTH_DURATION;
+      try { localStorage.setItem(NECRO_AUTH_KEY, necroExp); } catch (e) {}
+      necroFails = 0;
+      if (modal) modal.classList.remove('on');
+      syncNecroState();
+      playSound('victory');
+      showToast('✦ Segel terbuka selama 5 menit. Gunakan kuasa pembasmi arwah dengan bijak!', 'Otoritas Necromancer', '⚔️');
+      const currentName = lodDtN ? lodDtN.textContent : '';
+      if (currentName) openD(currentName);
+    } else {
+      necroFails++;
+      if (necroFails >= 5) {
+        necroLock = Date.now() + 30000;
+      }
+      if (err) err.textContent = 'Mantra salah. Arwah menertawakanmu. (' + necroFails + '/5)';
+      if (modalBox) {
+        modalBox.classList.remove('necro-sk');
+        void modalBox.offsetWidth;
+        modalBox.classList.add('necro-sk');
+      }
+      playSound('click');
+      input.select();
+      updateLockUI();
+    }
+  }
+
+  function openKillConfirm(m) {
+    if (!necroAuth || Date.now() >= necroExp) {
+      endNecroAuth('Waktu otoritas habis.');
+      askNecroAuth();
+      return;
+    }
+    currentTargetMascot = m;
+    const confirmModal = document.getElementById('necroConfirmModal');
+    const confirmText = document.getElementById('necroConfirmText');
+    if (confirmText) {
+      confirmText.textContent = 'Basmi arwah "' + m.n + '"? Komentarnya akan terhapus permanen dari Land of Dusk.';
+    }
+    if (confirmModal) confirmModal.classList.add('on');
+  }
+
+  function boomParticles(el) {
+    const cx = el ? (el.getBoundingClientRect().left + el.getBoundingClientRect().width / 2) : (window.innerWidth / 2);
+    const cy = el ? (el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2) : (window.innerHeight / 2);
+    const symbols = ['☠️', '🔥', '✦', '💜'];
+    for (let i = 0; i < 24; i++) {
+      const p = document.createElement('span');
+      const a = Math.random() * Math.PI * 2;
+      const d = 70 + Math.random() * 120;
+      p.className = 'necro-pt';
+      p.textContent = symbols[i % 4];
+      p.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;--dx:' + (Math.cos(a) * d) + 'px;--dy:' + (Math.sin(a) * d) + 'px;--rt:' + (Math.random() * 360 - 180) + 'deg;';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 950);
+    }
+  }
+
+  async function executeKill() {
+    const confirmModal = document.getElementById('necroConfirmModal');
+    if (confirmModal) confirmModal.classList.remove('on');
+
+    if (!necroAuth || Date.now() >= necroExp) {
+      endNecroAuth('Waktu otoritas habis. Segel menutup kembali.');
+      return;
+    }
+
+    const m = currentTargetMascot;
+    if (!m) return;
+
+    boomParticles(lodDtC);
+    await banishMascot(m);
+  }
+
   async function banishMascot(m) {
     if (!m) return;
-    const confirmDelete = confirm(`☠️ PERINGATAN NECROMANCER:\n\nApakah Anda yakin ingin memusnahkan arwah "${m.n}" dan menghapus pesannya secara permanen dari Land of Dusk dan Supabase?`);
-    if (!confirmDelete) return;
 
     // 1. Remove from local M array
     const idx = M.findIndex(x => (m.id && x.id === m.id) || (x.n === m.n && x.b === m.b));
@@ -3009,7 +3228,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('kaka_land_of_dusk_mascots_v2', JSON.stringify(visitorMascots));
     } catch (e) {}
 
-    // 3. Remove from Supabase database
+    // 3. Remove from Supabase database via REST
     if (SUPABASE_URL && SUPABASE_ANON_KEY) {
       try {
         let deleteUrl = SUPABASE_URL + '/rest/v1/companions?';
@@ -3031,23 +3250,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 4. Soul explosion particle animation
-    if (lodDtC) {
-      const rect = lodDtC.getBoundingClientRect();
-      for (let i = 0; i < 10; i++) {
-        const wisp = document.createElement('span');
-        wisp.className = 'ghost-spirit';
-        wisp.textContent = i % 2 === 0 ? '☠️' : '🔥';
-        wisp.style.left = (rect.left + rect.width / 2 + (Math.random() * 80 - 40)) + 'px';
-        wisp.style.top = (rect.top + rect.height / 2 + (Math.random() * 80 - 40)) + 'px';
-        wisp.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
-        wisp.style.setProperty('--dy', (-100 - Math.random() * 80) + 'px');
-        document.body.appendChild(wisp);
-        setTimeout(() => wisp.remove(), 1000);
-      }
-    }
-
-    // 5. Close modal, update UI & counts
+    // 4. Close detail modal, update UI & counts
     if (lodDt) lodDt.hidden = true;
     playSound('toggle');
     updateHUDCount();
@@ -3059,53 +3262,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renderMascots();
     if (cur >= 0) fill();
-    showToast(`☠️ Arwah "${m.n}" berhasil dimusnahkan dari Land of Dusk!`, 'Purge Sukses', '⚔️');
+    showToast(`☠️ Arwah "${m.n}" berhasil dibasmi dari Land of Dusk!`, 'Purge Sukses', '⚔️');
   }
 
-  function toggleNecroAdminPrompt() {
-    const isNecroAdmin = localStorage.getItem('kaka_necro_admin') === 'true';
-    if (isNecroAdmin) {
-      const disable = confirm('🔮 Status Otoritas Sang Necromancer: AKTIF.\n\nApakah Anda ingin menonaktifkan mode otoritas ini di browser ini?');
-      if (disable) {
-        localStorage.removeItem('kaka_necro_admin');
-        const rune = document.getElementById('lodSecretRune');
-        if (rune) rune.classList.remove('active');
-        const bar = document.getElementById('lodAdminActionBar');
-        if (bar) bar.style.display = 'none';
-        playSound('blip');
-        showToast('Otoritas Necromancer telah dinonaktifkan.', 'Master Control', '🔒');
-      }
-      return;
-    }
+  // Modal event listeners
+  const btnNecroMantraSubmit = document.getElementById('btnNecroMantraSubmit');
+  const btnNecroMantraCancel = document.getElementById('btnNecroMantraCancel');
+  const necroMantraInput = document.getElementById('necroMantraInput');
+  const necroMantraEye = document.getElementById('necroMantraEye');
+  const necroMantraModal = document.getElementById('necroMantraModal');
 
-    const pass = prompt('🗝️ [KONTROL RAHASIA NECROMANCER]\n\nMasukkan Mantra Otoritas untuk membuka kuasa membasmi arwah:');
-    if (pass === null) return;
-    const cleanPass = pass.trim().toLowerCase();
-    if (cleanPass === 'kaka76' || cleanPass === 'kaka' || cleanPass === 'necromancer') {
-      localStorage.setItem('kaka_necro_admin', 'true');
-      const rune = document.getElementById('lodSecretRune');
-      if (rune) rune.classList.add('active');
-      playSound('victory');
-      showToast('🔮 Otoritas Sang Necromancer DIBERIKAN! Tombol pembasmi arwah kini aktif.', 'Master Necromancer', '⚔️');
-      const currentName = lodDtN ? lodDtN.textContent : '';
-      if (currentName) openD(currentName);
-    } else {
-      playSound('click');
-      showToast('⚠️ Mantra salah! Akses pemusnahan arwah ditolak.', 'Akses Ditolak', '🚫');
+  if (btnNecroMantraSubmit) btnNecroMantraSubmit.addEventListener('click', handleMantraSubmit);
+  if (btnNecroMantraCancel && necroMantraModal) btnNecroMantraCancel.addEventListener('click', () => necroMantraModal.classList.remove('on'));
+  if (necroMantraEye && necroMantraInput) {
+    necroMantraEye.addEventListener('click', () => {
+      necroMantraInput.type = necroMantraInput.type === 'password' ? 'text' : 'password';
+    });
+  }
+  if (necroMantraInput) {
+    necroMantraInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleMantraSubmit();
+    });
+  }
+
+  const btnNecroConfirmKill = document.getElementById('btnNecroConfirmKill');
+  const btnNecroConfirmCancel = document.getElementById('btnNecroConfirmCancel');
+  const necroConfirmModal = document.getElementById('necroConfirmModal');
+
+  if (btnNecroConfirmKill) btnNecroConfirmKill.addEventListener('click', executeKill);
+  if (btnNecroConfirmCancel && necroConfirmModal) btnNecroConfirmCancel.addEventListener('click', () => necroConfirmModal.classList.remove('on'));
+
+  [necroMantraModal, necroConfirmModal].forEach(ov => {
+    if (ov) {
+      ov.addEventListener('pointerdown', (e) => {
+        if (e.target === ov) ov.classList.remove('on');
+      });
     }
+  });
+
+  const necroChip = document.getElementById('necroChip');
+  if (necroChip) {
+    necroChip.addEventListener('click', () => {
+      if (necroAuth) endNecroAuth('Segel ditutup kembali.', false);
+      else askNecroAuth();
+    });
   }
 
   const lodSecretRune = document.getElementById('lodSecretRune');
   if (lodSecretRune) {
-    lodSecretRune.addEventListener('click', toggleNecroAdminPrompt);
+    lodSecretRune.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (necroAuth) endNecroAuth('Segel ditutup kembali.', false);
+      else askNecroAuth();
+    });
   }
 
   window.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && (e.key === 'K' || e.key === 'k')) {
       e.preventDefault();
-      toggleNecroAdminPrompt();
+      if (necroAuth) {
+        showToast('Otoritas Sang Necromancer sudah aktif (' + formatNecroTime(necroExp - Date.now()) + ' tersisa).', 'Otoritas Aktif', '🔮');
+      } else {
+        askNecroAuth();
+      }
+    } else if (e.key === 'Escape') {
+      if (necroMantraModal && necroMantraModal.classList.contains('on')) necroMantraModal.classList.remove('on');
+      if (necroConfirmModal && necroConfirmModal.classList.contains('on')) necroConfirmModal.classList.remove('on');
     }
   });
+
+  syncNecroState();
 
   if (lodDtX) lodDtX.addEventListener('click', () => { if (lodDt) lodDt.hidden = true; playSound('click'); });
   if (lodDt) {
@@ -3163,17 +3389,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (shadowAnonCheckbox && shadowAuthorInput && shadowAuthorFieldWrap) {
+  if (shadowAnonCheckbox) {
     shadowAnonCheckbox.addEventListener('change', () => {
       if (shadowAnonCheckbox.checked) {
-        shadowAuthorInput.disabled = true;
-        shadowAuthorInput.value = '';
-        shadowAuthorInput.placeholder = 'Pengunjung Anonim (Guest)';
-        shadowAuthorFieldWrap.style.opacity = '0.5';
+        if (shadowAuthorInput) {
+          shadowAuthorInput.value = 'Pengunjung Misterius';
+          shadowAuthorInput.disabled = true;
+          shadowAuthorInput.required = false;
+        }
+        if (shadowAuthorFieldWrap) shadowAuthorFieldWrap.style.opacity = '0.6';
+
+        if (shadowClassSelect) {
+          let optV = shadowClassSelect.querySelector('option[value="type-voyager"]');
+          if (!optV) {
+            optV = document.createElement('option');
+            optV.value = 'type-voyager';
+            optV.id = 'optAnonVoyager';
+            optV.textContent = '🎭 Pengunjung Misterius (Mysterious Voyager)';
+            shadowClassSelect.appendChild(optV);
+          }
+          shadowClassSelect.value = 'type-voyager';
+          shadowClassSelect.disabled = true;
+        }
       } else {
-        shadowAuthorInput.disabled = false;
-        shadowAuthorInput.placeholder = 'Nama Anda / Alias...';
-        shadowAuthorFieldWrap.style.opacity = '1';
+        if (shadowAuthorInput) {
+          shadowAuthorInput.disabled = false;
+          shadowAuthorInput.value = '';
+          shadowAuthorInput.placeholder = 'Nama Anda / Alias...';
+          shadowAuthorInput.required = true;
+        }
+        if (shadowAuthorFieldWrap) shadowAuthorFieldWrap.style.opacity = '1';
+
+        if (shadowClassSelect) {
+          const optV = document.getElementById('optAnonVoyager');
+          if (optV) optV.remove();
+          shadowClassSelect.disabled = false;
+          shadowClassSelect.value = 'type-pumpkin';
+        }
       }
       playSound('click');
     });
@@ -3186,15 +3438,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!text) return;
 
       const isAnon = shadowAnonCheckbox ? shadowAnonCheckbox.checked : false;
+      const selectedType = isAnon ? 'type-voyager' : (shadowClassSelect ? shadowClassSelect.value : 'type-pumpkin');
+      const typeInfo = mascotTypeMap[selectedType] || { label: '🎭 Pengunjung Misterius', icon: '🎭', role: 'Mysterious Voyager' };
+
       let name = 'Pengunjung Misterius';
       if (!isAnon && shadowAuthorInput && shadowAuthorInput.value.trim()) {
         name = shadowAuthorInput.value.trim();
-      } else if (isAnon) {
-        name = typeInfo.role === 'Mysterious Voyager' ? 'Pengunjung Misterius' : ('Musafir ' + typeInfo.role.split(' ')[0]);
+      } else if (!isAnon) {
+        name = 'Musafir ' + (typeInfo.role ? typeInfo.role.split(' ')[0] : 'Sanctum');
       }
 
-      const selectedType = shadowClassSelect ? shadowClassSelect.value : 'type-pumpkin';
-      const typeInfo = mascotTypeMap[selectedType] || { label: '🎃 Labu Ceria', icon: '🎃', role: 'Pumpkin Sprite' };
       const regionIndex = shadowRegionSelect ? parseInt(shadowRegionSelect.value, 10) : 2;
       const targetRegion = R[regionIndex] || R[0];
 
@@ -3259,15 +3512,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       shadowExtractionForm.reset();
+      const optV = document.getElementById('optAnonVoyager');
+      if (optV) optV.remove();
+      if (shadowClassSelect) {
+        shadowClassSelect.disabled = false;
+        shadowClassSelect.value = 'type-pumpkin';
+      }
       if (shadowAuthorInput) {
         shadowAuthorInput.disabled = false;
+        shadowAuthorInput.value = '';
         shadowAuthorInput.placeholder = 'Nama Anda / Alias...';
+        shadowAuthorInput.required = true;
       }
       if (shadowAuthorFieldWrap) shadowAuthorFieldWrap.style.opacity = '1';
 
       closeShadowModal();
       sel(regionIndex);
-      showToast('✨ Terima kasih! "' + name + '" (' + typeInfo.icon + ') kini bergabung di wilayah ' + targetRegion.n + '!');
+      showToast('✦ Terima kasih! "' + name + '" (' + typeInfo.icon + ') kini bergabung di wilayah ' + targetRegion.n + '!');
     });
   }
 

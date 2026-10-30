@@ -13848,3 +13848,246 @@ body.eco-performance-mode .sky-atmosphere {
 .spooky-switch#btnTogglePerfMode.active .switch-label {
   color: #34d399 !important;
 }
+
+/* --------------------------------------------------------------------------
+   14. MEKANISME RAHASIA OTORITAS NECROMANCER (SEGEL NECROMANCER)
+   -------------------------------------------------------------------------- */
+.necro-chip {
+  display: inline-block;
+  border: 2px solid #4a4658;
+  background: #140b22;
+  color: #8d88a0;
+  padding: 3px 12px;
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+.necro-chip:hover {
+  border-color: #ff8a1f;
+  color: #ffb347;
+}
+.necro-chip.on {
+  border-color: #ff3b3b;
+  color: #ffb0b0;
+  box-shadow: 0 0 14px rgba(255, 59, 59, 0.55);
+}
+.necro-chip.low,
+.btn-banish-spirit.low {
+  animation: necroPls 1s steps(2) infinite;
+}
+
+.necro-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 100050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(8, 3, 16, 0.85);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.necro-ov.on {
+  display: flex !important;
+}
+.necro-dg {
+  position: relative;
+  width: min(440px, 92vw);
+  background: #140b22;
+  border: 4px solid #ff8a1f;
+  box-shadow: 0 0 0 3px #000, 0 0 32px rgba(255, 138, 31, 0.4), 6px 6px 0 3px rgba(0, 0, 0, 0.65);
+  padding: 24px 22px 20px;
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+  color: #e2d4f5;
+  box-sizing: border-box;
+}
+.necro-dg::before,
+.necro-dg::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: #140b22;
+  border: 3px solid #ff8a1f;
+  transform: translateX(-50%) rotate(45deg);
+  pointer-events: none;
+}
+.necro-dg::before { top: -11px; }
+.necro-dg::after { bottom: -11px; }
+
+.necro-web {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 52px;
+  height: 52px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.necro-dg h2 {
+  margin: 0 0 6px;
+  padding-right: 32px;
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffb347;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+}
+.necro-dv {
+  text-align: center;
+  color: #ff8a1f;
+  letter-spacing: 0.4em;
+  border-bottom: 1px dashed rgba(255, 138, 31, 0.35);
+  padding-bottom: 6px;
+  margin: 6px 0 14px;
+}
+.necro-dg p {
+  margin: 0 0 12px;
+  line-height: 1.35;
+  font-size: 14px;
+  color: #d1c5e8;
+}
+.necro-fw {
+  position: relative;
+  width: 100%;
+}
+.necro-in {
+  width: 100%;
+  background: #0a0514;
+  border: 3px solid #6b2fa0;
+  color: #fff4dc;
+  font-family: monospace;
+  font-size: 20px;
+  letter-spacing: 0.15em;
+  padding: 8px 46px 8px 12px;
+  outline: 0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.necro-in:focus {
+  border-color: #ff8a1f;
+  box-shadow: 0 0 14px rgba(255, 138, 31, 0.55);
+}
+.necro-in:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.necro-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 0;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ffb347;
+  line-height: 1;
+  padding: 4px;
+}
+.necro-er {
+  min-height: 22px;
+  margin-top: 6px;
+  color: #ff8a8a;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.necro-bt {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+.necro-b {
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  border-radius: 4px;
+  transition: filter 0.15s, transform 0.1s;
+}
+.necro-b:hover {
+  filter: brightness(1.2);
+}
+.necro-b:active {
+  transform: translateY(1px);
+}
+.necro-b:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.necro-b.p {
+  background: #ff8a1f;
+  color: #140b22;
+}
+.necro-b.g {
+  background: #2a1840;
+  color: #e2d4f5;
+}
+.necro-b.d {
+  background: #8a1228;
+  color: #ffe0e0;
+}
+
+.lod-secret-rune.on {
+  color: #ff6b6b !important;
+  border-color: #ff3b3b !important;
+  text-shadow: 0 0 10px #f00 !important;
+  animation: necroPls 1.4s ease-in-out infinite !important;
+}
+
+@keyframes necroPls {
+  50% {
+    box-shadow: 0 0 16px #ff3b3b;
+    border-color: #ff8a8a;
+    color: #ff8a8a;
+  }
+}
+
+.necro-sk {
+  animation: necroShk 0.4s ease-in-out;
+}
+@keyframes necroShk {
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(9px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+.necro-pt {
+  position: fixed;
+  z-index: 100060;
+  pointer-events: none;
+  font-size: 24px;
+  animation: necroBst 0.95s ease-out forwards;
+}
+@keyframes necroBst {
+  from {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(1.4) rotate(var(--rt));
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .necro-chip {
+    display: none;
+  }
+}
