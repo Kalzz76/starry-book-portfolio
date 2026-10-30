@@ -12886,6 +12886,19 @@ body[data-t="tm"] .theme-toggle .midnight-icon {
 /* --------------------------------------------------------------------------
    SURFACE MASCOTS: Firmly Grounded on Grass (Distinct from LOD Map Mascots)
    -------------------------------------------------------------------------- */
+/* Mobile / Touchscreen: Hide surface wandering mascots so only the cloaked guardian remains */
+@media (max-width: 768px), (pointer: coarse) {
+  .sky-atmosphere > .mc,
+  .sky-atmosphere > .bb,
+  .stage,
+  .stage .char {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+}
+
 .sky-atmosphere > .mc {
   position: absolute !important;
   bottom: 30px !important;

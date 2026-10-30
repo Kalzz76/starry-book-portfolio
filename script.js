@@ -5991,7 +5991,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Atmospheric Spooky Sky: Calm & Balanced Night Spirits
-      const isMobileSky = window.innerWidth <= 768;
+      const isMobileSky = (typeof window !== 'undefined') && (
+        window.innerWidth <= 768 ||
+        (window.matchMedia && (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(max-width: 768px)').matches))
+      );
       const ghostConfigs = isMobileSky
         ? [[18, 200, 38], [78, 230, 40]]
         : [[12, 190, 44], [84, 230, 46], [48, 360, 48]];
@@ -6281,7 +6284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         c.b.style.bottom = (36 + 18 * sc) + 'px';
       }
 
-      const castDefs = [
+      // Surface Mascots: On mobile, only the cloaked guardian remains (castDefs empty on mobile)
+      const castDefs = isMobileSky ? [] : [
         ['pumpkin', 0.12, 0.5, 2],
         ['witch', 0.3, 0.25, 1],
         ['skel', 0.5, 0.15, 0],
