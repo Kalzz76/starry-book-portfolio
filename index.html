@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kaka Andrea Yahya | Code Necromancer Portfolio</title>
   <meta name="description" content="Portofolio Kaka Andrea Yahya - Code Necromancer, Web Developer & Spooky Pixel Enthusiast.">
+  <meta name="theme-color" content="#0d0614">
+
+  <!-- Open Graph / Meta Sosial -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kaka Andrea Yahya | Code Necromancer Portfolio">
+  <meta property="og:description" content="Portofolio Kaka Andrea Yahya - Code Necromancer, Web Developer & Spooky Pixel Enthusiast. Jelajahi Grimoire, Relik, dan Land of Dusk!">
+  <meta property="og:image" content="./Assets/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kaka Andrea Yahya | Code Necromancer Portfolio">
+  <meta name="twitter:description" content="Portofolio Kaka Andrea Yahya - Code Necromancer, Web Developer & Spooky Pixel Enthusiast.">
+  <meta name="twitter:image" content="./Assets/logo.png">
   
   <!-- Google Fonts: Pixelify Sans, MedievalSharp, Press Start 2P, Cinzel Decorative, & VT323 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +47,10 @@
       <!-- Left Pumpkin Logo & Current Active Section Title -->
       <div class="head" id="head" role="button" tabindex="0" title="Klik untuk membuka / menutup menu navigasi">
         <span class="pk" aria-hidden="true">
-          <img src="./Assets/logo.png" alt="Sinister Jack-o'-Lantern" class="pk-img">
+          <picture>
+            <source srcset="./Assets/logo.webp" type="image/webp">
+            <img src="./Assets/logo.png" alt="Sinister Jack-o'-Lantern" class="pk-img" width="36" height="36" decoding="async">
+          </picture>
         </span>
         <b class="cur" id="cur">Sanctum</b>
       </div>
@@ -347,7 +361,10 @@
                       <!-- Back Face: Real Portrait Photo of Kaka Andrea Yahya (KK.jpeg) -->
                       <div class="avatar-face avatar-back">
                         <div class="real-photo-art">
-                          <img src="./Assets/Images/kaka-portrait.jpg" alt="Foto Asli Kaka Andrea Yahya" class="kaka-real-photo" onerror="this.src='../referensi/KK.jpeg'">
+                          <picture>
+                            <source srcset="./Assets/Images/kaka-portrait.webp" type="image/webp">
+                            <img src="./Assets/Images/kaka-portrait.jpg" alt="Foto Asli Kaka Andrea Yahya" class="kaka-real-photo" width="280" height="340" loading="lazy" decoding="async" onerror="this.src='../referensi/KK.jpeg'">
+                          </picture>
                           <div class="photo-overlay-vignette"></div>
                         </div>
                         <div class="avatar-face-badge real-badge"><span>REAL PORTRAIT</span></div>
@@ -693,7 +710,10 @@
             <div class="book-grimoire" id="book">
               <div class="pg-grimoire l" id="pl">
                 <div class="pg-illustration-frame" id="pgIllustrationFrame">
-                  <img src="./Assets/Projects/project-clinic.jpg" alt="Sistem Mapping Klinik Pratama" id="projectIllustrationImg" class="pg-illustration-img" />
+                  <picture>
+                    <source srcset="./Assets/Projects/project-clinic.webp" type="image/webp">
+                    <img src="./Assets/Projects/project-clinic.jpg" alt="Sistem Mapping Klinik Pratama" id="projectIllustrationImg" class="pg-illustration-img" width="560" height="320" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="pg-quote" id="quote"></div>
                 <div class="pg-meta-badge" id="metaBadge"></div>
@@ -747,7 +767,7 @@
                   <i class="relic-chain relic-chain-r"></i>
                   <div class="relic-frame">
                     <div class="relic-mat">
-                      <img class="relic-cert-img px" id="relicCertImg" alt="Pratinjau Sertifikat" src="./Assets/Certificates/cert-innoventure-juara3-px.png">
+                      <img class="relic-cert-img px" id="relicCertImg" alt="Pratinjau Sertifikat" src="./Assets/Certificates/cert-innoventure-juara3-px.png" width="480" height="340" loading="lazy" decoding="async">
                       <button type="button" class="relic-ex-btn" id="btnZoomRelicQuick" title="Perbesar Dokumen" aria-label="Perbesar Dokumen">⤢</button>
                     </div>
                     <img class="relic-web relic-web-l" id="relicWebL" alt="">
@@ -1833,7 +1853,7 @@
 
     <!-- FLOATING RETRO PIXEL MUSIC PLAYER HUD -->
     <div class="pixel-music-hud" id="pixelMusicHud">
-      <audio id="bgMusicAudio" src="./audio/Halloween-bg.mp3" loop preload="auto"></audio>
+      <audio id="bgMusicAudio" src="./audio/Halloween-bg.mp3" loop preload="none"></audio>
       <div class="music-hud-glow" aria-hidden="true"></div>
       
       <div class="music-hud-card" id="musicHudCard" role="region" aria-label="Pemutar Musik Retro Sanctum">
@@ -1931,7 +1951,7 @@
   </div>
 
   <!-- Supabase Client for Public Companions Guestbook -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Main JavaScript File -->
   <script type="module" src="./script.js"></script>
 </body>

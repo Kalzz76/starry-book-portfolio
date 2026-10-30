@@ -9847,6 +9847,19 @@ body.theme-day .pixel-music-hud.minimized.playing .music-hud-mini-dot {
 /* --------------------------------------------------------------------------
    15. Flying Phantom Reaper Flying Cursor & Spirit/Bat Particles
    -------------------------------------------------------------------------- */
+/* Mobile / Touchscreen: Completely disable and hide Phantom Reaper */
+@media (max-width: 768px), (pointer: coarse) {
+  #dragon,
+  .dragon,
+  .dragon.reaper-cursor,
+  .reaper-cursor {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+}
+
 .dragon.reaper-cursor {
   position: fixed;
   left: 0;

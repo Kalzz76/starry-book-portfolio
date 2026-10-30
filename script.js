@@ -2194,20 +2194,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const regIdx = typeof vm.region === 'number' && R[vm.region] ? vm.region : 2;
     const reg = R[regIdx] || R[0];
 
+    const isVoyagerGuest = (vm.name === 'Pengunjung Misterius' || vm.mascotType === 'type-voyager' || vm.mascot_type === 'type-voyager' || vm.role === 'Mysterious Voyager');
+    if (isVoyagerGuest) {
+      vm.role = 'Mysterious Voyager';
+      vm.mascotType = 'type-voyager';
+    }
+
     M.push({
       id: compId,
       n: vm.name,
-      i: vm.icon || '🎃',
-      r: vm.role || 'Visitor Sprite',
+      i: isVoyagerGuest ? '🎭' : (vm.icon || '🎃'),
+      r: isVoyagerGuest ? 'Mysterious Voyager' : (vm.role || 'Visitor Sprite'),
       b: '"' + vm.text + '"',
       g: regIdx,
       x: typeof vm.x === 'number' ? vm.x : (reg.s[0] + (Math.random() * 0.08 - 0.04)),
       y: typeof vm.y === 'number' ? vm.y : (reg.s[1] + (Math.random() * 0.08 - 0.04)),
       isGuest: true,
-      mascotType: vm.mascotType || vm.mascot_type
+      mascotType: isVoyagerGuest ? 'type-voyager' : (vm.mascotType || vm.mascot_type)
     });
-
-    const isVoyagerGuest = (vm.name === 'Pengunjung Misterius' || vm.mascotType === 'type-voyager' || vm.mascot_type === 'type-voyager' || vm.role === 'Mysterious Voyager');
     const bioData = {
       o: reg.p && reg.p[0] ? reg.p[0][0] + ", " + reg.n : reg.n,
       d: isVoyagerGuest
@@ -4720,9 +4724,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------------------
   // Settings elements declared at top in Elements Selection
 
+  const isTouchOrMobileDevice = (typeof window !== 'undefined') && (
+    window.innerWidth <= 768 ||
+    (window.matchMedia && (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(max-width: 768px)').matches))
+  );
+
   let isDragonEnabled = localStorage.getItem('kaka_pumpkin_active') !== 'false';
   window.isDragonEnabled = isDragonEnabled;
-  if (dr && isDragonEnabled) dr.style.display = 'block';
+  if (dr) {
+    if (isTouchOrMobileDevice || !isDragonEnabled) {
+      dr.style.display = 'none';
+    } else {
+      dr.style.display = 'block';
+    }
+  }
   let isMascotsEnabled = localStorage.getItem('kaka_mascots_active') !== 'false';
   let isMidnightEnabled = localStorage.getItem('kaka_midnight_mode') === 'true';
 
@@ -4797,7 +4812,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.isDragonEnabled = isDragonEnabled;
     updateDragonSwitchUI();
     if (dr) {
-      if (!isDragonEnabled) {
+      if (!isDragonEnabled || isTouchOrMobileDevice || (window.innerWidth <= 768)) {
         dr.style.display = 'none';
       } else {
         dr.style.display = window.reaperCursorShown ? 'block' : 'none';
@@ -5158,7 +5173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
   // 12. Floating Phantom Reaper Flying Cursor & Click Particles
   // -------------------------------------------------------------------------
-  if (dr) {
+  if (dr && !isTouchOrMobileDevice) {
     const di = dr.querySelector('i');
     let tx = window.innerWidth / 2, ty = window.innerHeight * 0.45, x = tx, y = ty;
     let shown = true, face = 1;
@@ -5266,6 +5281,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       requestAnimationFrame(tick);
     })();
+  } else if (dr) {
+    dr.style.display = 'none';
   }
 
   // -------------------------------------------------------------------------
